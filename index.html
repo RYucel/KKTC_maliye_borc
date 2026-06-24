@@ -1,8 +1,3 @@
-İşte `data.json` mimarisine tam uyumlu, "0,00 Mrd" sorununu çözen, virgül/nokta hatalarını gideren ve sütun kaymalarını düzelten **eksiksiz ve en güncel `index.html` kodun**.
-
-Mevcut `index.html` dosyanın içindeki her şeyi silip, doğrudan bu kodu yapıştırabilirsin:
-
-```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -78,6 +73,7 @@ Mevcut `index.html` dosyanın içindeki her şeyi silip, doğrudan bu kodu yapı
   table td{padding:.4rem .6rem;border-bottom:1px solid var(--bdr);color:var(--fg);white-space:nowrap}
   table tr:hover td{background:rgba(255,255,255,.03)}
   .tag{display:inline-block;padding:.12rem .45rem;border-radius:4px;font-size:.68rem;font-weight:600}
+  .tag-tl{background:rgba(230,57,70,.15);color:var(--accent)}
   .tag-usd{background:rgba(46,196,182,.15);color:var(--accent3)}
   .tag-eur{background:rgba(167,139,250,.15);color:var(--accent4)}
   .tag-gbp{background:rgba(56,189,248,.15);color:var(--accent5)}
@@ -101,36 +97,58 @@ Mevcut `index.html` dosyanın içindeki her şeyi silip, doğrudan bu kodu yapı
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <div class="loading-text" id="loadingText">Veriler Yükleniyor...</div>
-  <div class="loading-sub" id="loadingSub">DİBS ihale verileri hazırlanıyor</div>
-  <button class="btn" onclick="useDemoData()" style="margin-top:.5rem">Demo Veri ile Devam Et</button>
+  <div class="loading-sub" id="loadingSub">DİBS ihale ve stok verileri hazırlanıyor</div>
 </div>
 
 <header>
   <h1>KKTC Merkezi Hükümet Borç İlerlemesi</h1>
-  <p>TL ve Yabancı Para Cinsi DİBS İhale Verileri — Canlı Veri Analizi</p>
+  <p>TL ve Yabancı Para Cinsi DİBS İhale ve Güncel Stok Verileri</p>
 </header>
 
 <div class="status-bar">
   <span><span class="status-dot" id="statusDot"></span><span id="statusLabel">Bağlanıyor...</span></span>
-  <span id="statusTL">TL: —</span>
-  <span id="statusFX">Döviz: —</span>
   <span id="statusTime">Son güncelleme: —</span>
   <button class="btn" onclick="refreshData()">Verileri Yenile</button>
 </div>
 
 <main>
-  <div class="kpi-grid fade-in" id="kpiGrid"></div>
-  <div class="insight-box fade-in" id="mainInsights"></div>
-
-  <div class="tab-bar fade-in">
-    <button class="tab-btn active" data-tab="trends">Borç Trendleri</button>
-    <button class="tab-btn" data-tab="rates">Faiz Analizi</button>
-    <button class="tab-btn" data-tab="currency">Döviz Dağılımı</button>
-    <button class="tab-btn" data-tab="maturity">Vade Yapısı</button>
-    <button class="tab-btn" data-tab="table">Veri Tablosu</button>
+  <div class="tab-bar fade-in" style="justify-content: center; margin-bottom: 2rem;">
+    <button class="tab-btn active" data-tab="stock" style="font-size: 1rem; padding: 0.6rem 1.2rem;">Borç Stoku (Güncel)</button>
+    <button class="tab-btn" data-tab="trends" style="font-size: 1rem; padding: 0.6rem 1.2rem;">Borçlanma Trendleri</button>
+    <button class="tab-btn" data-tab="rates" style="font-size: 1rem; padding: 0.6rem 1.2rem;">Faiz Analizi</button>
+    <button class="tab-btn" data-tab="maturity" style="font-size: 1rem; padding: 0.6rem 1.2rem;">Vade Yapısı</button>
+    <button class="tab-btn" data-tab="table" style="font-size: 1rem; padding: 0.6rem 1.2rem;">İhale Tablosu</button>
   </div>
 
-  <div class="tab-content active" id="tab-trends">
+  <div class="tab-content active" id="tab-stock">
+    <div class="chart-section fade-in">
+      <h2>Mevcut Ödenmemiş Borç Stoku Özeti</h2>
+      <div class="kpi-grid" id="stockKpiGrid"></div>
+      
+      <div class="chart-row two-col" style="margin-top: 1.5rem;">
+        <div class="chart-container"><h3>Döviz Cinsine Göre Stok Dağılımı (Kayıt Adedi)</h3><canvas id="chartStockCount"></canvas></div>
+        <div class="chart-container"><h3>Stok Vade Profil (Gün)</h3><canvas id="chartStockMaturity"></canvas></div>
+      </div>
+    </div>
+    
+    <div class="chart-section fade-in">
+      <h2>Güncel Borç Stoku Dökümü</h2>
+      <div class="tab-bar">
+        <button class="tab-btn active" data-subtab="stock-tl">TL Stok</button>
+        <button class="tab-btn" data-subtab="stock-usd">USD Stok</button>
+        <button class="tab-btn" data-subtab="stock-eur">EUR Stok</button>
+        <button class="tab-btn" data-subtab="stock-gbp">GBP Stok</button>
+      </div>
+      <div id="stock-tl" class="table-wrap"></div>
+      <div id="stock-usd" class="table-wrap" style="display:none"></div>
+      <div id="stock-eur" class="table-wrap" style="display:none"></div>
+      <div id="stock-gbp" class="table-wrap" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-trends">
+    <div class="kpi-grid fade-in" id="kpiGrid"></div>
+    <div class="insight-box fade-in" id="mainInsights"></div>
     <div class="chart-section fade-in">
       <h2>İhale Bazlı Yıllık Borçlanma Hacmi</h2>
       <div class="chart-row two-col">
@@ -160,19 +178,6 @@ Mevcut `index.html` dosyanın içindeki her şeyi silip, doğrudan bu kodu yapı
     </div>
   </div>
 
-  <div class="tab-content" id="tab-currency">
-    <div class="chart-section fade-in">
-      <h2>Döviz Cinsi Dağılımı</h2>
-      <div class="chart-row two-col">
-        <div class="chart-container"><h3>İhale Sayısına Göre Döviz Dağılımı</h3><canvas id="chartCurrencyCount"></canvas></div>
-        <div class="chart-container"><h3>Kabul Edilen Tutar TL Karşılığı Dağılımı</h3><canvas id="chartCurrencyAmount"></canvas></div>
-      </div>
-    </div>
-    <div class="chart-section fade-in">
-      <div class="chart-row"><div class="chart-container"><h3>Yıllara Göre Döviz Cinsi Borçlanma (Milyar TL Karşılığı)</h3><canvas id="chartFXByYear"></canvas></div></div>
-    </div>
-  </div>
-
   <div class="tab-content" id="tab-maturity">
     <div class="chart-section fade-in">
       <h2>Vade Yapısı Analizi</h2>
@@ -188,10 +193,10 @@ Mevcut `index.html` dosyanın içindeki her şeyi silip, doğrudan bu kodu yapı
 
   <div class="tab-content" id="tab-table">
     <div class="chart-section fade-in">
-      <h2>Detaylı İhale Verileri</h2>
+      <h2>Tarihsel İhale Verileri</h2>
       <div class="tab-bar">
-        <button class="tab-btn active" data-subtab="tl-table">TL DİBS</button>
-        <button class="tab-btn" data-subtab="fx-table">Döviz DİBS</button>
+        <button class="tab-btn active" data-subtab="tl-table">TL İhaleleri</button>
+        <button class="tab-btn" data-subtab="fx-table">Döviz İhaleleri</button>
       </div>
       <div id="tl-table" class="table-wrap"></div>
       <div id="fx-table" class="table-wrap" style="display:none"></div>
@@ -199,72 +204,48 @@ Mevcut `index.html` dosyanın içindeki her şeyi silip, doğrudan bu kodu yapı
   </div>
 </main>
 
-<footer>Kaynak: KKTC Merkez Bankası DİBS İhale Verileri · Otomatik Veri Güncelleme</footer>
+<footer>Kaynak: KKTC Merkez Bankası DİBS Verileri · Otomatik Veri Güncelleme</footer>
 
 <script>
 // ============================================================
-// GLOBAL DURUM VE DEMO VERİ
+// GLOBAL DURUM
 // ============================================================
 let state = {
-  tlRecords: [],
-  fxRecords: [],
+  tlRecords: [], fxRecords: [],
+  stockTL: [], stockUSD: [], stockEUR: [], stockGBP: [],
   source: 'none', 
   charts: {}
 };
 
-const DEMO_TL = [
-  ["KKB081024T16","27/06/2024","08/10/2024",103,955000000,880000000,49.98,53.50,50.68,60.60],
-  ["KKB240125T16","31/10/2024","24/01/2025",85,790000000,335000000,48.00,50.00,49.30,59.48],
-  ["KKB180425T11","28/02/2025","18/04/2025",49,2300000000,970000000,41.25,44.02,43.49,52.60]
-];
-
-const DEMO_FX = [
-  ["KKB081222F12","ABD DOLARI","26.08.2022","8.12.2022",104,10690000,7690000,139547354,3.00,4.50,3.68,3.73],
-  ["KKB151024F13","ABD DOLARI","27.06.2024","15.10.2024",110,26700000,26700000,878536800,4.00,5.00,4.53,4.60]
-];
-
 // ============================================================
-// VERİ İŞLEME (GÜNCELLENMİŞ VERSİYON)
+// VERİ İŞLEME FONKSİYONLARI
 // ============================================================
 
-// Gelişmiş Sayı Ayrıştırma: Hem "145,000,000" hem "1.450.000,00" hem de "7.50" formatlarını anlar
 function parseNum(str) {
   if (str == null) return null;
   str = String(str).trim();
   if (str === '' || str === '—' || str === '-') return null;
   if (/TLREF/i.test(str)) return null;
   
-  let c = str.replace(/\s/g, ''); // Boşlukları temizle
-
+  let c = str.replace(/\s/g, ''); 
   const commas = (c.match(/,/g) || []).length;
   const dots = (c.match(/\./g) || []).length;
 
   if (commas > 0 && dots > 0) {
-      if (c.lastIndexOf(',') > c.lastIndexOf('.')) {
-          c = c.replace(/\./g, '').replace(',', '.'); // EU Formatı: 1.234,56
-      } else {
-          c = c.replace(/,/g, ''); // US Formatı: 1,234.56
-      }
+      if (c.lastIndexOf(',') > c.lastIndexOf('.')) c = c.replace(/\./g, '').replace(',', '.');
+      else c = c.replace(/,/g, '');
   } else if (commas > 0) {
       const lastPart = c.split(',').pop();
-      if (lastPart.length === 3 && commas >= 1) { 
-          c = c.replace(/,/g, ''); // Sadece virgül var ve binlik ayırıcı (Örn: 145,000,000)
-      } else { 
-          c = c.replace(',', '.'); // Sadece virgül var ve ondalık ayırıcı (Örn: 7,50)
-      }
+      if (lastPart.length === 3 && commas >= 1) c = c.replace(/,/g, ''); 
+      else c = c.replace(',', '.');
   } else if (dots > 0) {
       const lastPart = c.split('.').pop();
-      if (lastPart.length === 3 && dots >= 1) { 
-          c = c.replace(/\./g, ''); // Sadece nokta var ve binlik ayırıcı (Örn: 145.000)
-      } 
-      // Sadece nokta ve ondalıksa (Örn: 7.50) aynen bırakılır
+      if (lastPart.length === 3 && dots >= 1) c = c.replace(/\./g, ''); 
   }
-  
   const num = parseFloat(c);
   return isNaN(num) ? null : num;
 }
 
-// Yıl çıkarma
 function parseYear(dateStr) {
   if (!dateStr) return null;
   const s = String(dateStr).trim();
@@ -279,26 +260,18 @@ function parseYear(dateStr) {
   return null;
 }
 
-// TL kayıtlarını yapılandır
+// İHALE VERİLERİ (Tarihsel)
 function processTLData(rawRows) {
   return rawRows.map(row => {
     const len = row.length;
     const isin = (row[0] || '').replace(/\s+\d+$/, '').trim();
-
-    // Sıkı ISIN kontrolü: Başlıkları atlamak için ilk 3 harf + en az 1 rakam kuralı
     if (!/^[A-Z]{3}\d/.test(isin)) return null; 
 
     const valor = row[1] || '';
     const itfa = row[2] || '';
+    const vade = parseInt(String(row[3] || '0').replace(/[^\d]/g, '')) || 0;
 
-    let vadeStr = row[3] || '0';
-    const vade = parseInt(String(vadeStr).replace(/[^\d]/g, '')) || 0;
-
-    // "gün" ifadesi ayrı bir sütuna taşmışsa finansal verileri sağa kaydır
-    let offset = 0;
-    if (row[4] && String(row[4]).toLowerCase().includes('gün')) {
-        offset = 1;
-    }
+    let offset = (row[4] && String(row[4]).toLowerCase().includes('gün')) ? 1 : 0;
 
     const teklif = parseNum(row[4 + offset]);
     const kabul = parseNum(row[5 + offset]);
@@ -309,33 +282,22 @@ function processTLData(rawRows) {
 
     if (kabul === null || kabul <= 0) return null;
 
-    return {
-      isin, valor, itfa, vade, teklif, kabul,
-      minFaiz, maxFaiz, ortFaiz, bilesik,
-      year: parseYear(valor), type: 'TL'
-    };
+    return { isin, valor, itfa, vade, teklif, kabul, minFaiz, maxFaiz, ortFaiz, bilesik, year: parseYear(valor), type: 'TL' };
   }).filter(Boolean);
 }
 
-// Döviz kayıtlarını yapılandır
 function processFXData(rawRows) {
   return rawRows.map(row => {
     const len = row.length;
     const isin = (row[0] || '').replace(/\s+\d+$/, '').trim();
-
     if (!/^[A-Z]{3}\d/.test(isin)) return null;
 
     const doviz = (row[1] || '').trim();
     const valor = row[2] || '';
     const itfa = row[3] || '';
+    const vade = parseInt(String(row[4] || '0').replace(/[^\d]/g, '')) || 0;
 
-    let vadeStr = row[4] || '0';
-    const vade = parseInt(String(vadeStr).replace(/[^\d]/g, '')) || 0;
-
-    let offset = 0;
-    if (row[5] && String(row[5]).toLowerCase().includes('gün')) {
-        offset = 1;
-    }
+    let offset = (row[5] && String(row[5]).toLowerCase().includes('gün')) ? 1 : 0;
 
     const teklif = parseNum(row[5 + offset]);
     const kabul = parseNum(row[6 + offset]);
@@ -347,13 +309,41 @@ function processFXData(rawRows) {
 
     if (kabul === null || kabul <= 0) return null;
 
-    return {
-      isin, doviz, valor, itfa, vade, teklif, kabul, tlKarsilik,
-      minFaiz, maxFaiz, ortFaiz, bilesik,
-      year: parseYear(valor), type: 'FX'
-    };
+    return { isin, doviz, valor, itfa, vade, teklif, kabul, tlKarsilik, minFaiz, maxFaiz, ortFaiz, bilesik, year: parseYear(valor), type: 'FX' };
   }).filter(Boolean);
 }
+
+// STOK VERİLERİ (Güncel) - Sezgisel Ayrıştırma
+function processStockData(rawRows, currency) {
+  if (!rawRows) return [];
+  return rawRows.map(row => {
+    const isin = (row[0] || '').replace(/\s+\d+$/, '').trim();
+    if (!/^[A-Z]{3}\d/.test(isin)) return null; // ISIN kontrolü
+
+    const valor = row[1] || '';
+    const itfa = row[2] || '';
+    
+    // Stok tablolarının sütun yapısı farklılık gösterebilir. 
+    // Miktarı ve vadeyi bulmak için satırdaki sayısal değerleri tarıyoruz.
+    let amount = 0;
+    let vade = 0;
+    
+    for (let i = 3; i < row.length; i++) {
+       const val = parseNum(row[i]);
+       if (val !== null) {
+          // Eğer 10.000'den küçükse büyük ihtimalle "Kalan Gün" veya faiz oranıdır
+          if (val < 10000 && vade === 0) vade = val; 
+          // Eğer 50.000'den büyükse ihraç tutarı veya kalan tutardır
+          else if (val > 50000 && amount === 0) amount = val; 
+       }
+    }
+
+    if (amount === 0) return null; // Tutar bulunamadıysa atla
+
+    return { isin, valor, itfa, vade, amount, currency };
+  }).filter(Boolean);
+}
+
 
 // ============================================================
 // VERİ ÇEKME (GITHUB ACTIONS JSON)
@@ -364,47 +354,33 @@ async function fetchAndProcess() {
   if(loadingSub) loadingSub.textContent = 'Güncel veriler yükleniyor...';
 
   try {
-    // Tarayıcının eski veriyi önbelleğe almasını önlemek için zaman damgası (cache-busting)
     const url = 'data.json?v=' + new Date().getTime();
     const resp = await fetch(url);
-    
     if (!resp.ok) throw new Error('data.json dosyası henüz oluşturulmamış.');
     
     const data = await resp.json();
     
-    // Python'dan gelen ham dizileri yapılandır
-    const tlRecords = data.tlRaw ? processTLData(data.tlRaw) : [];
-    const fxRecords = data.fxRaw ? processFXData(data.fxRaw) : [];
+    // İhale Verileri
+    state.tlRecords = data.tlRaw ? processTLData(data.tlRaw) : [];
+    state.fxRecords = data.fxRaw ? processFXData(data.fxRaw) : [];
+    
+    // Stok Verileri
+    state.stockTL = processStockData(data.tlStockRaw, 'TL');
+    state.stockUSD = processStockData(data.usdStockRaw, 'USD');
+    state.stockEUR = processStockData(data.eurStockRaw, 'EUR');
+    state.stockGBP = processStockData(data.gbpStockRaw, 'GBP');
 
-    if (tlRecords.length > 0 || fxRecords.length > 0) {
-      state.tlRecords = tlRecords;
-      state.fxRecords = fxRecords;
-      state.source = 'live';
-      
-      const timeStr = data.last_updated || new Date().toLocaleString('tr-TR');
-      document.getElementById('statusTime').textContent = 'Son güncelleme: ' + timeStr;
-      
-      updateStatus();
-      renderDashboard();
-      hideLoading();
-    } else {
-      console.warn('data.json verileri işlenemedi, demo veri kullanılıyor');
-      useDemoData();
-    }
+    state.source = 'live';
+    const timeStr = data.last_updated || new Date().toLocaleString('tr-TR');
+    document.getElementById('statusTime').textContent = 'Son güncelleme: ' + timeStr;
+    
+    updateStatus();
+    renderDashboard();
+    hideLoading();
   } catch(e) {
     console.error('Veri çekme hatası:', e);
-    console.warn('Otomasyon henüz çalışmamış olabilir. Demo veri kullanılıyor.');
-    useDemoData();
+    showLoading('Bağlantı Hatası', 'Veriler okunamadı. Otomasyon henüz tamamlanmamış olabilir.');
   }
-}
-
-function useDemoData() {
-  state.tlRecords = processTLData(DEMO_TL);
-  state.fxRecords = processFXData(DEMO_FX);
-  state.source = 'demo';
-  updateStatus();
-  renderDashboard();
-  hideLoading();
 }
 
 function refreshData() {
@@ -413,24 +389,14 @@ function refreshData() {
 }
 
 // ============================================================
-// YARDIMCI FONKSİYONLAR VE UI
+// YARDIMCI FONKSİYONLAR
 // ============================================================
 
 function updateStatus() {
   const dot = document.getElementById('statusDot');
   const label = document.getElementById('statusLabel');
-
-  dot.className = 'status-dot';
-  if (state.source === 'live') {
-    dot.classList.add('live');
-    label.textContent = 'Güncel Veri';
-  } else {
-    dot.classList.add('demo');
-    label.textContent = 'Demo Veri';
-  }
-
-  document.getElementById('statusTL').textContent = `TL: ${state.tlRecords.length} ihale`;
-  document.getElementById('statusFX').textContent = `Döviz: ${state.fxRecords.length} ihale`;
+  dot.className = 'status-dot live';
+  label.textContent = 'Güncel Veri';
 }
 
 function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
@@ -443,6 +409,7 @@ function showLoading(msg, sub) {
 
 function fmtNum(n, dec=0) { return n == null ? '—' : n.toLocaleString('tr-TR', {minimumFractionDigits:dec, maximumFractionDigits:dec}); }
 function fmtB(n) { return fmtNum(n/1e9, 2); }
+function fmtM(n) { return fmtNum(n/1e6, 2); }
 
 function yearlyTLSummary(records) {
   const map = {};
@@ -481,6 +448,7 @@ function yearlyFXSummary(records) {
 // ============================================================
 
 function renderDashboard() {
+  renderStockKPIs();
   renderKPIs();
   renderInsights();
   renderCharts();
@@ -488,33 +456,57 @@ function renderDashboard() {
   observeFadeIns();
 }
 
+// STOK KPI GÖSTERİMİ
+function renderStockKPIs() {
+  const sumTL = state.stockTL.reduce((s, r) => s + r.amount, 0);
+  const sumUSD = state.stockUSD.reduce((s, r) => s + r.amount, 0);
+  const sumEUR = state.stockEUR.reduce((s, r) => s + r.amount, 0);
+  const sumGBP = state.stockGBP.reduce((s, r) => s + r.amount, 0);
+
+  const grid = document.getElementById('stockKpiGrid');
+  grid.innerHTML = '';
+  
+  const kpis = [
+    { label:'Mevcut TL Stoku', value:fmtB(sumTL)+' Mrd ₺', sub:state.stockTL.length+' aktif ihraç' },
+    { label:'Mevcut USD Stoku', value:fmtM(sumUSD)+' Milyon $', sub:state.stockUSD.length+' aktif ihraç' },
+    { label:'Mevcut EUR Stoku', value:fmtM(sumEUR)+' Milyon €', sub:state.stockEUR.length+' aktif ihraç' },
+    { label:'Mevcut GBP Stoku', value:fmtM(sumGBP)+' Milyon £', sub:state.stockGBP.length+' aktif ihraç' }
+  ];
+  
+  kpis.forEach((k, i) => {
+    const card = document.createElement('div');
+    card.className = 'kpi-card';
+    if(i===0) card.style.setProperty('--accent', 'var(--accent)');
+    if(i===1) card.style.setProperty('--accent', 'var(--accent3)');
+    if(i===2) card.style.setProperty('--accent', 'var(--accent4)');
+    if(i===3) card.style.setProperty('--accent', 'var(--accent5)');
+    
+    card.innerHTML = `<div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div><div class="kpi-sub">${k.sub}</div>`;
+    grid.appendChild(card);
+  });
+}
+
+// İHALE TREND KPI GÖSTERİMİ
 function renderKPIs() {
   const tl = state.tlRecords;
   const fx = state.fxRecords;
 
   const totalTL = tl.reduce((s,r) => s + (r.kabul||0), 0);
   const totalFX = fx.reduce((s,r) => s + (r.tlKarsilik||0), 0);
-  const total = totalTL + totalFX;
 
   const tlRates = tl.filter(r=>r.bilesik!=null).map(r=>r.bilesik);
   const avgTL = tlRates.length ? tlRates.reduce((a,b)=>a+b,0)/tlRates.length : 0;
-  const maxTL = tlRates.length ? Math.max(...tlRates) : 0;
 
   const fxRates = fx.filter(r=>r.ortFaiz!=null).map(r=>r.ortFaiz);
   const avgFX = fxRates.length ? fxRates.reduce((a,b)=>a+b,0)/fxRates.length : 0;
 
-  const avgTLMat = tl.length ? tl.reduce((s,r)=>s+r.vade,0)/tl.length : 0;
-  const avgFXMat = fx.length ? fx.reduce((s,r)=>s+r.vade,0)/fx.length : 0;
-
   const grid = document.getElementById('kpiGrid');
   grid.innerHTML = '';
   const kpis = [
-    { label:'Toplam Borçlanma (TL Karşılığı)', value:fmtB(total)+' Mrd TL', sub:'TL + Döviz ihaleleri toplamı' },
-    { label:'TL Borçlanma Toplamı', value:fmtB(totalTL)+' Mrd TL', sub:fmtNum(tl.length)+' ihale' },
-    { label:'Döviz Borçlanma (TL Karşılığı)', value:fmtB(totalFX)+' Mrd TL', sub:fmtNum(fx.length)+' ihale' },
-    { label:'TL Ort. Bileşik Faiz', value:avgTL.toFixed(1)+'%', sub:'En yüksek: %'+maxTL.toFixed(1) },
-    { label:'Döviz Ort. Faiz (USD)', value:avgFX.toFixed(1)+'%', sub:'Fark: ~'+(avgTL-avgFX).toFixed(0)+' puan' },
-    { label:'Ort. Vade', value:'TL '+avgTLMat.toFixed(0)+' / FX '+avgFXMat.toFixed(0)+' gün', sub:'Kısa vadeli borçlanma ağırlıklı' }
+    { label:'Tarihsel TL Borçlanma Toplamı', value:fmtB(totalTL)+' Mrd TL', sub:fmtNum(tl.length)+' ihale' },
+    { label:'Tarihsel Döviz Borçlanma (TL Karşılığı)', value:fmtB(totalFX)+' Mrd TL', sub:fmtNum(fx.length)+' ihale' },
+    { label:'TL Ort. Bileşik Faiz', value:avgTL.toFixed(1)+'%', sub:'Tarihsel Ortalama' },
+    { label:'Döviz Ort. Faiz (USD)', value:avgFX.toFixed(1)+'%', sub:'Tarihsel Ortalama' }
   ];
   kpis.forEach(k => {
     const card = document.createElement('div');
@@ -527,7 +519,6 @@ function renderKPIs() {
 function renderInsights() {
   const tl = state.tlRecords;
   const fx = state.fxRecords;
-  
   if (tl.length === 0 && fx.length === 0) return;
 
   const tlY = yearlyTLSummary(tl);
@@ -539,10 +530,6 @@ function renderInsights() {
     if (total > maxVal) { maxVal = total; maxYear = y; }
   });
 
-  const tlWithRates = tl.filter(r=>r.bilesik!=null);
-  const maxTLRate = tlWithRates.length > 0 ? tlWithRates.reduce((m,r) => Math.max(m, r.bilesik), 0) : 0;
-  const maxTLRateYear = tlWithRates.length > 0 ? tlWithRates.filter(r=>r.bilesik === maxTLRate).map(r=>r.year)[0] : 'Yok';
-
   const currencies = [...new Set(fx.map(r=>r.doviz))];
   const years = [...new Set([...Object.keys(tlY), ...Object.keys(fxY)])].map(Number).sort((a,b)=>b-a);
   const lastYear = years.length > 0 ? years[0] : new Date().getFullYear();
@@ -550,12 +537,11 @@ function renderInsights() {
   const lastYearFX = fxY[lastYear]?.totalAcceptedTL || 0;
 
   document.getElementById('mainInsights').innerHTML = `
-    <h3>Temel Bulgular ve Kırılma Noktaları</h3>
+    <h3>Tarihsel İhale İstatistikleri Özeti</h3>
     <ul>
       <li><strong>Veri kapsamı:</strong> ${years.length > 0 ? Math.min(...years) : '-'}–${lastYear} yılları arasında toplam ${tl.length} TL ve ${fx.length} döviz ihalesi, ${fmtB(maxVal)} Mrd TL en yüksek yıllık borçlanma (${maxYear}).</li>
-      <li><strong>Son yıl (${lastYear}) borçlanması:</strong> TL ${fmtB(lastYearTL)} Mrd + Döviz ${fmtB(lastYearFX)} Mrd = ${fmtB(lastYearTL+lastYearFX)} Mrd TL toplam.</li>
-      <li><strong>TL faizlerinde uç nokta:</strong> En yüksek yıllık bileşik faiz %${maxTLRate.toFixed(1)} (${maxTLRateYear}).</li>
-      <li><strong>Döviz çeşitlendirme:</strong> ${currencies.join(', ')} ile borçlanma yapılıyor.</li>
+      <li><strong>Son yıl (${lastYear}) ihale hacmi:</strong> TL ${fmtB(lastYearTL)} Mrd + Döviz ${fmtB(lastYearFX)} Mrd = ${fmtB(lastYearTL+lastYearFX)} Mrd TL toplam.</li>
+      <li><strong>Döviz çeşitlendirme:</strong> İhalelerde ${currencies.join(', ')} para birimleri kullanıldı.</li>
     </ul>
   `;
 }
@@ -565,18 +551,19 @@ function renderInsights() {
 // ============================================================
 
 function destroyChart(id) {
-  if (state.charts[id]) {
-    state.charts[id].destroy();
-    delete state.charts[id];
-  }
+  if (state.charts[id]) { state.charts[id].destroy(); delete state.charts[id]; }
 }
 
 Chart.defaults.color = '#8899b8';
 Chart.defaults.borderColor = '#2a3654';
 Chart.defaults.font.family = "'Source Sans 3', sans-serif";
-Chart.defaults.font.size = 12;
 
 function renderCharts() {
+  // Stok Grafikleri
+  renderStockCountChart();
+  renderStockMaturityChart();
+  
+  // Trend Grafikleri
   renderTLYearlyChart();
   renderFXYearlyChart();
   renderTLvsFXChart();
@@ -592,22 +579,43 @@ function renderCharts() {
   renderAvgMaturityChart();
 }
 
+function renderStockCountChart() {
+  destroyChart('chartStockCount');
+  const counts = [state.stockTL.length, state.stockUSD.length, state.stockEUR.length, state.stockGBP.length];
+  state.charts['chartStockCount'] = new Chart(document.getElementById('chartStockCount'), {
+    type:'doughnut',
+    data: {
+      labels: ['TL', 'USD', 'EUR', 'GBP'],
+      datasets:[{ data:counts, backgroundColor:['#e63946', '#2ec4b6', '#a78bfa', '#38bdf8'], borderColor:'#1a2235', borderWidth:3 }]
+    },
+    options:{ responsive:true, plugins:{legend:{position:'bottom'}} }
+  });
+}
+
+function renderStockMaturityChart() {
+  destroyChart('chartStockMaturity');
+  const allStock = [...state.stockTL, ...state.stockUSD, ...state.stockEUR, ...state.stockGBP];
+  const buckets = [{label:'0-30',min:0,max:30},{label:'31-90',min:31,max:90},{label:'91-180',min:91,max:180},{label:'181+',min:181,max:9999}];
+  const dist = buckets.map(b => allStock.filter(r=>r.vade>=b.min&&r.vade<=b.max).length);
+  
+  state.charts['chartStockMaturity'] = new Chart(document.getElementById('chartStockMaturity'), {
+    type:'bar',
+    data: {
+      labels: buckets.map(b=>b.label+' gün'),
+      datasets:[{ label:'Aktif İhraç Adedi', data:dist, backgroundColor:'rgba(244,162,97,0.8)', borderRadius:4 }]
+    },
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{ticks:{stepSize:1}, grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
+  });
+}
+
+// Diğer grafikler (Eski İhale grafikleri)
 function renderTLYearlyChart() {
   destroyChart('chartTLYearly');
   const tlY = yearlyTLSummary(state.tlRecords);
   const years = Object.keys(tlY).sort();
   state.charts['chartTLYearly'] = new Chart(document.getElementById('chartTLYearly'), {
-    type:'bar',
-    data:{
-      labels:years,
-      datasets:[{
-        label:'Kabul Edilen (Mrd TL)',
-        data:years.map(y=>tlY[y].totalAccepted/1e9),
-        backgroundColor:years.map(y=>tlY[y].totalAccepted/1e9>20?'rgba(230,57,70,0.8)':tlY[y].totalAccepted/1e9>5?'rgba(244,162,97,0.8)':'rgba(46,196,182,0.8)'),
-        borderRadius:6, borderSkipped:false
-      }]
-    },
-    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
+    type:'bar', data:{ labels:years, datasets:[{ label:'Kabul Edilen (Mrd TL)', data:years.map(y=>tlY[y].totalAccepted/1e9), backgroundColor:'rgba(230,57,70,0.8)', borderRadius:6 }] },
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
   });
 }
 
@@ -616,17 +624,8 @@ function renderFXYearlyChart() {
   const fxY = yearlyFXSummary(state.fxRecords);
   const years = Object.keys(fxY).sort();
   state.charts['chartFXYearly'] = new Chart(document.getElementById('chartFXYearly'), {
-    type:'bar',
-    data:{
-      labels:years,
-      datasets:[{
-        label:'Döviz Borçlanma TL Karşılığı (Mrd TL)',
-        data:years.map(y=>fxY[y].totalAcceptedTL/1e9),
-        backgroundColor:'rgba(46,196,182,0.8)',
-        borderRadius:6, borderSkipped:false
-      }]
-    },
-    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{title:{display:true,text:'Milyar TL Karşılığı'},grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
+    type:'bar', data:{ labels:years, datasets:[{ label:'TL Karşılığı (Mrd TL)', data:years.map(y=>fxY[y].totalAcceptedTL/1e9), backgroundColor:'rgba(46,196,182,0.8)', borderRadius:6 }] },
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
   });
 }
 
@@ -639,12 +638,9 @@ function renderTLvsFXChart() {
     type:'bar',
     data:{
       labels:years,
-      datasets:[
-        {label:'TL Borçlanma',data:years.map(y=>(tlY[y]?.totalAccepted||0)/1e9),backgroundColor:'rgba(230,57,70,0.75)',borderRadius:4},
-        {label:'Döviz Borçlanma (TL Karşılığı)',data:years.map(y=>(fxY[y]?.totalAcceptedTL||0)/1e9),backgroundColor:'rgba(46,196,182,0.75)',borderRadius:4}
-      ]
+      datasets:[ {label:'TL Borçlanma',data:years.map(y=>(tlY[y]?.totalAccepted||0)/1e9),backgroundColor:'rgba(230,57,70,0.75)'}, {label:'Döviz (TL Karşılığı)',data:years.map(y=>(fxY[y]?.totalAcceptedTL||0)/1e9),backgroundColor:'rgba(46,196,182,0.75)'} ]
     },
-    options:{ responsive:true,plugins:{legend:{position:'top'}}, scales:{ y:{stacked:true,title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,0.5)'}}, x:{stacked:true,grid:{display:false}} } }
+    options:{ responsive:true, scales:{ y:{stacked:true,grid:{color:'rgba(42,54,84,0.5)'}}, x:{stacked:true,grid:{display:false}} } }
   });
 }
 
@@ -654,175 +650,107 @@ function renderCumulativeChart() {
   const fxY = yearlyFXSummary(state.fxRecords);
   const years = [...new Set([...Object.keys(tlY),...Object.keys(fxY)])].sort();
   let cumTL=0,cumFX=0;
-  const data = years.map(y=>{
-    cumTL += tlY[y]?.totalAccepted||0;
-    cumFX += fxY[y]?.totalAcceptedTL||0;
-    return {year:y,tl:cumTL/1e9,fx:cumFX/1e9,total:(cumTL+cumFX)/1e9};
-  });
+  const data = years.map(y=>{ cumTL+=tlY[y]?.totalAccepted||0; cumFX+=fxY[y]?.totalAcceptedTL||0; return {year:y,tl:cumTL/1e9,total:(cumTL+cumFX)/1e9}; });
   state.charts['chartCumulative'] = new Chart(document.getElementById('chartCumulative'), {
     type:'line',
-    data:{
-      labels:data.map(d=>d.year),
-      datasets:[
-        {label:'Kümülatif TL',data:data.map(d=>d.tl),borderColor:'#e63946',backgroundColor:'rgba(230,57,70,0.1)',fill:true,tension:0.3,pointRadius:4,pointBackgroundColor:'#e63946'},
-        {label:'Kümülatif Döviz',data:data.map(d=>d.fx),borderColor:'#2ec4b6',backgroundColor:'rgba(46,196,182,0.1)',fill:true,tension:0.3,pointRadius:4,pointBackgroundColor:'#2ec4b6'},
-        {label:'Toplam',data:data.map(d=>d.total),borderColor:'#f4a261',borderDash:[6,3],tension:0.3,pointRadius:3,pointBackgroundColor:'#f4a261'}
-      ]
-    },
-    options:{ responsive:true,plugins:{legend:{position:'top'}}, scales:{ y:{title:{display:true,text:'Milyar TL (Kümülatif)'},grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
+    data:{ labels:data.map(d=>d.year), datasets:[ {label:'Kümülatif Toplam',data:data.map(d=>d.total),borderColor:'#f4a261',tension:0.3,pointRadius:3} ] },
+    options:{ responsive:true, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
   });
 }
 
 function renderTLRateChart() {
   destroyChart('chartTLRate');
-  const rateData = state.tlRecords.filter(r=>r.bilesik!=null&&r.kabul>0).map(r=>({
-    x:r.valor.split(/[\/.]/).reverse().join('-'),
-    y:r.bilesik, vade:r.vade, tutar:r.kabul
-  })).sort((a,b)=>a.x.localeCompare(b.x));
+  const r = state.tlRecords.filter(x=>x.bilesik!=null&&x.kabul>0).map(x=>({x:x.valor.split(/[\/.]/).reverse().join('-'), y:x.bilesik})).sort((a,b)=>a.x.localeCompare(b.x));
   state.charts['chartTLRate'] = new Chart(document.getElementById('chartTLRate'), {
-    type:'line',
-    data:{
-      labels:rateData.map(d=>d.x),
-      datasets:[{ label:'Yıllık Bileşik Faiz (%)', data:rateData.map(d=>d.y), borderColor:'#e63946',backgroundColor:'rgba(230,57,70,0.08)',fill:true, tension:0.3,pointRadius:3,pointBackgroundColor:'#e63946',pointHoverRadius:6 }]
-    },
-    options:{ responsive:true,plugins:{legend:{display:false}}, scales:{ y:{title:{display:true,text:'Yıllık Bileşik Faiz (%)'},grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false},ticks:{maxRotation:45,maxTicksLimit:15}} } }
+    type:'line', data:{ labels:r.map(d=>d.x), datasets:[{ label:'Faiz (%)', data:r.map(d=>d.y), borderColor:'#e63946',tension:0.3,pointRadius:2 }] },
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false},ticks:{display:false}} } }
   });
 }
 
 function renderFXRateChart() {
   destroyChart('chartFXRate');
-  const usdData = state.fxRecords.filter(r=>r.doviz.includes('DOLAR')&&r.ortFaiz!=null).map(r=>({
-    x:r.valor.split(/[\/.]/).reverse().join('-'),
-    y:r.ortFaiz, vade:r.vade
-  })).sort((a,b)=>a.x.localeCompare(b.x));
+  const r = state.fxRecords.filter(x=>x.doviz.includes('DOLAR')&&x.ortFaiz!=null).map(x=>({x:x.valor.split(/[\/.]/).reverse().join('-'), y:x.ortFaiz})).sort((a,b)=>a.x.localeCompare(b.x));
   state.charts['chartFXRate'] = new Chart(document.getElementById('chartFXRate'), {
-    type:'line',
-    data:{
-      labels:usdData.map(d=>d.x),
-      datasets:[{ label:'USD Ortalama Faiz (%)', data:usdData.map(d=>d.y), borderColor:'#2ec4b6',backgroundColor:'rgba(46,196,182,0.08)',fill:true, tension:0.3,pointRadius:3,pointBackgroundColor:'#2ec4b6' }]
-    },
-    options:{ responsive:true,plugins:{legend:{display:false}}, scales:{ y:{title:{display:true,text:'Ortalama Faiz (%)'},grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false},ticks:{maxRotation:45,maxTicksLimit:15}} } }
+    type:'line', data:{ labels:r.map(d=>d.x), datasets:[{ label:'Faiz (%)', data:r.map(d=>d.y), borderColor:'#2ec4b6',tension:0.3,pointRadius:2 }] },
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false},ticks:{display:false}} } }
   });
 }
 
 function renderRateDiffChart() {
   destroyChart('chartRateDiff');
-  const tlY = yearlyTLSummary(state.tlRecords);
-  const fxY = yearlyFXSummary(state.fxRecords);
+  const tlY = yearlyTLSummary(state.tlRecords), fxY = yearlyFXSummary(state.fxRecords);
   const years = [...new Set([...Object.keys(tlY),...Object.keys(fxY)])].sort();
   state.charts['chartRateDiff'] = new Chart(document.getElementById('chartRateDiff'), {
     type:'bar',
-    data:{
-      labels:years,
-      datasets:[
-        {label:'TL Ort. Bileşik Faiz (%)',data:years.map(y=>{const a=tlY[y]?.rates;return a&&a.length?a.reduce((s,v)=>s+v,0)/a.length:null}),backgroundColor:'rgba(230,57,70,0.75)',borderRadius:4},
-        {label:'Döviz Ort. Faiz (%)',data:years.map(y=>{const a=fxY[y]?.rates;return a&&a.length?a.reduce((s,v)=>s+v,0)/a.length:null}),backgroundColor:'rgba(46,196,182,0.75)',borderRadius:4}
-      ]
-    },
-    options:{ responsive:true,plugins:{legend:{position:'top'}}, scales:{ y:{title:{display:true,text:'Ortalama Faiz (%)'},grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
+    data:{ labels:years, datasets:[ {label:'TL Faiz',data:years.map(y=>{const a=tlY[y]?.rates;return a&&a.length?a.reduce((s,v)=>s+v,0)/a.length:null}),backgroundColor:'rgba(230,57,70,0.75)'}, {label:'FX Faiz',data:years.map(y=>{const a=fxY[y]?.rates;return a&&a.length?a.reduce((s,v)=>s+v,0)/a.length:null}),backgroundColor:'rgba(46,196,182,0.75)'} ] },
+    options:{ responsive:true, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
   });
 }
 
 function renderCurrencyCountChart() {
   destroyChart('chartCurrencyCount');
-  const curCount = {};
-  state.fxRecords.forEach(r => { curCount[r.doviz] = (curCount[r.doviz]||0)+1; });
-  const labels = Object.keys(curCount);
-  const colors = {USD:'#2ec4b6',AVRO:'#a78bfa','İNGİLİZ STERLİNİ':'#38bdf8','ABD DOLARI':'#2ec4b6'};
-  const nameMap = {'ABD DOLARI':'ABD Doları',USD:'ABD Doları',AVRO:'Avro',EUR:'Avro','İNGİLİZ STERLİNİ':'İngiliz Sterlini',GBP:'İngiliz Sterlini'};
+  const curCount = {}; state.fxRecords.forEach(r => curCount[r.doviz] = (curCount[r.doviz]||0)+1);
   state.charts['chartCurrencyCount'] = new Chart(document.getElementById('chartCurrencyCount'), {
-    type:'doughnut',
-    data:{
-      labels:labels.map(c=>nameMap[c]||c),
-      datasets:[{data:labels.map(c=>curCount[c]),backgroundColor:labels.map(c=>colors[c]||'#f4a261'),borderColor:'#1a2235',borderWidth:3}]
-    },
-    options:{ responsive:true,plugins:{legend:{position:'bottom'}} }
+    type:'doughnut', data:{ labels:Object.keys(curCount), datasets:[{data:Object.values(curCount),backgroundColor:['#2ec4b6','#a78bfa','#38bdf8','#f4a261'],borderColor:'#1a2235',borderWidth:2}] },
+    options:{ responsive:true, plugins:{legend:{position:'bottom'}} }
   });
 }
 
 function renderCurrencyAmountChart() {
   destroyChart('chartCurrencyAmount');
-  const curAmount = {};
-  state.fxRecords.forEach(r => { curAmount[r.doviz] = (curAmount[r.doviz]||0)+(r.tlKarsilik||0); });
-  const labels = Object.keys(curAmount);
-  const colors = {USD:'#2ec4b6',AVRO:'#a78bfa','İNGİLİZ STERLİNİ':'#38bdf8','ABD DOLARI':'#2ec4b6'};
-  const nameMap = {'ABD DOLARI':'ABD Doları',USD:'ABD Doları',AVRO:'Avro',EUR:'Avro','İNGİLİZ STERLİNİ':'İngiliz Sterlini',GBP:'İngiliz Sterlini'};
+  const curAmount = {}; state.fxRecords.forEach(r => curAmount[r.doviz] = (curAmount[r.doviz]||0)+(r.tlKarsilik||0));
   state.charts['chartCurrencyAmount'] = new Chart(document.getElementById('chartCurrencyAmount'), {
-    type:'doughnut',
-    data:{
-      labels:labels.map(c=>nameMap[c]||c),
-      datasets:[{data:labels.map(c=>curAmount[c]/1e9),backgroundColor:labels.map(c=>colors[c]||'#f4a261'),borderColor:'#1a2235',borderWidth:3}]
-    },
-    options:{ responsive:true,plugins:{legend:{position:'bottom'}} }
+    type:'doughnut', data:{ labels:Object.keys(curAmount), datasets:[{data:Object.values(curAmount).map(x=>x/1e9),backgroundColor:['#2ec4b6','#a78bfa','#38bdf8','#f4a261'],borderColor:'#1a2235',borderWidth:2}] },
+    options:{ responsive:true, plugins:{legend:{position:'bottom'}} }
   });
 }
 
 function renderFXByYearChart() {
   destroyChart('chartFXByYear');
-  const fxY = yearlyFXSummary(state.fxRecords);
-  const years = Object.keys(fxY).sort();
-  const allCur = [...new Set(state.fxRecords.map(r=>r.doviz))];
-  const colors = {USD:'rgba(46,196,182,0.75)',AVRO:'rgba(167,139,250,0.75)','İNGİLİZ STERLİNİ':'rgba(56,189,248,0.75)','ABD DOLARI':'rgba(46,196,182,0.75)'};
-  const nameMap = {'ABD DOLARI':'USD',USD:'USD',AVRO:'EUR',EUR:'EUR','İNGİLİZ STERLİNİ':'GBP',GBP:'GBP'};
+  const fxY = yearlyFXSummary(state.fxRecords), years = Object.keys(fxY).sort(), allCur = [...new Set(state.fxRecords.map(r=>r.doviz))];
+  const colors = ['rgba(46,196,182,0.75)','rgba(167,139,250,0.75)','rgba(56,189,248,0.75)'];
   state.charts['chartFXByYear'] = new Chart(document.getElementById('chartFXByYear'), {
-    type:'bar',
-    data:{
-      labels:years,
-      datasets:allCur.map(cur=>({
-        label:nameMap[cur]||cur,
-        data:years.map(y=>(fxY[y]?.byCurrency[cur]?.totalAcceptedTL||0)/1e9),
-        backgroundColor:colors[cur]||'rgba(244,162,97,0.75)',
-        borderRadius:4
-      }))
-    },
-    options:{ responsive:true,plugins:{legend:{position:'top'}}, scales:{ y:{stacked:true,title:{display:true,text:'Milyar TL Karşılığı'},grid:{color:'rgba(42,54,84,0.5)'}}, x:{stacked:true,grid:{display:false}} } }
+    type:'bar', data:{ labels:years, datasets:allCur.map((cur,i)=>({label:cur,data:years.map(y=>(fxY[y]?.byCurrency[cur]?.totalAcceptedTL||0)/1e9),backgroundColor:colors[i%colors.length]})) },
+    options:{ responsive:true, scales:{ y:{stacked:true,grid:{color:'rgba(42,54,84,0.5)'}}, x:{stacked:true,grid:{display:false}} } }
   });
 }
 
 function renderTLMaturityChart() {
   destroyChart('chartTLMaturity');
-  const buckets = [{label:'0-30',min:0,max:30},{label:'31-60',min:31,max:60},{label:'61-90',min:61,max:90},{label:'91-120',min:91,max:120},{label:'121-180',min:121,max:180},{label:'181-365',min:181,max:366}];
+  const buckets = [{label:'0-30',min:0,max:30},{label:'31-90',min:31,max:90},{label:'91-180',min:91,max:180},{label:'181+',min:181,max:9999}];
   const dist = buckets.map(b => state.tlRecords.filter(r=>r.vade>=b.min&&r.vade<=b.max).reduce((s,r)=>s+(r.kabul||0),0));
   state.charts['chartTLMaturity'] = new Chart(document.getElementById('chartTLMaturity'), {
-    type:'bar',
-    data:{
-      labels:buckets.map(b=>b.label+' gün'),
-      datasets:[{label:'Kabul Edilen (Mrd TL)',data:dist.map(v=>v/1e9),backgroundColor:'rgba(230,57,70,0.75)',borderRadius:4,borderSkipped:false}]
-    },
-    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,0.5)'}},y:{grid:{display:false}}}}
+    type:'bar', data:{ labels:buckets.map(b=>b.label+' gün'), datasets:[{label:'Milyar TL',data:dist.map(v=>v/1e9),backgroundColor:'rgba(230,57,70,0.75)'}] },
+    options:{ indexAxis:'y', responsive:true, scales:{ x:{grid:{color:'rgba(42,54,84,0.5)'}}, y:{grid:{display:false}} } }
   });
 }
 
 function renderFXMaturityChart() {
   destroyChart('chartFXMaturity');
-  const buckets = [{label:'0-30',min:0,max:30},{label:'31-60',min:31,max:60},{label:'61-90',min:61,max:90},{label:'91-120',min:91,max:120},{label:'121-180',min:121,max:180},{label:'181+',min:181,max:9999}];
+  const buckets = [{label:'0-30',min:0,max:30},{label:'31-90',min:31,max:90},{label:'91-180',min:91,max:180},{label:'181+',min:181,max:9999}];
   const dist = buckets.map(b => state.fxRecords.filter(r=>r.vade>=b.min&&r.vade<=b.max).reduce((s,r)=>s+(r.tlKarsilik||0),0));
   state.charts['chartFXMaturity'] = new Chart(document.getElementById('chartFXMaturity'), {
-    type:'bar',
-    data:{
-      labels:buckets.map(b=>b.label+' gün'),
-      datasets:[{label:'TL Karşılığı (Mrd TL)',data:dist.map(v=>v/1e9),backgroundColor:'rgba(46,196,182,0.75)',borderRadius:4,borderSkipped:false}]
-    },
-    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,0.5)'}},y:{grid:{display:false}}}}
+    type:'bar', data:{ labels:buckets.map(b=>b.label+' gün'), datasets:[{label:'Milyar TL',data:dist.map(v=>v/1e9),backgroundColor:'rgba(46,196,182,0.75)'}] },
+    options:{ indexAxis:'y', responsive:true, scales:{ x:{grid:{color:'rgba(42,54,84,0.5)'}}, y:{grid:{display:false}} } }
   });
 }
 
 function renderAvgMaturityChart() {
   destroyChart('chartAvgMaturity');
-  const tlAvgMat = {}, fxAvgMat = {};
-  state.tlRecords.forEach(r => { const y=r.year; if(y){if(!tlAvgMat[y])tlAvgMat[y]=[];tlAvgMat[y].push(r.vade);} });
-  state.fxRecords.forEach(r => { const y=r.year; if(y){if(!fxAvgMat[y])fxAvgMat[y]=[];fxAvgMat[y].push(r.vade);} });
-  const years = [...new Set([...Object.keys(tlAvgMat),...Object.keys(fxAvgMat)])].sort();
+  const tlAvg = {}, fxAvg = {};
+  state.tlRecords.forEach(r => { if(r.year) { tlAvg[r.year] = tlAvg[r.year]||[]; tlAvg[r.year].push(r.vade); }});
+  state.fxRecords.forEach(r => { if(r.year) { fxAvg[r.year] = fxAvg[r.year]||[]; fxAvg[r.year].push(r.vade); }});
+  const years = [...new Set([...Object.keys(tlAvg),...Object.keys(fxAvg)])].sort();
   state.charts['chartAvgMaturity'] = new Chart(document.getElementById('chartAvgMaturity'), {
     type:'line',
     data:{
       labels:years,
       datasets:[
-        {label:'TL Ort. Vade (gün)',data:years.map(y=>{const a=tlAvgMat[y];return a?a.reduce((s,v)=>s+v,0)/a.length:null}),borderColor:'#e63946',tension:0.3,pointRadius:5,pointBackgroundColor:'#e63946'},
-        {label:'Döviz Ort. Vade (gün)',data:years.map(y=>{const a=fxAvgMat[y];return a?a.reduce((s,v)=>s+v,0)/a.length:null}),borderColor:'#2ec4b6',tension:0.3,pointRadius:5,pointBackgroundColor:'#2ec4b6'}
+        {label:'TL Vade',data:years.map(y=>tlAvg[y]?tlAvg[y].reduce((a,b)=>a+b,0)/tlAvg[y].length:null),borderColor:'#e63946'},
+        {label:'FX Vade',data:years.map(y=>fxAvg[y]?fxAvg[y].reduce((a,b)=>a+b,0)/fxAvg[y].length:null),borderColor:'#2ec4b6'}
       ]
     },
-    options:{ responsive:true,plugins:{legend:{position:'top'}}, scales:{y:{title:{display:true,text:'Ortalama Vade (Gün)'},grid:{color:'rgba(42,54,84,0.5)'}},x:{grid:{display:false}}} }
+    options:{ responsive:true, scales:{y:{grid:{color:'rgba(42,54,84,0.5)'}},x:{grid:{display:false}}} }
   });
 }
 
@@ -831,7 +759,32 @@ function renderAvgMaturityChart() {
 // ============================================================
 
 function renderTables() {
-  const tlHeaders = ['ISIN','Valör','İtfa','Vade','Teklif (TL)','Kabul (TL)','Min Faiz','Max Faiz','Ort. Faiz','Bileşik'];
+  // 1. STOK TABLOLARI RENDER (Yeni)
+  const buildStockTable = (records, cur) => {
+     if(records.length === 0) return '<p style="padding:1rem;color:var(--muted)">Güncel borç kaydı bulunmamaktadır.</p>';
+     let html = '<table><thead><tr><th>ISIN Kodu</th><th>Döviz</th><th>Valör Tarihi</th><th>İtfa Tarihi</th><th>Tahmini Vade</th><th>Nominal Tutar</th></tr></thead><tbody>';
+     records.forEach(r => {
+        html += `<tr>
+            <td>${r.isin}</td>
+            <td><span class="tag tag-${cur.toLowerCase()}">${r.currency}</span></td>
+            <td>${r.valor}</td>
+            <td>${r.itfa}</td>
+            <td>${r.vade} Gün</td>
+            <td style="font-weight:600">${fmtNum(r.amount)}</td>
+        </tr>`;
+     });
+     html += '</tbody></table>';
+     return html;
+  };
+
+  document.getElementById('stock-tl').innerHTML = buildStockTable(state.stockTL, 'TL');
+  document.getElementById('stock-usd').innerHTML = buildStockTable(state.stockUSD, 'USD');
+  document.getElementById('stock-eur').innerHTML = buildStockTable(state.stockEUR, 'EUR');
+  document.getElementById('stock-gbp').innerHTML = buildStockTable(state.stockGBP, 'GBP');
+
+
+  // 2. İHALE TABLOLARI RENDER (Tarihsel)
+  const tlHeaders = ['ISIN','Valör','İtfa','Vade','Teklif','Kabul','Min Faiz','Max Faiz','Ort. Faiz','Bileşik'];
   let tlHTML = '<table><thead><tr>';
   tlHeaders.forEach(h => tlHTML += `<th>${h}</th>`);
   tlHTML += '</tr></thead><tbody>';
@@ -854,6 +807,7 @@ function renderTables() {
   document.getElementById('fx-table').innerHTML = fxHTML;
 }
 
+// Ana Sekme Geçişleri
 document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn[data-tab]').forEach(b => b.classList.remove('active'));
@@ -863,12 +817,19 @@ document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
   });
 });
 
+// Alt Tablo Geçişleri (Trend İhaleler)
 document.querySelectorAll('.tab-btn[data-subtab]').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn[data-subtab]').forEach(b => b.classList.remove('active'));
+    // Sadece aynı kapsayıcı içindeki butonları bul ve active class'ını sil
+    const parentBar = btn.closest('.tab-bar');
+    parentBar.querySelectorAll('.tab-btn[data-subtab]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('tl-table').style.display = btn.dataset.subtab==='tl-table'?'block':'none';
-    document.getElementById('fx-table').style.display = btn.dataset.subtab==='fx-table'?'block':'none';
+    
+    const subtab = btn.dataset.subtab;
+    // Hangi alt sekme grubunda olduğumuzu anlamak için section'ı bul
+    const section = btn.closest('.chart-section');
+    section.querySelectorAll('.table-wrap').forEach(w => w.style.display = 'none');
+    document.getElementById(subtab).style.display = 'block';
   });
 });
 
@@ -892,5 +853,3 @@ fetchAndProcess();
 </script>
 </body>
 </html>
-
-```
