@@ -1,5 +1,37 @@
 {
-  "last_updated": "2026-06-24 08:14:44",
+  "last_updated": "2026-06-24 08:46:49",
+  "sources": {
+    "tlRaw": {
+      "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
+      "rows": 55,
+      "status": "ok"
+    },
+    "fxRaw": {
+      "url": "https://mb.gov.ct.tr/tr/node/4717",
+      "rows": 174,
+      "status": "ok"
+    },
+    "tlStockRaw": {
+      "url": "https://mb.gov.ct.tr/tr/dibs-stoku",
+      "rows": 62,
+      "status": "ok"
+    },
+    "usdStockRaw": {
+      "url": "https://mb.gov.ct.tr/tr/node/4718",
+      "rows": 55,
+      "status": "ok"
+    },
+    "eurStockRaw": {
+      "url": "https://mb.gov.ct.tr/tr/node/4779",
+      "rows": 41,
+      "status": "ok"
+    },
+    "gbpStockRaw": {
+      "url": "https://mb.gov.ct.tr/tr/node/5694",
+      "rows": 19,
+      "status": "ok"
+    }
+  },
   "tlRaw": [
     [
       "ISIN Kodu",
@@ -9,14 +41,6 @@
       "Teklif Edilen Tutar",
       "İhalede Kabul Edilen Tutar",
       "İhalede Kabul Edilen Faiz (%)"
-    ],
-    [
-      "Nominal",
-      "Nominal",
-      "En düşük",
-      "En Yüksek",
-      "Ortalama",
-      "Ortalama Yıllık Bileşik"
     ],
     [
       "KKB250913T11",
@@ -732,14 +756,6 @@
       "İhalede Kabul Edilen Tutar",
       "İhalede Kabul Edilen Tutarın Valör Tarihine Göre TL Karşılığı",
       "İhalede Kabul Edilen Faiz (%)"
-    ],
-    [
-      "Nominal",
-      "Nominal",
-      "En Düşük",
-      "En Yüksek",
-      "Ortalama",
-      "Ortalama Yıllık Bileşik"
     ],
     [
       "KKB081222F12",
@@ -3341,9 +3357,9 @@
     [
       "Yıl",
       "Ay",
-      "İlgili Ay İçinde Yapılan DİBS İhracı(TL - Nominal)",
-      "İlgili Ay İçinde Yapılan DİBS Geri Ödemesi(TL - Nominal)",
-      "İlgili Ay Sonu İtibarıyla Vadesi Gelmemiş DİBS STOKU(TL - Nominal)"
+      "İlgili Ay İçinde Yapılan DİBS İhracı (TL - Nominal)",
+      "İlgili Ay İçinde Yapılan DİBS Geri Ödemesi (TL - Nominal)",
+      "İlgili Ay Sonu İtibarıyla Vadesi Gelmemiş DİBS STOKU (TL - Nominal)"
     ],
     [
       "2020",
@@ -3722,9 +3738,9 @@
     [
       "Yıl",
       "Ay",
-      "İlgili Ay İçinde Yapılan DİBS İhracı(ABD Doları)",
-      "İlgili Ay İçinde Yapılan DİBS Geri Ödemesi(ABD Doları)",
-      "İlgili Ay Sonu İtibarıyla Vadesi Gelmemiş DİBS STOKU(ABD Doları)"
+      "İlgili Ay İçinde Yapılan DİBS İhracı (ABD Doları)",
+      "İlgili Ay İçinde Yapılan DİBS Geri Ödemesi (ABD Doları)",
+      "İlgili Ay Sonu İtibarıyla Vadesi Gelmemiş DİBS STOKU (ABD Doları)"
     ],
     [
       "2022",
@@ -4060,9 +4076,9 @@
     [
       "Yıl",
       "Ay",
-      "İlgili Ay İçinde Yapılan DİBS İhracı(Avro)",
-      "İlgili Ay İçinde Yapılan DİBS Geri Ödemesi(Avro)",
-      "İlgili Ay Sonu İtibarıyla Vadesi Gelmemiş DİBS STOKU(Avro)"
+      "İlgili Ay İçinde Yapılan DİBS İhracı (Avro)",
+      "İlgili Ay İçinde Yapılan DİBS Geri Ödemesi (Avro)",
+      "İlgili Ay Sonu İtibarıyla Vadesi Gelmemiş DİBS STOKU (Avro)"
     ],
     [
       "2022",
@@ -4314,9 +4330,9 @@
     [
       "Yıl",
       "Ay",
-      "İlgili Ay İçinde Yapılan DİBS İhracı(Sterlin)",
-      "İlgili Ay İçinde Yapılan DİBS GeriÖdemesi (Sterlin)",
-      "İlgili Ay Sonu İtibarıyla Vadesi GelmemişDİBS STOKU (Sterlin)"
+      "İlgili Ay İçinde Yapılan DİBS İhracı (Sterlin)",
+      "İlgili Ay İçinde Yapılan DİBS Geri Ödemesi (Sterlin)",
+      "İlgili Ay Sonu İtibarıyla Vadesi Gelmemiş DİBS STOKU (Sterlin)"
     ],
     [
       "2025",
