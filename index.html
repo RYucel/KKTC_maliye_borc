@@ -185,19 +185,30 @@ const S={tl:[],fx:[],stk:[],src:'none',charts:{},rates:{USD_TRY:0,EUR_TRY:0,GBP_
 /* Güvenli hücre okuma */
 function cs(c){if(c==null)return '';if(typeof c==='number')return String(c);return String(c).trim()}
 
-/* Sayı ayrıştırma */
+/* Sayı ayrıştırma — hem ABD (1,234,567.89) hem TR (1.234.567,89) biçimini destekler */
 function pn(s){
   if(s==null)return null;s=String(s).trim();
   if(!s||s==='—'||s==='-'||s==='–'||s==='N/A')return null;
   if(/TLREF/i.test(s))return null;
-  let c=s.replace(/\s/g,'');
-  if(c.includes(',')){c=c.replace(/\./g,'').replace(',','.')}
-  else if(c.includes('.')){const p=c.split('.');if(p.length>2)c=c.replace(/\./g,'');else if(p.length===2&&p[1].length===3&&+p[0]>100)c=c.replace(/\./g,'')}
+  let c=s.replace(/[^\d.,-]/g,'');           // para birimi/harf/boşlukları at
+  if(!c||c==='-')return null;
+  const hasC=c.includes(','),hasD=c.includes('.');
+  if(hasC&&hasD){
+    if(c.lastIndexOf('.')>c.lastIndexOf(','))c=c.replace(/,/g,'');        // ABD: 40,000,000.00
+    else c=c.replace(/\./g,'').replace(',','.');                          // TR: 1.234.567,89
+  }else if(hasC){
+    const p=c.split(',');
+    if(p.length>2||p[p.length-1].length===3)c=c.replace(/,/g,'');         // binlik ayıracı
+    else c=c.replace(',','.');                                            // ondalık virgül
+  }else if(hasD){
+    const p=c.split('.');
+    if(p.length>2)c=c.replace(/\./g,'');                                  // TR binlik: 1.234.567
+  }
   const n=parseFloat(c);return isNaN(n)?null:n;
 }
 
 function py(d){if(!d)return null;const s=cs(d);const m=s.match(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);if(m){let y=+m[3];if(y<100)y+=2000;if(y>1990&&y<2100)return y}const m2=s.match(/(\d{4})[\/.\-](\d{1,2})[\/.\-](\d{1,2})/);if(m2){const y=+m2[1];if(y>1990&&y<2100)return y}return null}
-function fn(n,d=0){return n==null?'—':n.toLocaleString('tr-TR',{minimumFractionDigits:d,maximumDigits:d})}
+function fn(n,d=0){return n==null?'—':n.toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d})}
 function fb(n){return n?fn(n/1e9,2):'—'}
 function fm(n){return n?fn(n/1e6,1):'—'}
 
@@ -226,136 +237,76 @@ function extractRowPatterns(r, skipIsiIdx){
 }
 
 /* ==========================================================
-   procTL — TAMAMEN YENİ: Tüm satırı tarar
+   procTL — Sabit sütun düzeni (ISIN, Valör, İtfa, Vade, [gün],
+   Teklif, Kabul, EnDüşük, EnYüksek, Ortalama, Bileşik)
+   "gün" dolgu hücresi varsa otomatik atlanır; canlı ve demo
+   verisinin ikisiyle de çalışır.
    ========================================================== */
 function procTL(rows){
   const result=[];if(!rows||!rows.length)return result;
   for(const r of rows){
-    if(!r||r.length<4)continue;
-
-    // 1) ISIN kodunu bul
-    let isi=-1;
-    for(let i=0;i<r.length;i++){if(/^[A-Z]{3}\d/i.test(cs(r[i]))){isi=i;break}}
-    if(isi<0)continue;
-    const isin=cs(r[isi]).replace(/\s+\d{1,2}$/,'');
-
-    // 2) Satırdaki tüm desenleri çıkar
-    const{dates,nums}=extractRowPatterns(r,isi);
-
-    // 3) Tarihleri ata (ilk iki tarih = valor, itfa)
-    const valor=dates.length>=1?dates[0].val:'';
-    const itfa=dates.length>=2?dates[1].val:(dates.length===1?dates[0].val:'');
-
-    // 4) Vade: 1-400 arası tek başına duran tam sayı
-    let vade=0;
-    for(const n of nums){
-      const raw=cs(r[n.idx]).trim();
-      // "182" gibi sadece rakamlardan oluşan ve 1-400 arası olan değer
-      if(/^\d{1,3}$/.test(raw)&&n.val>=1&&n.val<=400){vade=n.val;break}
-    }
-
-    // 5) Büyük sayılar = tutarlar (teklif, kabul)
-    const bigNums=nums.filter(n=>n.val>1000).map(n=>n.val).sort((a,b)=>b-a);
-    const teklif=bigNums.length>=1?bigNums[0]:null;
-    const kabul=bigNums.length>=2?bigNums[1]:(bigNums.length===1?bigNums[0]:null);
+    if(!r||r.length<6)continue;
+    if(!/^[A-Z]{3}\d/i.test(cs(r[0])))continue;              // başlık/boş satırları atla
+    const isin=cs(r[0]).replace(/\s+\d{1,2}$/,'');
+    const valor=cs(r[1]),itfa=cs(r[2]),vade=pn(r[3])||0;
+    let i=4;if(cs(r[i]).toLowerCase()==='gün')i++;            // "gün" dolgu hücresini atla
+    const teklif=pn(r[i]),kabul=pn(r[i+1]);
+    const minF=pn(r[i+2]),maxF=pn(r[i+3]),ortF=pn(r[i+4]),bil=pn(r[i+5]);
     if(!kabul||kabul<=0)continue;
-
-    // 6) Küçük sayılar = faiz oranları (0-100 arası, tutar olmayan)
-    const smallNums=nums.filter(n=>n.val>=0&&n.val<=100&&n.val!==vade).map(n=>n.val);
-    const minF=smallNums.length>=1?smallNums[0]:null;
-    const maxF=smallNums.length>=2?smallNums[1]:null;
-    const ortF=smallNums.length>=3?smallNums[2]:null;
-    const bil=smallNums.length>=4?smallNums[3]:ortF;
-
-    result.push({isin,valor,itfa,vade,teklif,kabul,minF,maxF,ortF,bil,year:py(valor),type:'TL'});
+    result.push({isin,valor,itfa,vade,teklif,kabul,minF,maxF,ortF,bil:bil!=null?bil:ortF,year:py(valor),type:'TL'});
   }
   return result;
 }
 
 /* ==========================================================
-   procFX — Aynı yapı (çalışıyordu, korundu)
+   procFX — Sabit sütun düzeni (ISIN, Döviz, Valör, İtfa, Vade,
+   [gün], Teklif, Kabul, TL Karşılığı, EnDüşük, EnYüksek,
+   Ortalama, Bileşik)
    ========================================================== */
 function procFX(rows){
   const result=[];if(!rows||!rows.length)return result;
   for(const r of rows){
-    if(!r||r.length<6)continue;
-    let isi=-1;
-    for(let i=0;i<r.length;i++){if(/^[A-Z]{3}\d/i.test(cs(r[i]))){isi=i;break}}
-    if(isi<0)continue;
-    const isin=cs(r[isi]).replace(/\s+\d{1,2}$/,'');
-
-    let doviz='';
-    for(let i=0;i<r.length;i++){const cell=cs(r[i]);if(/DOLAR|USD|AVRO|EUR|STERL|GBP/i.test(cell)){doviz=cell;break}}
-    if(!doviz)continue;
-
-    const{dates,nums}=extractRowPatterns(r,isi);
-    const valor=dates.length>=1?dates[0].val:'';
-    const itfa=dates.length>=2?dates[1].val:'';
-
-    let vade=0;
-    for(const n of nums){const raw=cs(r[n.idx]).trim();if(/^\d{1,3}$/.test(raw)&&n.val>=1&&n.val<=400){vade=n.val;break}}
-
-    const bigNums=nums.filter(n=>n.val>1000).map(n=>n.val).sort((a,b)=>a-b);
-    const teklif=bigNums.length>=3?bigNums[0]:null;
-    const kabul=bigNums.length>=3?bigNums[1]:(bigNums.length>=2?bigNums[0]:null);
-    const tlK=bigNums.length>=3?bigNums[2]:(bigNums.length>=2?bigNums[1]:null);
+    if(!r||r.length<8)continue;
+    if(!/^[A-Z]{3}\d/i.test(cs(r[0])))continue;
+    const isin=cs(r[0]).replace(/\s+\d{1,2}$/,'');
+    const doviz=cs(r[1]);
+    if(!/DOLAR|USD|AVRO|EUR|STERL|GBP/i.test(doviz))continue;
+    const valor=cs(r[2]),itfa=cs(r[3]),vade=pn(r[4])||0;
+    let i=5;if(cs(r[i]).toLowerCase()==='gün')i++;            // "gün" dolgu hücresini atla
+    const teklif=pn(r[i]),kabul=pn(r[i+1]),tlK=pn(r[i+2]);
+    const minF=pn(r[i+3]),maxF=pn(r[i+4]),ortF=pn(r[i+5]),bil=pn(r[i+6]);
     if(!kabul||kabul<=0)continue;
-
-    const smallNums=nums.filter(n=>n.val>=0&&n.val<=20&&n.val!==vade).map(n=>n.val);
-    const minF=smallNums.length>=1?smallNums[0]:null;
-    const maxF=smallNums.length>=2?smallNums[1]:null;
-    const ortF=smallNums.length>=3?smallNums[2]:null;
-    const bil=smallNums.length>=4?smallNums[3]:ortF;
-
-    result.push({isin,doviz,valor,itfa,vade,teklif,kabul,tlK,minF,maxF,ortF,bil,year:py(valor),type:'FX'});
+    result.push({isin,doviz,valor,itfa,vade,teklif,kabul,tlK,minF,maxF,ortF,bil:bil!=null?bil:ortF,year:py(valor),type:'FX'});
   }
   return result;
 }
 
 /* ==========================================================
-   procStock — TAMAMEN YENİ: Tüm satırı tarar
+   procStock — Aylık zaman serisi
+   (Yıl, Ay, İhraç, Geri Ödeme, Ay Sonu Stok)
+   Yıl sadece o yılın ilk satırında yer alır; sonraki aylarda
+   yıl taşınır. Sonuç: para cinsi başına aylık kayıtlar.
    ========================================================== */
+const TR_AY={'ocak':1,'şubat':2,'subat':2,'mart':3,'nisan':4,'mayıs':5,'mayis':5,'haziran':6,'temmuz':7,'ağustos':8,'agustos':8,'eylül':9,'eylul':9,'ekim':10,'kasım':11,'kasim':11,'aralık':12,'aralik':12};
 function procStock(rows,cur){
   const result=[];if(!rows||!rows.length)return result;
+  let year=null;
   for(const r of rows){
-    if(!r||r.length<3)continue;
-
-    // ISIN bul
-    let isi=-1;
-    for(let i=0;i<r.length;i++){if(/^[A-Z]{3}\d/i.test(cs(r[i]))){isi=i;break}}
-    if(isi<0)continue;
-    const isin=cs(r[isi]).replace(/\s+\d{1,2}$/,'');
-
-    // Tüm desenleri çıkar
-    const{dates,nums}=extractRowPatterns(r,isi);
-    const valor=dates.length>=1?dates[0].val:'';
-    const itfa=dates.length>=2?dates[1].val:'';
-
-    // Nominal: en büyük sayı
-    let nominal=0;
-    if(nums.length>=1){
-      const sorted=[...nums].sort((a,b)=>b.val-a.val);
-      nominal=sorted[0].val;
-    }
-
-    // Faiz: 0-100 arası, nominal olmayan küçük sayı
-    let faiz=null;
-    const smallCandidates=nums.filter(n=>n.val>=0&&n.val<=100&&n.val!==nominal);
-    // En çok rastlanan faiz adayı: ondalıklı olanları tercih et
-    if(smallCandidates.length){
-      // Ondalıklı olanları önceliklendir
-      const withDecimal=smallCandidates.filter(n=>cs(r[n.idx]).includes(',')||cs(r[n.idx]).includes('.'));
-      if(withDecimal.length)faiz=withDecimal[0].val;
-      else faiz=smallCandidates[0].val;
-    }
-
-    if(!/^[A-Z]{3}\d/i.test(isin))continue;
-    if(!nominal||nominal<=0)continue;
-
-    result.push({isin,valor,itfa,nominal,faiz,currency:cur,year:py(valor),matYear:py(itfa)});
+    if(!r||!r.length)continue;
+    let cells=r.map(cs);
+    if(/^\d{4}$/.test(cells[0])){year=+cells[0];cells=cells.slice(1);}   // yıl başlangıç satırı
+    if(cells.length<4)continue;
+    const mi=TR_AY[cells[0].toLowerCase()];
+    if(!mi||!year)continue;                                              // başlık/boş ay satırlarını atla
+    const issued=pn(cells[1]),repaid=pn(cells[2]),outstanding=pn(cells[3]);
+    if(issued==null&&repaid==null&&outstanding==null)continue;
+    result.push({currency:cur,year,month:cells[0],monthIdx:mi,key:year*100+mi,
+      date:new Date(year,mi-1,1),issued:issued||0,repaid:repaid||0,outstanding});
   }
   return result;
 }
+/* Bir para cinsinin en güncel (son) açık stok değeri */
+function latestStock(cur){const w=S.stk.filter(r=>r.currency===cur&&r.outstanding!=null);return w.length?w[w.length-1]:null}
 
 function ylTL(recs){const m={};recs.forEach(r=>{const y=r.year;if(!y)return;if(!m[y])m[y]={off:0,acc:0,rates:[],n:0};m[y].off+=r.teklif||0;m[y].acc+=r.kabul||0;m[y].n++;if(r.bil!=null)m[y].rates.push(r.bil)});return m}
 function ylFX(recs){const m={};recs.forEach(r=>{const y=r.year;if(!y)return;if(!m[y])m[y]={off:0,accTL:0,rates:[],n:0,byC:{}};m[y].off+=r.teklif||0;m[y].accTL+=r.tlK||0;m[y].n++;if(r.ortF!=null)m[y].rates.push(r.ortF);const c=r.doviz;if(!m[y].byC[c])m[y].byC[c]={accTL:0,n:0};m[y].byC[c].accTL+=r.tlK||0;m[y].byC[c].n++});return m}
@@ -364,10 +315,10 @@ function ylFX(recs){const m={};recs.forEach(r=>{const y=r.year;if(!y)return;if(!
 const DEMO={last_updated:"2025-07-15 12:00:00",
   tlRaw:[["KKB250913T11","27/03/2013","25/09/2013",182,145000000,31250000,7.50,7.50,7.50,7.64],["KKB100616T18","26/04/2016","10/06/2016",45,60000000,60000000,9.90,9.90,9.90,10.34],["KKB190117T13","20/12/2016","19/01/2017",30,80000000,80000000,10.00,10.00,10.00,10.47],["KKB310717T11","29/06/2017","31/07/2017",32,77000000,50000000,10.50,10.50,10.50,11.02],["KKB050620T19","27/02/2020","05/06/2020",99,118000000,40000000,10.00,11.20,10.49,10.90],["KKB041220T12","29/05/2020","04/12/2020",189,134000000,71000000,8.99,10.50,9.74,9.97],["KKB050521T19","28/10/2020","05/05/2021",189,53000000,31000000,15.25,17.00,16.46,17.11],["KKB100621T11","27/11/2020","10/06/2021",195,99500000,46500000,16.75,19.50,18.54,19.34],["KKB060421T19","31/12/2020","06/04/2021",96,95000000,57500000,18.80,20.50,20.02,21.54],["KKB070921T13","28/05/2021","07/09/2021",102,160175812,132963045,19.00,21.00,20.50,22.06],["KKB101221T13","07/09/2021","10/12/2021",94,146000000,93000000,19.25,21.00,20.41,22.01],["KKB070122T10","29/09/2021","07/01/2022",100,126500000,115000000,19.00,20.40,19.68,21.13],["KKB040222T12","27/10/2021","04/02/2022",100,54000000,30000000,17.50,18.10,17.95,19.15],["KKB150622T15","25/02/2022","15/06/2022",110,74000000,70000000,19.50,25.00,21.94,23.67],["KKB080722T13","30/03/2022","08/07/2022",100,35000000,35000000,23.90,25.99,24.86,27.19],["KKB071022T19","28/06/2022","07/10/2022",101,263912751,219412751,25.50,28.00,26.61,29.27],["KKB081024T16","27/06/2024","08/10/2024",103,955000000,880000000,49.98,53.50,50.68,60.60],["KKB240125T16","31/10/2024","24/01/2025",85,790000000,335000000,48.00,50.00,49.30,59.48],["KKB180425T11","28/02/2025","18/04/2025",49,2300000000,970000000,41.25,44.02,43.49,52.60],["KKB130625T14","30/04/2025","13/06/2025",44,1716000000,916000000,45.00,47.50,46.75,57.59],["KKB120925T12","28/05/2025","12/09/2025",107,2975000000,2375000000,46.00,49.50,47.81,56.43],["KKB140825T29","30/06/2025","14/08/2025",45,2450000000,995000000,45.68,47.25,46.27,56.83],["KKB071125T31","25/09/2025","07/11/2025",43,3260000000,2185000000,38.85,42.00,39.89,47.67],["KKB121225T41","31/10/2025","12/12/2025",42,2540000000,1095000000,39.50,40.89,40.22,48.17],["KKB261225T11","07/11/2025","26/12/2025",49,2745000000,2745000000,38.49,40.90,39.91,47.52],["KKB090126T48","28/11/2025","09/01/2026",42,1945000000,1085000000,39.00,40.50,40.02,47.88],["KKB260226T46","26/12/2025","26/02/2026",62,5890000000,3135000000,37.75,39.55,38.97,45.84],["KKB240426T12","26/02/2026","24/04/2026",57,7125000000,4710000000,35.00,36.00,35.47,41.23],["KKB050626T39","31/03/2026","05/06/2026",66,4190000000,3190000000,36.50,40.40,39.01,45.78],["KKB170726T59","24/04/2026","17/07/2026",84,7180000000,6380000000,38.00,42.06,40.68,47.53],["KKB280826T48","22/05/2026","28/08/2026",98,4040000000,3765000000,40.35,42.15,41.03,47.58],["KKB040926T11","05/06/2026","04/09/2026",91,4730000000,3470000000,40.99,42.20,41.80,48.83]],
   fxRaw:[["KKB081222F12","ABD DOLARI","26.08.2022","8.12.2022",104,10690000,7690000,139547354,3.00,4.50,3.68,3.73],["KKB130123F17","ABD DOLARI","31.10.2022","13.01.2023",74,23500000,13250000,246291000,3.74,4.50,4.21,4.28],["KKB170223F12","AVRO","31.10.2022","17.02.2023",109,22100000,7000000,130785900,2.49,3.65,3.18,3.21],["KKB100323F18","ABD DOLARI","28.11.2022","10.03.2023",102,18850000,12000000,223285200,3.50,4.28,3.85,3.90],["KKB090623F18","ABD DOLARI","28.02.2023","9.06.2023",101,16000000,10104488,190602978,3.50,4.00,3.77,3.82],["KKB140723F10","ABD DOLARI","31.03.2023","14.07.2023",105,17280000,17280000,330842880,3.74,4.00,3.88,3.93],["KKB180823F15","AVRO","30.03.2023","18.08.2023",141,12500000,10500000,217561050,2.75,3.13,2.95,2.98],["KKB131023F16","ABD DOLARI","19.06.2023","13.10.2023",116,8900000,8900000,210385320,4.50,6.00,5.36,5.46],["KKB201023F17","ABD DOLARI","19.07.2023","20.10.2023",93,16600000,16600000,445265120,5.24,5.50,5.45,5.56],["KKB151024F13","ABD DOLARI","27.06.2024","15.10.2024",110,26700000,26700000,878536800,4.00,5.00,4.53,4.60],["KKB100125F18","ABD DOLARI","15.10.2024","10.01.2025",87,25000000,25000000,855085000,4.00,5.00,4.52,4.60],["KKB070225F12","ABD DOLARI","31.10.2024","7.02.2025",99,15600000,15100000,516563450,4.00,4.95,4.54,4.62],["KKB160525F26","ABD DOLARI","11.02.2025","16.05.2025",94,21500000,16250000,584107875,3.50,4.50,4.02,4.08],["KKB040625F11","ABD DOLARI","28.02.2025","4.06.2025",96,25100000,21100000,767305720,3.75,4.50,4.19,4.26],["KKB110725F11","ABD DOLARI","28.03.2025","11.07.2025",105,15800000,14800000,561398040,3.75,4.49,3.96,4.02],["KKB110725F29","İNGİLİZ STERLİNİ","28.03.2025","11.07.2025",105,16750000,16750000,819708150,3.25,4.00,3.73,3.78],["KKB210825F18","AVRO","28.04.2025","21.08.2025",115,15500000,14000000,607784800,2.74,3.50,3.05,3.08],["KKB140825F17","İNGİLİZ STERLİNİ","28.04.2025","14.08.2025",108,9750000,9750000,495306825,3.60,3.99,3.81,3.86],["KKB121225F13","ABD DOLARI","26.08.2025","12.12.2025",108,13219000,13219000,540928090,4.00,4.50,4.11,4.17],["KKB121225F21","AVRO","26.08.2025","12.12.2025",108,20500000,14500000,694220850,3.49,3.75,3.65,3.70],["KKB121225F39","İNGİLİZ STERLİNİ","26.08.2025","12.12.2025",108,22010000,20900000,1153075990,3.95,4.50,4.29,4.36],["KKB090126F10","ABD DOLARI","19.09.2025","9.01.2026",112,22200000,21700000,894929700,4.00,4.50,4.21,4.27],["KKB090126F28","AVRO","19.09.2025","9.01.2026",112,17250000,17250000,841292850,3.50,3.75,3.63,3.68],["KKB090126F36","İNGİLİZ STERLİNİ","19.09.2025","9.01.2026",112,24400000,21400000,1200953020,4.00,4.50,4.35,4.42],["KKB260226F18","ABD DOLARI","28.10.2025","26.02.2026",121,7100000,7100000,297276290,4.00,4.45,4.09,4.15],["KKB260226F34","İNGİLİZ STERLİNİ","28.10.2025","26.02.2026",121,4100000,4100000,228510630,4.25,4.49,4.38,4.44],["KKB090426F17","ABD DOLARI","12.12.2025","9.04.2026",118,8600000,8600000,365794980,4.00,4.35,4.05,4.11],["KKB090426F33","İNGİLİZ STERLİNİ","12.12.2025","9.04.2026",118,19000000,17000000,965380700,4.00,4.49,4.44,4.51],["KKB080526F17","ABD DOLARI","9.01.2026","8.05.2026",119,23400000,22150000,951889605,4.00,4.25,4.06,4.12],["KKB080526F33","İNGİLİZ STERLİNİ","9.01.2026","8.05.2026",119,44050000,40150000,2316016615,3.91,4.25,4.04,4.10],["KKB170726F14","ABD DOLARI","9.04.2026","17.07.2026",99,6550000,6550000,291165185,3.75,4.14,3.84,3.89],["KKB170726F22","AVRO","9.04.2026","17.07.2026",99,17600000,13600000,706762080,2.29,3.50,3.13,3.17],["KKB170726F30","İNGİLİZ STERLİNİ","9.04.2026","17.07.2026",99,18300000,18300000,1091110050,3.95,4.65,4.26,4.33],["KKB180926F11","ABD DOLARI","8.05.2026","18.09.2026",133,19450000,19450000,878295870,3.75,4.24,4.00,4.05],["KKB180926F37","İNGİLİZ STERLİNİ","8.05.2026","18.09.2026",133,35800000,35800000,2197557940,4.39,4.70,4.54,4.61]],
-  tlStockRaw:[["KKB180425T11","28/02/2025","18/04/2025",970000000,43.49],["KKB130625T14","30/04/2025","13/06/2025",916000000,46.75],["KKB120925T12","28/05/2025","12/09/2025",2375000000,47.81],["KKB140825T29","30/06/2025","14/08/2025",995000000,46.27],["KKB071125T31","25/09/2025","07/11/2025",2185000000,39.89],["KKB121225T41","31/10/2025","12/12/2025",1095000000,40.22],["KKB261225T11","07/11/2025","26/12/2025",2745000000,39.91],["KKB090126T48","28/11/2025","09/01/2026",1085000000,40.02],["KKB260226T46","26/12/2025","26/02/2026",3135000000,38.97],["KKB240426T12","26/02/2026","24/04/2026",4710000000,35.47],["KKB050626T39","31/03/2026","05/06/2026",3190000000,39.01],["KKB170726T59","24/04/2026","17/07/2026",6380000000,40.68],["KKB280826T48","22/05/2026","28/08/2026",3765000000,41.03],["KKB040926T11","05/06/2026","04/09/2026",3470000000,41.80]],
-  usdStockRaw:[["KKB070225F12","31/10/2024","7/02/2025",15100000,4.54],["KKB160525F26","11/02/2025","16/05/2025",16250000,4.02],["KKB040625F11","28/02/2025","4/06/2025",21100000,4.19],["KKB110725F11","28/03/2025","11/07/2025",14800000,3.96],["KKB121225F13","26/08/2025","12/12/2025",13219000,4.11],["KKB090126F10","19/09/2025","9/01/2026",21700000,4.21],["KKB260226F18","28/10/2025","26/02/2026",7100000,4.09],["KKB090426F17","12/12/2025","9/04/2026",8600000,4.05],["KKB080526F17","9/01/2026","8.05.2026",22150000,4.06],["KKB170726F14","9/04/2026","17.07.2026",6550000,3.84],["KKB180926F11","8.05.2026","18.09.2026",19450000,4.00]],
-  eurStockRaw:[["KKB210825F18","28/04/2025","21/08/2025",14000000,3.05],["KKB121225F21","26/08/2025","12/12/2025",14500000,3.65],["KKB090126F28","19/09/2025","9/01/2026",17250000,3.63],["KKB090426F25","12/12/2025","9/04/2026",16000000,3.75],["KKB080526F25","9/01/2026","8/05/2026",17300000,3.48],["KKB170726F22","9/04/2026","17/07/2026",13600000,3.13]],
-  gbpStockRaw:[["KKB110725F29","28/03/2025","11/07/2025",16750000,3.73],["KKB140825F17","28/04/2025","14/08/2025",9750000,3.81],["KKB121225F39","26/08/2025","12/12/2025",20900000,4.29],["KKB090126F36","19/09/2025","9/01/2026",21400000,4.35],["KKB260226F34","28/10/2025","26/02/2026",4100000,4.38],["KKB090426F33","12/12/2025","9/04/2026",17000000,4.44],["KKB080526F33","9/01/2026","8/05/2026",40150000,4.04],["KKB170726F30","9/04/2026","17/07/2026",18300000,4.26],["KKB180926F37","8/05/2026","18/09/2026",35800000,4.54]]
+  tlStockRaw:[["Yıl","Ay","İhraç","Geri Ödeme","Ay Sonu Stok"],["2025","Ocak","-","-","8500000000.00"],["Şubat","970000000.00","450000000.00","9020000000.00"],["Mart","916000000.00","600000000.00","9336000000.00"],["Nisan","2375000000.00","800000000.00","10911000000.00"],["Mayıs","995000000.00","700000000.00","11206000000.00"],["Haziran","2185000000.00","970000000.00","12421000000.00"]],
+  usdStockRaw:[["Yıl","Ay","İhraç","Geri Ödeme","Ay Sonu Stok"],["2025","Ocak","-","-","85000000.00"],["Şubat","15100000.00","12000000.00","88100000.00"],["Mart","16250000.00","15000000.00","89350000.00"],["Nisan","21100000.00","16000000.00","94450000.00"],["Mayıs","14800000.00","20000000.00","89250000.00"],["Haziran","13219000.00","10000000.00","92469000.00"]],
+  eurStockRaw:[["Yıl","Ay","İhraç","Geri Ödeme","Ay Sonu Stok"],["2025","Nisan","14000000.00","-","14000000.00"],["Mayıs","14500000.00","-","28500000.00"],["Haziran","17250000.00","6000000.00","39750000.00"]],
+  gbpStockRaw:[["Yıl","Ay","İhraç","Geri Ödeme","Ay Sonu Stok"],["2025","Mart","16750000.00","-","16750000.00"],["Nisan","9750000.00","-","26500000.00"],["Mayıs","20900000.00","-","47400000.00"],["Haziran","21400000.00","16000000.00","52800000.00"]]
 };
 
 /* VERİ YÜKLEME */
@@ -386,7 +337,7 @@ function renderDebug(){
     const curMap={tlRaw:'TL',fxRaw:'FX',tlStockRaw:'TL',usdStockRaw:'USD',eurStockRaw:'EUR',gbpStockRaw:'GBP'};
     const cur=curMap[k]||'';
     const parsed=k.includes('Stock')?S.stk.filter(r=>r.currency===cur).length:k==='tlRaw'?S.tl.length:k==='fxRaw'?S.fx.length:0;
-    const ok=raw>0&&parsed>0;
+    const ok=raw.length>0&&parsed>0;
     html+=`<div class="debug-item"><div class="key">${k}</div><div class="val">Raw: ${raw.length} | Header: ${hdrs.length} | Parsed: ${parsed} | HTTP: ${dbg.httpStatus||'—'}</div><div style="color:${ok?'var(--green)':'var(--red)'};font-weight:600;font-size:.7rem">${ok?'✓ OK':'✗ VERİ YOK'}</div>`;
     // İlk 3 ham satırı göster
     if(raw.length>0){
@@ -415,30 +366,30 @@ function render(){try{renderDebug()}catch(e){console.warn('debug:',e)}try{render
 const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.1});document.querySelectorAll('.fade-in').forEach(e=>obs.observe(e));setTimeout(()=>{document.querySelectorAll('.fade-in').forEach(e=>{if(e.getBoundingClientRect().top<innerHeight)e.classList.add('vis')})},80)}
 
 function renderKPI(){
-  const stkTL=S.stk.filter(r=>r.currency==='TL').reduce((s,r)=>s+(r.nominal||0),0);
-  const stkUSD=S.stk.filter(r=>r.currency==='USD').reduce((s,r)=>s+(r.nominal||0),0);
-  const stkEUR=S.stk.filter(r=>r.currency==='EUR').reduce((s,r)=>s+(r.nominal||0),0);
-  const stkGBP=S.stk.filter(r=>r.currency==='GBP').reduce((s,r)=>s+(r.nominal||0),0);
+  const lTL=latestStock('TL'),lUSD=latestStock('USD'),lEUR=latestStock('EUR'),lGBP=latestStock('GBP');
+  const stkTL=lTL?lTL.outstanding:0,stkUSD=lUSD?lUSD.outstanding:0,stkEUR=lEUR?lEUR.outstanding:0,stkGBP=lGBP?lGBP.outstanding:0;
   const stkUSDtl=stkUSD*S.rates.USD_TRY,stkEURtl=stkEUR*S.rates.EUR_TRY,stkGBPtl=stkGBP*S.rates.GBP_TRY;
   const totalStkTL=stkTL+stkUSDtl+stkEURtl+stkGBPtl;
+  const subOf=l=>l?l.year+' '+l.month:'—';
   const tlR=S.tl.filter(r=>r.bil!=null).map(r=>r.bil);const avgTL=tlR.length?tlR.reduce((a,b)=>a+b,0)/tlR.length:null;
   const fxR=S.fx.filter(r=>r.ortF!=null).map(r=>r.ortF);const avgFX=fxR.length?fxR.reduce((a,b)=>a+b,0)/fxR.length:null;
   const g=document.getElementById('kpis');g.innerHTML='';
-  [{l:'TL Stok',v:stkTL?fb(stkTL)+' Mrd':'—',s:S.stk.filter(r=>r.currency==='TL').length+' sened'},
+  [{l:'TL Stok',v:stkTL?fb(stkTL)+' Mrd':'—',s:subOf(lTL)},
    {l:'USD Stok',v:stkUSD?fm(stkUSD)+' M':'—',s:stkUSD?'≈ '+fb(stkUSDtl)+' Mrd TL':'—',rate:'1 USD = '+S.rates.USD_TRY.toFixed(2)},
    {l:'EUR Stok',v:stkEUR?fm(stkEUR)+' M':'—',s:stkEUR?'≈ '+fb(stkEURtl)+' Mrd TL':'—',rate:'1 EUR = '+S.rates.EUR_TRY.toFixed(2)},
    {l:'GBP Stok',v:stkGBP?fm(stkGBP)+' M':'—',s:stkGBP?'≈ '+fb(stkGBPtl)+' Mrd TL':'—',rate:'1 GBP = '+S.rates.GBP_TRY.toFixed(2)},
-   {l:'Toplam Stok (TL)',v:totalStkTL?fb(totalStkTL)+' Mrd':'—',s:'Canlı kur ile'},
+   {l:'Toplam Stok (TL)',v:totalStkTL?fb(totalStkTL)+' Mrd':'—',s:'Güncel · canlı kur ile'},
    {l:'TL Ort. Bileşik',v:avgTL!=null?'%'+avgTL.toFixed(1):'—',s:tlR.length+' veri'},
    {l:'Döviz Ort. Faiz',v:avgFX!=null?'%'+avgFX.toFixed(1):'—',s:fxR.length+' veri'}
   ].forEach(k=>{const c=document.createElement('div');c.className='kpi-card';c.innerHTML=`<div class="kpi-label">${k.l}</div><div class="kpi-value">${k.v}</div><div class="kpi-sub">${k.s}</div>${k.rate?`<div class="kpi-rate">${k.rate}</div>`:''}`;g.appendChild(c)});
 }
 
 function renderInsights(){
-  const stkTL=S.stk.filter(r=>r.currency==='TL').reduce((s,r)=>s+(r.nominal||0),0);const stkUSD=S.stk.filter(r=>r.currency==='USD').reduce((s,r)=>s+(r.nominal||0),0);const stkEUR=S.stk.filter(r=>r.currency==='EUR').reduce((s,r)=>s+(r.nominal||0),0);const stkGBP=S.stk.filter(r=>r.currency==='GBP').reduce((s,r)=>s+(r.nominal||0),0);
+  const so=c=>{const l=latestStock(c);return l?l.outstanding:0};
+  const stkTL=so('TL'),stkUSD=so('USD'),stkEUR=so('EUR'),stkGBP=so('GBP');
   const totalTL=stkTL+stkUSD*S.rates.USD_TRY+stkEUR*S.rates.EUR_TRY+stkGBP*S.rates.GBP_TRY;const maxTLR=S.tl.filter(r=>r.bil!=null).reduce((m,r)=>Math.max(m,r.bil),0);
   const items=[];
-  if(totalTL>0)items.push(`<strong>Toplam stok:</strong> TL ${fb(stkTL)} Mrd + ${fm(stkUSD)} M USD + ${fm(stkEUR)} M EUR + ${fm(stkGBP)} M GBP = <strong>${fb(totalTL)} Mrd TL</strong>`);
+  if(totalTL>0)items.push(`<strong>Güncel stok:</strong> TL ${fb(stkTL)} Mrd + ${fm(stkUSD)} M USD + ${fm(stkEUR)} M EUR + ${fm(stkGBP)} M GBP = <strong>${fb(totalTL)} Mrd TL</strong>`);
   items.push(`<strong>Kurlar (${S.rates.ratesSrc}):</strong> USD=${S.rates.USD_TRY.toFixed(2)} EUR=${S.rates.EUR_TRY.toFixed(2)} GBP=${S.rates.GBP_TRY.toFixed(2)}`);
   if(maxTLR>0)items.push(`<strong>TL faiz uç:</strong> %${maxTLR.toFixed(1)}`);
   if(!S.tl.length&&!S.fx.length)items.push('İhale verisi yüklenemedi — demo veri kullanılıyor olabilir. Debug panelinden ham verileri kontrol edin.');
@@ -476,34 +427,38 @@ function renderMaturity(){if(!S.tl.length)return;const bk=[{l:'0-30',a:0,b:30},{
   mk('cAM',{type:'line',data:{labels:ay,datasets:[{label:'TL',data:ay.map(y=>{const a=tAM[y];return a?a.reduce((s,v)=>s+v,0)/a.length:null}),borderColor:'#e63946',tension:.3,pointRadius:4,pointBackgroundColor:'#e63946'},{label:'Döviz',data:ay.map(y=>{const a=fAM[y];return a?a.reduce((s,v)=>s+v,0)/a.length:null}),borderColor:'#2ec4b6',tension:.3,pointRadius:4,pointBackgroundColor:'#2ec4b6'}]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Gün'},grid:gG},x:{grid:nG}}}});
 }
 
-/* BORÇ STOKU */
+/* BORÇ STOKU — aylık zaman serisi (açık stok gelişimi) */
 function renderStock(){
-  const el=document.getElementById('stockContent');const now=new Date(),thisY=now.getFullYear(),R=S.rates;
-  const curCfg={TL:{color:'#e63946',colorA:'rgba(230,57,70,.75)',unit:'Mrd TL',scale:1e9,rate:1,rateLbl:'TL'},USD:{color:'#2ec4b6',colorA:'rgba(46,196,182,.75)',unit:'Milyon USD',scale:1e6,rate:R.USD_TRY,rateLbl:'1 USD = '+R.USD_TRY.toFixed(2)+' TL'},EUR:{color:'#a78bfa',colorA:'rgba(167,139,250,.75)',unit:'Milyon EUR',scale:1e6,rate:R.EUR_TRY,rateLbl:'1 EUR = '+R.EUR_TRY.toFixed(2)+' TL'},GBP:{color:'#38bdf8',colorA:'rgba(56,189,248,.75)',unit:'Milyon GBP',scale:1e6,rate:R.GBP_TRY,rateLbl:'1 GBP = '+R.GBP_TRY.toFixed(2)+' TL'}};
+  const el=document.getElementById('stockContent');const R=S.rates;
+  const curCfg={TL:{color:'#e63946',colorA:'rgba(230,57,70,.75)',unit:'Mrd TL',div:1e9,rate:1,rateLbl:'TL'},USD:{color:'#2ec4b6',colorA:'rgba(46,196,182,.75)',unit:'Milyon USD',div:1e6,rate:R.USD_TRY,rateLbl:'1 USD = '+R.USD_TRY.toFixed(2)+' TL'},EUR:{color:'#a78bfa',colorA:'rgba(167,139,250,.75)',unit:'Milyon EUR',div:1e6,rate:R.EUR_TRY,rateLbl:'1 EUR = '+R.EUR_TRY.toFixed(2)+' TL'},GBP:{color:'#38bdf8',colorA:'rgba(56,189,248,.75)',unit:'Milyon GBP',div:1e6,rate:R.GBP_TRY,rateLbl:'1 GBP = '+R.GBP_TRY.toFixed(2)+' TL'}};
   const curName={TL:'Türk Lirası',USD:'ABD Doları',EUR:'Avro',GBP:'İngiliz Sterlini'};
-  let html='';
-  ['TL','USD','EUR','GBP'].forEach(cur=>{const cfg=curCfg[cur];const recs=S.stk.filter(r=>r.currency===cur);const totalNom=recs.reduce((s,r)=>s+(r.nominal||0),0);const totalTL=totalNom*cfg.rate;const avgF=recs.filter(r=>r.faiz!=null);const avgFaiz=avgF.length?avgF.reduce((s,r)=>s+r.faiz,0)/avgF.length:0;
-    if(!recs.length){html+=`<div class="chart-section fade-in"><h2>${cur} Borç Stoku</h2><div class="cur-card"><p class="no-data">${cur} için stok verisi bulunamadı.</p></div></div>`;return}
-    html+=`<div class="chart-section fade-in"><h2>${cur} Borç Stoku</h2><div class="cur-card"><div class="cur-card-head"><h3><span class="cur-badge ${cur.toLowerCase()}">${cur}</span> ${curName[cur]} Borç Stoku</h3><div class="cur-stats"><div class="cur-stat"><div class="val">${cur==='TL'?fb(totalNom):fm(totalNom)}</div><div class="lbl">${cfg.unit}</div></div><div class="cur-stat"><div class="val">${fb(totalTL)}</div><div class="lbl">Mrd TL Karşılığı</div></div><div class="cur-stat"><div class="val">%${avgFaiz.toFixed(2)}</div><div class="lbl">Ort. Faiz</div></div><div class="cur-stat"><div class="val">${recs.length}</div><div class="lbl">Sened</div></div><div class="cur-stat" style="font-size:.65rem;color:var(--accent3)">${cfg.rateLbl}</div></div></div>
-      <div class="chart-row c2"><div class="chart-box"><h3>ISIN Bazında (${cfg.unit})</h3><canvas id="c${cur}StkN"></canvas></div><div class="chart-box"><h3>Vade Takvimi</h3><canvas id="c${cur}StkM"></canvas></div></div>
-      <div class="chart-row c2" style="margin-top:1.1rem"><div class="chart-box"><h3>Faiz Profili</h3><canvas id="c${cur}StkR"></canvas></div><div class="chart-box"><h3>Kalan Vade vs Faiz</h3><canvas id="c${cur}StkSR"></canvas></div></div></div></div>`;
+  const order=['TL','USD','EUR','GBP'];let html='';
+  order.forEach(cur=>{const cfg=curCfg[cur];const recs=S.stk.filter(r=>r.currency===cur);const withOut=recs.filter(r=>r.outstanding!=null);
+    if(!withOut.length){html+=`<div class="chart-section fade-in"><h2>${cur} Borç Stoku</h2><div class="cur-card"><p class="no-data">${cur} için stok verisi bulunamadı.</p></div></div>`;return}
+    const latest=withOut[withOut.length-1];const latestVal=latest.outstanding;const totalTL=latestVal*cfg.rate;
+    const totalIssued=recs.reduce((s,r)=>s+(r.issued||0),0);
+    const fmtBig=v=>cur==='TL'?fb(v):fm(v);
+    html+=`<div class="chart-section fade-in"><h2>${cur} Borç Stoku</h2><div class="cur-card"><div class="cur-card-head"><h3><span class="cur-badge ${cur.toLowerCase()}">${cur}</span> ${curName[cur]} Borç Stoku</h3><div class="cur-stats"><div class="cur-stat"><div class="val">${fmtBig(latestVal)}</div><div class="lbl">Güncel Stok</div></div><div class="cur-stat"><div class="val">${fb(totalTL)}</div><div class="lbl">Mrd TL Karşılığı</div></div><div class="cur-stat"><div class="val">${fmtBig(totalIssued)}</div><div class="lbl">Toplam İhraç</div></div><div class="cur-stat"><div class="val">${latest.year} ${latest.month}</div><div class="lbl">Son Veri</div></div><div class="cur-stat" style="font-size:.65rem;color:var(--accent3)">${cfg.rateLbl}</div></div></div>
+      <div class="chart-row c2"><div class="chart-box"><h3>Borç Stoku Gelişimi (${cfg.unit})</h3><canvas id="c${cur}StkT"></canvas></div><div class="chart-box"><h3>Aylık İhraç / Geri Ödeme (${cfg.unit})</h3><canvas id="c${cur}StkIR"></canvas></div></div></div></div>`;
   });
-  const totals={};['TL','USD','EUR','GBP'].forEach(cur=>{const recs=S.stk.filter(r=>r.currency===cur);const t=recs.reduce((s,r)=>s+(r.nominal||0),0);totals[cur]={nom:t,tl:t*curCfg[cur].rate,n:recs.length}});const grandTotal=Object.values(totals).reduce((s,t)=>s+t.tl,0);
-  html+=`<div class="chart-section fade-in"><h2>Toplam Stok — TL Karşılığı</h2><div class="cur-card"><div class="cur-card-head"><h3>Tüm Stok TL Karşılığı</h3><div class="cur-stats"><div class="cur-stat"><div class="val">${fb(grandTotal)}</div><div class="lbl">Mrd TL</div></div></div></div><div class="chart-row c2"><div class="chart-box"><h3>Para Cinsine Göre (Mrd TL)</h3><canvas id="cTotStk"></canvas></div><div class="chart-box"><h3>Vade — Tüm Cinsler (Mrd TL)</h3><canvas id="cTotStkM"></canvas></div></div></div></div>`;
+  const totals={};order.forEach(cur=>{const l=latestStock(cur);const v=l?l.outstanding:0;totals[cur]={nat:v,tl:v*curCfg[cur].rate}});
+  const grandTotal=Object.values(totals).reduce((s,t)=>s+t.tl,0);
+  html+=`<div class="chart-section fade-in"><h2>Toplam Stok — TL Karşılığı</h2><div class="cur-card"><div class="cur-card-head"><h3>Tüm Stok TL Karşılığı (Güncel)</h3><div class="cur-stats"><div class="cur-stat"><div class="val">${fb(grandTotal)}</div><div class="lbl">Mrd TL</div></div></div></div><div class="chart-row c2"><div class="chart-box"><h3>Para Cinsine Göre (Mrd TL)</h3><canvas id="cTotStk"></canvas></div><div class="chart-box"><h3>Toplam Stok Gelişimi (Mrd TL)</h3><canvas id="cTotStkT"></canvas></div></div></div></div>`;
   el.innerHTML=html;
 
-  ['TL','USD','EUR','GBP'].forEach(cur=>{const cfg=curCfg[cur];const recs=S.stk.filter(r=>r.currency===cur);if(!recs.length)return;const unitDiv=cfg.scale;
-    mk('c'+cur+'StkN',{type:'bar',data:{labels:recs.map(r=>r.isin.replace(/^(KKB|KKT)/,'')),datasets:[{label:cfg.unit,data:recs.map(r=>(r.nominal||0)/unitDiv),backgroundColor:recs.map(r=>{const my=r.matYear||9999;return my<=thisY?cfg.colorA.replace('.75','.4'):my===thisY+1?cfg.colorA.replace('.75','.6'):cfg.colorA}),borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{afterLabel:ctx=>{const rec=recs[ctx.dataIndex];const tlEq=(rec.nominal||0)*cfg.rate;return cur==='TL'?'':'TL Karşılığı: '+fb(tlEq)+' Mrd'}}}},scales:{x:{title:{display:true,text:cfg.unit},grid:gG},y:{grid:nG,ticks:{font:{size:10}}}}}});
-    const matBk=[{l:thisY+' İçinde',test:y=>y&&y<=thisY},{l:(thisY+1)+' ',test:y=>y===thisY+1},{l:(thisY+2)+' ',test:y=>y===thisY+2},{l:(thisY+3)+'+',test:y=>y&&y>thisY+2}];
-    mk('c'+cur+'StkM',{type:'bar',data:{labels:matBk.map(b=>b.l),datasets:[{label:cfg.unit,data:matBk.map(b=>recs.filter(r=>b.test(r.matYear)).reduce((s,r)=>s+(r.nominal||0),0)/unitDiv),backgroundColor:cfg.colorA,borderRadius:6,borderSkipped:false}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:cfg.unit},grid:gG},x:{grid:nG}}}});
-    const fBk=cur==='TL'?[{l:'%35-',a:0,b:35},{l:'%35-40',a:35,b:40},{l:'%40-45',a:40,b:45},{l:'%45-50',a:45,b:50},{l:'%50+',a:50,b:999}]:[{l:'%3-',a:0,b:3},{l:'%3-3.5',a:3,b:3.5},{l:'%3.5-4',a:3.5,b:4},{l:'%4-4.5',a:4,b:4.5},{l:'%4.5+',a:4.5,b:999}];
-    mk('c'+cur+'StkR',{type:'bar',data:{labels:fBk.map(b=>b.l),datasets:[{label:cfg.unit,data:fBk.map(b=>recs.filter(r=>r.faiz!=null&&r.faiz>=b.a&&r.faiz<b.b).reduce((s,r)=>s+(r.nominal||0),0)/unitDiv),backgroundColor:cfg.colorA,borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:cfg.unit},grid:gG},x:{grid:nG}}}});
-    const scData=recs.filter(r=>r.faiz!=null).map(r=>{const itfaDate=cs(r.itfa).split(/[\/.]/).reverse().join('-');const d=new Date(itfaDate);const daysToMat=d>now?Math.round((d-now)/(864e5)):0;return{x:daysToMat,y:r.faiz,nom:r.nominal}});
-    mk('c'+cur+'StkSR',{type:'scatter',data:{datasets:[{label:cur,data:scData,backgroundColor:cfg.colorA,pointRadius:scData.map(d=>Math.max(4,Math.min(14,Math.log10(d.nom+1)*3))),pointHoverRadius:8}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const p=ctx.raw;return'Vade: '+p.x+' gün | Faiz: %'+p.y.toFixed(2)+' | '+fm(p.nom)+' M'}}}},scales:{x:{title:{display:true,text:'Vadeye Kalan Gün'},grid:gG},y:{title:{display:true,text:'Faiz (%)'},grid:gG}}}});
+  order.forEach(cur=>{const cfg=curCfg[cur];const recs=S.stk.filter(r=>r.currency===cur);const withOut=recs.filter(r=>r.outstanding!=null);if(!withOut.length)return;const div=cfg.div;
+    const lab=r=>r.year+' '+r.month.slice(0,3);
+    mk('c'+cur+'StkT',{type:'line',data:{labels:withOut.map(lab),datasets:[{label:cfg.unit,data:withOut.map(r=>r.outstanding/div),borderColor:cfg.color,backgroundColor:cfg.colorA.replace('.75','.1'),fill:true,tension:.3,pointRadius:2}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:cfg.unit},grid:gG},x:{grid:nG,ticks:{maxRotation:45,maxTicksLimit:12}}}}});
+    mk('c'+cur+'StkIR',{type:'bar',data:{labels:recs.map(lab),datasets:[{label:'İhraç',data:recs.map(r=>(r.issued||0)/div),backgroundColor:cfg.colorA,borderRadius:3},{label:'Geri Ödeme',data:recs.map(r=>-(r.repaid||0)/div),backgroundColor:'rgba(239,68,68,.7)',borderRadius:3}]},options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+Math.abs(ctx.raw).toFixed(2)+' '+cfg.unit.replace('Mrd TL','Mrd').replace('Milyon ','M ')}}},scales:{y:{title:{display:true,text:cfg.unit},grid:gG},x:{grid:nG,ticks:{maxRotation:45,maxTicksLimit:12}}}}});
   });
-  if(grandTotal>0){mk('cTotStk',{type:'doughnut',data:{labels:['TL','USD (TL)','EUR (TL)','GBP (TL)'],datasets:[{data:['TL','USD','EUR','GBP'].map(c=>totals[c].tl/1e9),backgroundColor:['#e63946','#2ec4b6','#a78bfa','#38bdf8'],borderColor:'#1a2235',borderWidth:3}]},options:{responsive:true,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.raw.toFixed(2)+' Mrd TL'}}}}});
-    const matBk2=[{l:thisY+' İçinde',test:y=>y&&y<=thisY},{l:(thisY+1)+' ',test:y=>y===thisY+1},{l:(thisY+2)+' ',test:y=>y===thisY+2},{l:(thisY+3)+'+',test:y=>y&&y>thisY+2}];
-    mk('cTotStkM',{type:'bar',data:{labels:matBk2.map(b=>b.l),datasets:['TL','USD','EUR','GBP'].map(cur=>{const recs=S.stk.filter(r=>r.currency===cur);const cfg2=curCfg[cur];return{label:cur,data:matBk2.map(b=>recs.filter(r=>b.test(r.matYear)).reduce((s,r)=>s+((r.nominal||0)*cfg2.rate),0)/1e9),backgroundColor:cfg2.colorA,borderRadius:4}})},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{stacked:true,title:{display:true,text:'Milyar TL'},grid:gG},x:{stacked:true,grid:nG}}}});
+  if(grandTotal>0){
+    mk('cTotStk',{type:'doughnut',data:{labels:['TL','USD (TL)','EUR (TL)','GBP (TL)'],datasets:[{data:order.map(c=>totals[c].tl/1e9),backgroundColor:['#e63946','#2ec4b6','#a78bfa','#38bdf8'],borderColor:'#1a2235',borderWidth:3}]},options:{responsive:true,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.raw.toFixed(2)+' Mrd TL'}}}}});
+    const allKeys=[...new Set(S.stk.filter(r=>r.outstanding!=null).map(r=>r.key))].sort((a,b)=>a-b);
+    const lbl=allKeys.map(k=>Math.floor(k/100)+' '+String(k%100).padStart(2,'0'));
+    const ff=cur=>{const m={};S.stk.filter(r=>r.currency===cur&&r.outstanding!=null).forEach(r=>m[r.key]=r.outstanding);let last=0;return allKeys.map(k=>{if(m[k]!=null)last=m[k];return last})};
+    const series={};order.forEach(c=>series[c]=ff(c));
+    const totSeries=allKeys.map((k,i)=>order.reduce((s,c)=>s+series[c][i]*curCfg[c].rate,0)/1e9);
+    mk('cTotStkT',{type:'line',data:{labels:lbl,datasets:[{label:'Toplam (Mrd TL)',data:totSeries,borderColor:'#f4a261',backgroundColor:'rgba(244,162,97,.1)',fill:true,tension:.3,pointRadius:2}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Mrd TL'},grid:gG},x:{grid:nG,ticks:{maxRotation:45,maxTicksLimit:12}}}}});
   }
 }
 
@@ -515,8 +470,8 @@ function renderTables(){
   h='<table><thead><tr><th>ISIN</th><th>Döviz</th><th>Valör</th><th>İtfa</th><th>Vade</th><th>Kabul</th><th>TL Karşılığı</th><th>Ort. Faiz</th></tr></thead><tbody>';
   S.fx.forEach(r=>{h+=`<tr><td>${r.isin}</td><td>${tm[r.doviz]?`<span class="tag ${tm[r.doviz]}">${r.doviz}</span>`:r.doviz}</td><td>${r.valor}</td><td>${r.itfa}</td><td>${r.vade}</td><td>${fn(r.kabul)}</td><td>${fn(r.tlK)}</td><td>${r.ortF!=null?r.ortF:'—'}</td></tr>`});h+='</tbody></table>';document.getElementById('st-fx').innerHTML=h;
   const sc={TL:'tag-tl',USD:'tag-usd',EUR:'tag-eur',GBP:'tag-gbp'};const rateMap={TL:1,USD:S.rates.USD_TRY,EUR:S.rates.EUR_TRY,GBP:S.rates.GBP_TRY};
-  h='<table><thead><tr><th>ISIN</th><th>Para</th><th>Valör</th><th>İtfa</th><th>Nominal</th><th>Faiz</th><th>TL Karşılığı</th></tr></thead><tbody>';
-  S.stk.forEach(r=>{const tlEq=(r.nominal||0)*(rateMap[r.currency]||1);h+=`<tr><td>${r.isin}</td><td>${sc[r.currency]?`<span class="tag ${sc[r.currency]}">${r.currency}</span>`:r.currency}</td><td>${r.valor}</td><td>${r.itfa}</td><td>${fn(r.nominal)}</td><td>${r.faiz!=null?r.faiz:'—'}</td><td>${fn(tlEq)}</td></tr>`});h+='</tbody></table>';document.getElementById('st-stk').innerHTML=h;
+  h='<table><thead><tr><th>Para</th><th>Yıl</th><th>Ay</th><th>İhraç</th><th>Geri Ödeme</th><th>Ay Sonu Stok</th><th>TL Karşılığı</th></tr></thead><tbody>';
+  S.stk.forEach(r=>{const tlEq=(r.outstanding||0)*(rateMap[r.currency]||1);h+=`<tr><td>${sc[r.currency]?`<span class="tag ${sc[r.currency]}">${r.currency}</span>`:r.currency}</td><td>${r.year}</td><td>${r.month}</td><td>${fn(r.issued)}</td><td>${fn(r.repaid)}</td><td>${r.outstanding!=null?fn(r.outstanding):'—'}</td><td>${r.outstanding!=null?fn(tlEq):'—'}</td></tr>`});h+='</tbody></table>';document.getElementById('st-stk').innerHTML=h;
 }
 
 /* Sekmeler */
