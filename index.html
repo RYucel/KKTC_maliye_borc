@@ -3,853 +3,829 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KKTC Merkezi Hükümet Borç İlerlemesi — Canlı Veri Analizi</title>
+<title>KKTC Merkezi Hükümet Borç İlerlemesi</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <style>
-  :root {
-    --bg:#0a0f1a;--bg2:#111827;--card:#1a2235;--card-h:#1f2a40;--bdr:#2a3654;
-    --fg:#e8edf5;--muted:#8899b8;--accent:#e63946;--accent2:#f4a261;--accent3:#2ec4b6;
-    --accent4:#a78bfa;--accent5:#38bdf8;--green:#22c55e;--yellow:#eab308;--red:#ef4444;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
-  body::before{content:'';position:fixed;top:-30%;left:-20%;width:70vw;height:70vw;background:radial-gradient(circle,rgba(230,57,70,.06) 0%,transparent 65%);pointer-events:none;z-index:0}
-  body::after{content:'';position:fixed;bottom:-30%;right:-20%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(46,196,182,.05) 0%,transparent 65%);pointer-events:none;z-index:0}
+:root{
+  --bg:#0a0f1a;--bg2:#111827;--card:#1a2235;--card-h:#1f2a40;--bdr:#2a3654;
+  --fg:#e8edf5;--muted:#8899b8;--accent:#e63946;--accent2:#f4a261;
+  --accent3:#2ec4b6;--accent4:#a78bfa;--accent5:#38bdf8;
+  --green:#22c55e;--yellow:#eab308;--red:#ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:-30%;left:-20%;width:70vw;height:70vw;background:radial-gradient(circle,rgba(230,57,70,.06)0%,transparent 65%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;bottom:-30%;right:-20%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(46,196,182,.05)0%,transparent 65%);pointer-events:none;z-index:0}
 
-  header{position:relative;z-index:1;text-align:center;padding:2.5rem 1.5rem 1rem;border-bottom:1px solid var(--bdr);background:linear-gradient(180deg,rgba(26,34,53,.9) 0%,transparent 100%)}
-  header h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.4rem,3.5vw,2.4rem);letter-spacing:-.02em;background:linear-gradient(135deg,var(--fg) 40%,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-  header p{color:var(--muted);font-size:.9rem;margin-top:.4rem;font-weight:300}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 1.5rem 1rem;border-bottom:1px solid var(--bdr);background:linear-gradient(180deg,rgba(26,34,53,.9),transparent)}
+header h1{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(1.3rem,3.5vw,2.3rem);letter-spacing:-.02em;background:linear-gradient(135deg,var(--fg)40%,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+header p{color:var(--muted);font-size:.88rem;margin-top:.4rem;font-weight:300}
 
-  .status-bar{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;padding:.75rem 1rem;background:var(--bg2);border-bottom:1px solid var(--bdr);font-size:.8rem;position:relative;z-index:2}
-  .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:.35rem}
-  .status-dot.live{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
-  .status-dot.demo{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
-  .status-dot.error{background:var(--red);box-shadow:0 0 6px var(--red)}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.status-bar{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;padding:.65rem 1rem;background:var(--bg2);border-bottom:1px solid var(--bdr);font-size:.78rem;position:relative;z-index:2}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:.3rem}
+.status-dot.live{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+.status-dot.demo{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+.status-dot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.btn{padding:.35rem .8rem;border:1px solid var(--bdr);border-radius:6px;background:var(--card);color:var(--fg);font-size:.76rem;font-weight:600;cursor:pointer;transition:all .25s}
+.btn:hover{background:var(--card-h);border-color:var(--accent3)}
 
-  .btn{padding:.4rem .9rem;border:1px solid var(--bdr);border-radius:6px;background:var(--card);color:var(--fg);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .25s}
-  .btn:hover{background:var(--card-h);border-color:var(--accent3)}
+main{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:1.5rem}
 
-  main{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:1.5rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.9rem;margin-bottom:1.5rem}
+.kpi-card{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.05rem;transition:all .3s;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.kpi-card:nth-child(1)::before{background:var(--accent)}.kpi-card:nth-child(2)::before{background:var(--accent3)}
+.kpi-card:nth-child(3)::before{background:var(--accent2)}.kpi-card:nth-child(4)::before{background:var(--accent4)}
+.kpi-card:nth-child(5)::before{background:var(--accent5)}.kpi-card:nth-child(6)::before{background:var(--green)}
+.kpi-card:nth-child(7)::before{background:var(--yellow)}.kpi-card:nth-child(8)::before{background:var(--red)}
+.kpi-card:hover{background:var(--card-h);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.kpi-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.35rem}
+.kpi-value{font-size:1.25rem;font-weight:700;color:var(--fg);line-height:1.2}
+.kpi-sub{font-size:.72rem;color:var(--muted);margin-top:.2rem}
 
-  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-bottom:1.5rem}
-  .kpi-card{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.15rem;transition:all .3s;position:relative;overflow:hidden}
-  .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);border-radius:12px 12px 0 0}
-  .kpi-card:nth-child(2)::before{background:var(--accent3)}
-  .kpi-card:nth-child(3)::before{background:var(--accent2)}
-  .kpi-card:nth-child(4)::before{background:var(--accent4)}
-  .kpi-card:nth-child(5)::before{background:var(--accent5)}
-  .kpi-card:nth-child(6)::before{background:var(--green)}
-  .kpi-card:hover{background:var(--card-h);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
-  .kpi-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.4rem}
-  .kpi-value{font-size:1.35rem;font-weight:700;color:var(--fg);line-height:1.2}
-  .kpi-sub{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+.chart-section{margin-bottom:1.5rem}
+.chart-section h2{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem}
+.chart-section h2::before{content:'';width:4px;height:20px;background:var(--accent);border-radius:2px}
+.chart-row{display:grid;grid-template-columns:1fr;gap:1.1rem}
+@media(min-width:900px){.chart-row.c2{grid-template-columns:1fr 1fr}.chart-row.c3{grid-template-columns:1fr 1fr 1fr}}
+.chart-box{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.1rem}
+.chart-box h3{font-size:.82rem;font-weight:600;margin-bottom:.55rem}
+.chart-box canvas{width:100%!important;max-height:350px}
 
-  .chart-section{margin-bottom:1.5rem}
-  .chart-section h2{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
-  .chart-section h2::before{content:'';width:4px;height:22px;background:var(--accent);border-radius:2px}
-  .chart-row{display:grid;grid-template-columns:1fr;gap:1.25rem}
-  @media(min-width:900px){.chart-row.two-col{grid-template-columns:1fr 1fr}}
-  .chart-container{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.15rem}
-  .chart-container h3{font-size:.85rem;font-weight:600;margin-bottom:.65rem}
-  .chart-container canvas{width:100%!important;max-height:360px}
+.insight-box{background:linear-gradient(135deg,rgba(230,57,70,.08),rgba(244,162,97,.06));border:1px solid rgba(230,57,70,.2);border-radius:12px;padding:1.2rem;margin-bottom:1.5rem}
+.insight-box h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--accent2);margin-bottom:.6rem}
+.insight-box ul{list-style:none;padding:0}
+.insight-box li{position:relative;padding-left:1.1rem;margin-bottom:.35rem;font-size:.82rem;line-height:1.5;color:var(--fg)}
+.insight-box li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-weight:700}
 
-  .insight-box{background:linear-gradient(135deg,rgba(230,57,70,.08),rgba(244,162,97,.06));border:1px solid rgba(230,57,70,.2);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem}
-  .insight-box h3{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--accent2);margin-bottom:.65rem}
-  .insight-box ul{list-style:none;padding:0}
-  .insight-box li{position:relative;padding-left:1.15rem;margin-bottom:.4rem;font-size:.84rem;line-height:1.55;color:var(--fg)}
-  .insight-box li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-weight:700}
+.tab-bar{display:flex;gap:.4rem;margin-bottom:.9rem;flex-wrap:wrap}
+.tab-btn{padding:.4rem .8rem;background:var(--card);border:1px solid var(--bdr);border-radius:8px;color:var(--muted);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .25s}
+.tab-btn:hover{background:var(--card-h);color:var(--fg)}
+.tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab-pane{display:none}.tab-pane.active{display:block}
 
-  .tab-bar{display:flex;gap:.45rem;margin-bottom:1rem;flex-wrap:wrap}
-  .tab-btn{padding:.45rem .85rem;background:var(--card);border:1px solid var(--bdr);border-radius:8px;color:var(--muted);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .25s}
-  .tab-btn:hover{background:var(--card-h);color:var(--fg)}
-  .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .tab-content{display:none}.tab-content.active{display:block}
+.table-wrap{overflow-x:auto;margin-top:.7rem}
+table{width:100%;border-collapse:collapse;font-size:.72rem}
+table th{background:var(--bg2);color:var(--accent2);font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:.45rem .55rem;text-align:left;border-bottom:2px solid var(--bdr);white-space:nowrap}
+table td{padding:.35rem .55rem;border-bottom:1px solid var(--bdr);color:var(--fg);white-space:nowrap}
+table tr:hover td{background:rgba(255,255,255,.03)}
+.tag{display:inline-block;padding:.1rem .4rem;border-radius:4px;font-size:.66rem;font-weight:600}
+.tag-usd{background:rgba(46,196,182,.15);color:var(--accent3)}
+.tag-eur{background:rgba(167,139,250,.15);color:var(--accent4)}
+.tag-gbp{background:rgba(56,189,248,.15);color:var(--accent5)}
+.tag-tl{background:rgba(230,57,70,.15);color:var(--accent)}
 
-  .table-wrap{overflow-x:auto;margin-top:.75rem}
-  table{width:100%;border-collapse:collapse;font-size:.75rem}
-  table th{background:var(--bg2);color:var(--accent2);font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:.5rem .6rem;text-align:left;border-bottom:2px solid var(--bdr);white-space:nowrap}
-  table td{padding:.4rem .6rem;border-bottom:1px solid var(--bdr);color:var(--fg);white-space:nowrap}
-  table tr:hover td{background:rgba(255,255,255,.03)}
-  .tag{display:inline-block;padding:.12rem .45rem;border-radius:4px;font-size:.68rem;font-weight:600}
-  .tag-tl{background:rgba(230,57,70,.15);color:var(--accent)}
-  .tag-usd{background:rgba(46,196,182,.15);color:var(--accent3)}
-  .tag-eur{background:rgba(167,139,250,.15);color:var(--accent4)}
-  .tag-gbp{background:rgba(56,189,248,.15);color:var(--accent5)}
+.loading-overlay{position:fixed;inset:0;background:rgba(10,15,26,.92);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;transition:opacity .5s}
+.loading-overlay.hidden{opacity:0;pointer-events:none}
+.spinner{width:44px;height:44px;border:3px solid var(--bdr);border-top-color:var(--accent3);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  .loading-overlay{position:fixed;inset:0;background:rgba(10,15,26,.92);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;transition:opacity .5s}
-  .loading-overlay.hidden{opacity:0;pointer-events:none}
-  .spinner{width:48px;height:48px;border:3px solid var(--bdr);border-top-color:var(--accent3);border-radius:50%;animation:spin .8s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading-text{font-size:1rem;color:var(--muted);text-align:center}
-  .loading-sub{font-size:.8rem;color:var(--muted);opacity:.6;text-align:center;max-width:400px}
-
-  .fade-in{opacity:0;transform:translateY(18px);transition:opacity .5s ease,transform .5s ease}
-  .fade-in.visible{opacity:1;transform:translateY(0)}
-  footer{text-align:center;padding:1.5rem 1rem;border-top:1px solid var(--bdr);color:var(--muted);font-size:.75rem}
-
-  @media(max-width:600px){.kpi-grid{grid-template-columns:1fr 1fr}header h1{font-size:1.15rem}}
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
+.fade-in.vis{opacity:1;transform:translateY(0)}
+footer{text-align:center;padding:1.5rem 1rem;border-top:1px solid var(--bdr);color:var(--muted);font-size:.72rem}
+@media(max-width:600px){.kpi-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loadingOverlay">
+<div class="loading-overlay" id="loader">
   <div class="spinner"></div>
-  <div class="loading-text" id="loadingText">Veriler Yükleniyor...</div>
-  <div class="loading-sub" id="loadingSub">DİBS ihale ve stok verileri hazırlanıyor</div>
+  <div style="text-align:center">
+    <div style="font-size:.95rem;color:var(--muted)" id="loadMsg">Veriler yükleniyor...</div>
+    <div style="font-size:.78rem;color:var(--muted);opacity:.6;margin-top:.3rem" id="loadSub">data.json çekiliyor</div>
+  </div>
+  <button class="btn" onclick="useDemo()" style="margin-top:.5rem">Demo Veri ile Aç</button>
 </div>
 
 <header>
   <h1>KKTC Merkezi Hükümet Borç İlerlemesi</h1>
-  <p>TL ve Yabancı Para Cinsi DİBS İhale ve Güncel Stok Verileri</p>
+  <p>TL ve Yabancı Para DİBS İhale + Borç Stoku Verileri</p>
 </header>
 
 <div class="status-bar">
-  <span><span class="status-dot" id="statusDot"></span><span id="statusLabel">Bağlanıyor...</span></span>
-  <span id="statusTime">Son güncelleme: —</span>
-  <button class="btn" onclick="refreshData()">Verileri Yenile</button>
+  <span><span class="status-dot" id="sDot"></span><span id="sLabel">—</span></span>
+  <span id="sTL">TL İhale: —</span>
+  <span id="sFX">FX İhale: —</span>
+  <span id="sStk">Stok: —</span>
+  <span id="sTime">—</span>
+  <button class="btn" onclick="location.reload()">Yenile</button>
 </div>
 
 <main>
-  <div class="tab-bar fade-in" style="justify-content: center; margin-bottom: 2rem;">
-    <button class="tab-btn active" data-tab="stock" style="font-size: 1rem; padding: 0.6rem 1.2rem;">Borç Stoku (Güncel)</button>
-    <button class="tab-btn" data-tab="trends" style="font-size: 1rem; padding: 0.6rem 1.2rem;">Borçlanma Trendleri</button>
-    <button class="tab-btn" data-tab="rates" style="font-size: 1rem; padding: 0.6rem 1.2rem;">Faiz Analizi</button>
-    <button class="tab-btn" data-tab="maturity" style="font-size: 1rem; padding: 0.6rem 1.2rem;">Vade Yapısı</button>
-    <button class="tab-btn" data-tab="table" style="font-size: 1rem; padding: 0.6rem 1.2rem;">İhale Tablosu</button>
+  <div class="kpi-grid fade-in" id="kpis"></div>
+  <div class="insight-box fade-in" id="insights"></div>
+
+  <div class="tab-bar fade-in">
+    <button class="tab-btn active" data-t="trends">Borç Trendleri</button>
+    <button class="tab-btn" data-t="rates">Faiz Analizi</button>
+    <button class="tab-btn" data-t="currency">Döviz Dağılımı</button>
+    <button class="tab-btn" data-t="maturity">Vade Yapısı</button>
+    <button class="tab-btn" data-t="stock">Borç Stoku</button>
+    <button class="tab-btn" data-t="table">Veri Tablosu</button>
   </div>
 
-  <div class="tab-content active" id="tab-stock">
-    <div class="chart-section fade-in">
-      <h2>Mevcut Ödenmemiş Borç Stoku Özeti</h2>
-      <div class="kpi-grid" id="stockKpiGrid"></div>
-      
-      <div class="chart-row two-col" style="margin-top: 1.5rem;">
-        <div class="chart-container"><h3>Döviz Cinsine Göre Stok Dağılımı (Kayıt Adedi)</h3><canvas id="chartStockCount"></canvas></div>
-        <div class="chart-container"><h3>Stok Vade Profil (Gün)</h3><canvas id="chartStockMaturity"></canvas></div>
+  <!-- TREND -->
+  <div class="tab-pane active" id="p-trends">
+    <div class="chart-section fade-in"><h2>Yıllık Borçlanma Hacmi</h2>
+      <div class="chart-row c2">
+        <div class="chart-box"><h3>TL İhale (Mrd TL)</h3><canvas id="cTLY"></canvas></div>
+        <div class="chart-box"><h3>Döviz İhale — TL Karşılığı (Mrd TL)</h3><canvas id="cFXY"></canvas></div>
       </div>
     </div>
-    
+    <div class="chart-section fade-in"><h2>TL vs Döviz ve Kümülatif</h2>
+      <div class="chart-row c2">
+        <div class="chart-box"><h3>Yıllık Karşılaştırma (Yığınlı)</h3><canvas id="cCmp"></canvas></div>
+        <div class="chart-box"><h3>Kümülatif Toplam</h3><canvas id="cCum"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RATES -->
+  <div class="tab-pane" id="p-rates">
+    <div class="chart-section fade-in"><h2>Faiz Trendleri</h2>
+      <div class="chart-row c2">
+        <div class="chart-box"><h3>TL Bileşik Faiz (%)</h3><canvas id="cTLR"></canvas></div>
+        <div class="chart-box"><h3>USD Ortalama Faiz (%)</h3><canvas id="cFXR"></canvas></div>
+      </div>
+    </div>
     <div class="chart-section fade-in">
-      <h2>Güncel Borç Stoku Dökümü</h2>
+      <div class="chart-row"><div class="chart-box"><h3>Yıllık Ortalama TL vs Döviz Faizi</h3><canvas id="cRD"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- CURRENCY -->
+  <div class="tab-pane" id="p-currency">
+    <div class="chart-section fade-in"><h2>Döviz Cinsi Dağılımı</h2>
+      <div class="chart-row c2">
+        <div class="chart-box"><h3>İhale Sayısı</h3><canvas id="cCC"></canvas></div>
+        <div class="chart-box"><h3>TL Karşılığı Tutar</h3><canvas id="cCA"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-section fade-in">
+      <div class="chart-row"><div class="chart-box"><h3>Yıllara Göre Döviz Borçlanma (Yığınlı)</h3><canvas id="cFY"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- MATURITY -->
+  <div class="tab-pane" id="p-maturity">
+    <div class="chart-section fade-in"><h2>Vade Yapısı</h2>
+      <div class="chart-row c2">
+        <div class="chart-box"><h3>TL Vade Dağılımı</h3><canvas id="cTLM"></canvas></div>
+        <div class="chart-box"><h3>Döviz Vade Dağılımı</h3><canvas id="cFXM"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-section fade-in">
+      <div class="chart-row"><div class="chart-box"><h3>Yıllara Göre Ortalama Vade</h3><canvas id="cAM"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- STOCK -->
+  <div class="tab-pane" id="p-stock">
+    <div class="chart-section fade-in"><h2>Mevcut Borç Stoku</h2>
+      <div class="chart-row c2">
+        <div class="chart-box"><h3>Stok — Para Cinsi Dağılımı</h3><canvas id="cSP"></canvas></div>
+        <div class="chart-box"><h3>Stok — Vadeye Kalan Süre Profili</h3><canvas id="cSM"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-section fade-in"><h2>Stok Faiz Profili</h2>
+      <div class="chart-row c2">
+        <div class="chart-box"><h3>TL Stok Faiz Dağılımı</h3><canvas id="cSFR"></canvas></div>
+        <div class="chart-box"><h3>Döviz Stok Faiz Dağılımı</h3><canvas id="cSFXR"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-section fade-in">
+      <div class="chart-row"><div class="chart-box"><h3>İhale vs Stok Karşılaştırması</h3><canvas id="cSI"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="tab-pane" id="p-table">
+    <div class="chart-section fade-in"><h2>Detaylı Veriler</h2>
       <div class="tab-bar">
-        <button class="tab-btn active" data-subtab="stock-tl">TL Stok</button>
-        <button class="tab-btn" data-subtab="stock-usd">USD Stok</button>
-        <button class="tab-btn" data-subtab="stock-eur">EUR Stok</button>
-        <button class="tab-btn" data-subtab="stock-gbp">GBP Stok</button>
+        <button class="tab-btn active" data-st="st-tl">TL İhale</button>
+        <button class="tab-btn" data-st="st-fx">Döviz İhale</button>
+        <button class="tab-btn" data-st="st-stk">Borç Stoku</button>
       </div>
-      <div id="stock-tl" class="table-wrap"></div>
-      <div id="stock-usd" class="table-wrap" style="display:none"></div>
-      <div id="stock-eur" class="table-wrap" style="display:none"></div>
-      <div id="stock-gbp" class="table-wrap" style="display:none"></div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="tab-trends">
-    <div class="kpi-grid fade-in" id="kpiGrid"></div>
-    <div class="insight-box fade-in" id="mainInsights"></div>
-    <div class="chart-section fade-in">
-      <h2>İhale Bazlı Yıllık Borçlanma Hacmi</h2>
-      <div class="chart-row two-col">
-        <div class="chart-container"><h3>Yıllık Kabul Edilen TL Borçlanma (Milyar TL)</h3><canvas id="chartTLYearly"></canvas></div>
-        <div class="chart-container"><h3>Yıllık Kabul Edilen Döviz Borçlanma (Milyar TL Karşılığı)</h3><canvas id="chartFXYearly"></canvas></div>
-      </div>
-    </div>
-    <div class="chart-section fade-in">
-      <h2>Toplam Borçlanmada TL vs Döviz Payı</h2>
-      <div class="chart-row two-col">
-        <div class="chart-container"><h3>Yıllık TL / Döviz Borçlanma Karşılaştırması</h3><canvas id="chartTLvsFX"></canvas></div>
-        <div class="chart-container"><h3>Kümülatif Toplam Borçlanma</h3><canvas id="chartCumulative"></canvas></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="tab-rates">
-    <div class="chart-section fade-in">
-      <h2>Faiz Oranı Trendleri</h2>
-      <div class="chart-row two-col">
-        <div class="chart-container"><h3>TL DİBS Yıllık Bileşik Faiz Trendi (%)</h3><canvas id="chartTLRate"></canvas></div>
-        <div class="chart-container"><h3>Döviz DİBS Ortalama Faiz Trendi — USD Bazlı (%)</h3><canvas id="chartFXRate"></canvas></div>
-      </div>
-    </div>
-    <div class="chart-section fade-in">
-      <div class="chart-row"><div class="chart-container"><h3>TL vs Döviz Faiz Karşılaştırması (Yıllık Ortalama)</h3><canvas id="chartRateDiff"></canvas></div></div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="tab-maturity">
-    <div class="chart-section fade-in">
-      <h2>Vade Yapısı Analizi</h2>
-      <div class="chart-row two-col">
-        <div class="chart-container"><h3>TL DİBS Vade Dağılımı (Gün)</h3><canvas id="chartTLMaturity"></canvas></div>
-        <div class="chart-container"><h3>Döviz DİBS Vade Dağılımı (Gün)</h3><canvas id="chartFXMaturity"></canvas></div>
-      </div>
-    </div>
-    <div class="chart-section fade-in">
-      <div class="chart-row"><div class="chart-container"><h3>Yıllara Göre Ortalama Vade (Gün)</h3><canvas id="chartAvgMaturity"></canvas></div></div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="tab-table">
-    <div class="chart-section fade-in">
-      <h2>Tarihsel İhale Verileri</h2>
-      <div class="tab-bar">
-        <button class="tab-btn active" data-subtab="tl-table">TL İhaleleri</button>
-        <button class="tab-btn" data-subtab="fx-table">Döviz İhaleleri</button>
-      </div>
-      <div id="tl-table" class="table-wrap"></div>
-      <div id="fx-table" class="table-wrap" style="display:none"></div>
+      <div id="st-tl" class="table-wrap"></div>
+      <div id="st-fx" class="table-wrap" style="display:none"></div>
+      <div id="st-stk" class="table-wrap" style="display:none"></div>
     </div>
   </div>
 </main>
 
-<footer>Kaynak: KKTC Merkez Bankası DİBS Verileri · Otomatik Veri Güncelleme</footer>
+<footer>Kaynak: KKTC Merkez Bankası · Veriler otomatik çekilmektedir · Son güncelleme: <span id="footTime">—</span></footer>
 
 <script>
-// ============================================================
-// GLOBAL DURUM
-// ============================================================
-let state = {
-  tlRecords: [], fxRecords: [],
-  stockTL: [], stockUSD: [], stockEUR: [], stockGBP: [],
-  source: 'none', 
-  charts: {}
-};
+/* ==========================================================
+   GLOBAL DURUM
+   ========================================================== */
+const S = { tl:[], fx:[], stk:[], src:'none', charts:{} };
 
-// ============================================================
-// VERİ İŞLEME FONKSİYONLARI
-// ============================================================
-
-function parseNum(str) {
-  if (str == null) return null;
-  str = String(str).trim();
-  if (str === '' || str === '—' || str === '-') return null;
-  if (/TLREF/i.test(str)) return null;
-  
-  let c = str.replace(/\s/g, ''); 
-  const commas = (c.match(/,/g) || []).length;
-  const dots = (c.match(/\./g) || []).length;
-
-  if (commas > 0 && dots > 0) {
-      if (c.lastIndexOf(',') > c.lastIndexOf('.')) c = c.replace(/\./g, '').replace(',', '.');
-      else c = c.replace(/,/g, '');
-  } else if (commas > 0) {
-      const lastPart = c.split(',').pop();
-      if (lastPart.length === 3 && commas >= 1) c = c.replace(/,/g, ''); 
-      else c = c.replace(',', '.');
-  } else if (dots > 0) {
-      const lastPart = c.split('.').pop();
-      if (lastPart.length === 3 && dots >= 1) c = c.replace(/\./g, ''); 
-  }
-  const num = parseFloat(c);
-  return isNaN(num) ? null : num;
+/* ==========================================================
+   SAYI / TARİH AYRIŞTIRMA
+   ========================================================== */
+function pn(s){
+  if(s==null)return null;
+  s=String(s).trim();
+  if(!s||s==='—'||s==='-')return null;
+  if(/TLREF/i.test(s))return null;
+  let c=s.replace(/\s/g,'');
+  if(c.includes(',')){c=c.replace(/\./g,'').replace(',','.')}
+  else{const p=c.split('.');if(p.length>2)c=c.replace(/\./g,'');else if(p.length===2&&p[1].length===3&&p[0].length>0){const b=+p[0];if(!(b>=0&&b<=100&&p[1].length<=2))c=c.replace(/\./g,'')}}
+  const n=parseFloat(c);return isNaN(n)?null:n;
 }
-
-function parseYear(dateStr) {
-  if (!dateStr) return null;
-  const s = String(dateStr).trim();
-  const parts = s.split(/[\/.\-]/);
-  if (parts.length === 3) {
-    let y = parseInt(parts[2]);
-    if (y < 100) y += 2000;
-    if (y > 1990 && y < 2100) return y;
-    y = parseInt(parts[0]);
-    if (y > 1990 && y < 2100) return y;
-  }
+function py(d){
+  if(!d)return null;const s=String(d).trim(),p=s.split(/[\/.\-]/);
+  if(p.length===3){let y=+p[2];if(y<100)y+=2000;if(y>1990&&y<2100)return y;y=+p[0];if(y>1990&&y<2100)return y}
   return null;
 }
+function fn(n,d=0){return n==null?'—':n.toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function fb(n){return fn(n/1e9,2)}
+function fm(n){return fn(n/1e6,1)}
 
-// İHALE VERİLERİ (Tarihsel)
-function processTLData(rawRows) {
-  return rawRows.map(row => {
-    const len = row.length;
-    const isin = (row[0] || '').replace(/\s+\d+$/, '').trim();
-    if (!/^[A-Z]{3}\d/.test(isin)) return null; 
-
-    const valor = row[1] || '';
-    const itfa = row[2] || '';
-    const vade = parseInt(String(row[3] || '0').replace(/[^\d]/g, '')) || 0;
-
-    let offset = (row[4] && String(row[4]).toLowerCase().includes('gün')) ? 1 : 0;
-
-    const teklif = parseNum(row[4 + offset]);
-    const kabul = parseNum(row[5 + offset]);
-    const minFaiz = parseNum(row[6 + offset]);
-    const maxFaiz = parseNum(row[7 + offset]);
-    const ortFaiz = len > (8 + offset) ? parseNum(row[8 + offset]) : null;
-    const bilesik = len > (9 + offset) ? parseNum(row[9 + offset]) : null;
-
-    if (kabul === null || kabul <= 0) return null;
-
-    return { isin, valor, itfa, vade, teklif, kabul, minFaiz, maxFaiz, ortFaiz, bilesik, year: parseYear(valor), type: 'TL' };
+/* ==========================================================
+   İHALE VERİ İŞLEME
+   ========================================================== */
+function procTL(rows){
+  return rows.map(r=>{
+    if(!r||r.length<6)return null;
+    const isin=(r[0]||'').trim();
+    if(!/^[A-Z]{3}\d/i.test(isin))return null;
+    let off=0;if(r.length>=11&&/gün/i.test(String(r[3])))off=1;
+    const valor=r[1]||'',itfa=r[2]||'';
+    const vade=parseInt(String(r[3+off]||'0').replace(/[^\d]/g,''))||0;
+    const teklif=pn(r[4+off]),kabul=pn(r[5+off]);
+    if(kabul===null||kabul<=0)return null;
+    return{isin,valor,itfa,vade,teklif,kabul,
+      minF:pn(r[6+off]),maxF:pn(r[7+off]),
+      ortF:r.length>(8+off)?pn(r[8+off]):null,
+      bil:r.length>(9+off)?pn(r[9+off]):null,
+      year:py(valor),type:'TL'};
   }).filter(Boolean);
 }
 
-function processFXData(rawRows) {
-  return rawRows.map(row => {
-    const len = row.length;
-    const isin = (row[0] || '').replace(/\s+\d+$/, '').trim();
-    if (!/^[A-Z]{3}\d/.test(isin)) return null;
-
-    const doviz = (row[1] || '').trim();
-    const valor = row[2] || '';
-    const itfa = row[3] || '';
-    const vade = parseInt(String(row[4] || '0').replace(/[^\d]/g, '')) || 0;
-
-    let offset = (row[5] && String(row[5]).toLowerCase().includes('gün')) ? 1 : 0;
-
-    const teklif = parseNum(row[5 + offset]);
-    const kabul = parseNum(row[6 + offset]);
-    const tlKarsilik = parseNum(row[7 + offset]);
-    const minFaiz = parseNum(row[8 + offset]);
-    const maxFaiz = len > (9 + offset) ? parseNum(row[9 + offset]) : null;
-    const ortFaiz = len > (10 + offset) ? parseNum(row[10 + offset]) : null;
-    const bilesik = len > (11 + offset) ? parseNum(row[11 + offset]) : null;
-
-    if (kabul === null || kabul <= 0) return null;
-
-    return { isin, doviz, valor, itfa, vade, teklif, kabul, tlKarsilik, minFaiz, maxFaiz, ortFaiz, bilesik, year: parseYear(valor), type: 'FX' };
+function procFX(rows){
+  return rows.map(r=>{
+    if(!r||r.length<7)return null;
+    const isin=(r[0]||'').trim();
+    if(!/^[A-Z]{3}\d/i.test(isin))return null;
+    const doviz=(r[1]||'').trim();
+    let off=0;if(r.length>=13&&/gün/i.test(String(r[4])))off=1;
+    const valor=r[2]||'',itfa=r[3]||'';
+    const vade=parseInt(String(r[4+off]||'0').replace(/[^\d]/g,''))||0;
+    const teklif=pn(r[5+off]),kabul=pn(r[6+off]),tlK=pn(r[7+off]);
+    if(kabul===null||kabul<=0)return null;
+    return{isin,doviz,valor,itfa,vade,teklif,kabul,tlK,
+      minF:r.length>(8+off)?pn(r[8+off]):null,
+      maxF:r.length>(9+off)?pn(r[9+off]):null,
+      ortF:r.length>(10+off)?pn(r[10+off]):null,
+      bil:r.length>(11+off)?pn(r[11+off]):null,
+      year:py(valor),type:'FX'};
   }).filter(Boolean);
 }
 
-// STOK VERİLERİ (Güncel) - Sezgisel Ayrıştırma
-function processStockData(rawRows, currency) {
-  if (!rawRows) return [];
-  return rawRows.map(row => {
-    const isin = (row[0] || '').replace(/\s+\d+$/, '').trim();
-    if (!/^[A-Z]{3}\d/.test(isin)) return null; // ISIN kontrolü
-
-    const valor = row[1] || '';
-    const itfa = row[2] || '';
-    
-    // Stok tablolarının sütun yapısı farklılık gösterebilir. 
-    // Miktarı ve vadeyi bulmak için satırdaki sayısal değerleri tarıyoruz.
-    let amount = 0;
-    let vade = 0;
-    
-    for (let i = 3; i < row.length; i++) {
-       const val = parseNum(row[i]);
-       if (val !== null) {
-          // Eğer 10.000'den küçükse büyük ihtimalle "Kalan Gün" veya faiz oranıdır
-          if (val < 10000 && vade === 0) vade = val; 
-          // Eğer 50.000'den büyükse ihraç tutarı veya kalan tutardır
-          else if (val > 50000 && amount === 0) amount = val; 
-       }
+/* ==========================================================
+   STOK VERİ İŞLEME
+   Stok tabloları esnek sütun yapısına sahip olabilir.
+   ISIN kodu bulunarak diğer sütunlar konumsal ayrıştırılır.
+   ========================================================== */
+function procStock(rows,cur){
+  return rows.map(r=>{
+    if(!r||r.length<4)return null;
+    // ISIN kodunu bul
+    let isi=-1;
+    for(let i=0;i<r.length;i++){if(/^[A-Z]{3}\d/i.test((r[i]||'').trim())){isi=i;break}}
+    if(isi<0)return null;
+    const isin=(r[isi]||'').trim();
+    const valor=r[isi+1]||'';
+    const itfa=r[isi+2]||'';
+    // Nominal tutar: büyük sayı olan ilk hücre
+    let nominal=0,faiz=null;
+    for(let i=isi+3;i<r.length;i++){
+      const v=pn(r[i]);
+      if(v!==null){
+        if(nominal===0&&v>1000)nominal=v; // Büyük sayı = nominal
+        else if(v>=0&&v<=100&&faiz===null)faiz=v; // Küçük sayı = faiz
+      }
     }
-
-    if (amount === 0) return null; // Tutar bulunamadıysa atla
-
-    return { isin, valor, itfa, vade, amount, currency };
+    return{isin,valor,itfa,nominal,faiz,currency:cur,
+      year:py(valor),matYear:py(itfa)};
   }).filter(Boolean);
 }
 
+/* ==========================================================
+   YILLIK ÖZET
+   ========================================================== */
+function ylTL(recs){
+  const m={};recs.forEach(r=>{const y=r.year;if(!y)return;
+    if(!m[y])m[y]={off:0,acc:0,rates:[],n:0};
+    m[y].off+=r.teklif||0;m[y].acc+=r.kabul||0;m[y].n++;
+    if(r.bil!=null)m[y].rates.push(r.bil);
+  });return m;
+}
+function ylFX(recs){
+  const m={};recs.forEach(r=>{const y=r.year;if(!y)return;
+    if(!m[y])m[y]={off:0,accTL:0,rates:[],n:0,byC:{}};
+    m[y].off+=r.teklif||0;m[y].accTL+=r.tlK||0;m[y].n++;
+    if(r.ortF!=null)m[y].rates.push(r.ortF);
+    const c=r.doviz;if(!m[y].byC[c])m[y].byC[c]={accTL:0,n:0};
+    m[y].byC[c].accTL+=r.tlK||0;m[y].byC[c].n++;
+  });return m;
+}
 
-// ============================================================
-// VERİ ÇEKME (GITHUB ACTIONS JSON)
-// ============================================================
+/* ==========================================================
+   DEMO VERİ (data.json yoksa yedek)
+   ========================================================== */
+const DEMO={
+  last_updated:"2025-01-15 12:00:00",
+  tlRaw:[
+    ["KKB250913T11","27/03/2013","25/09/2013",182,145000000,31250000,7.50,7.50,7.50,7.64],
+    ["KKB100616T18","26/04/2016","10/06/2016",45,60000000,60000000,9.90,9.90,9.90,10.34],
+    ["KKB290716T16","14/06/2016","29/07/2016",45,40000000,40000000,9.90,9.90,9.90,10.34],
+    ["KKB190117T13","20/12/2016","19/01/2017",30,80000000,80000000,10.00,10.00,10.00,10.47],
+    ["KKB310717T11","29/06/2017","31/07/2017",32,77000000,50000000,10.50,10.50,10.50,11.02],
+    ["KKB050620T19","27/02/2020","05/06/2020",99,118000000,40000000,10.00,11.20,10.49,10.90],
+    ["KKB041220T12","29/05/2020","04/12/2020",189,134000000,71000000,8.99,10.50,9.74,9.97],
+    ["KKB050121T13","29/06/2020","05/01/2021",190,125000000,88000000,9.25,10.37,9.67,9.89],
+    ["KKB050521T19","28/10/2020","05/05/2021",189,53000000,31000000,15.25,17.00,16.46,17.11],
+    ["KKB100621T11","27/11/2020","10/06/2021",195,99500000,46500000,16.75,19.50,18.54,19.34],
+    ["KKB060421T19","31/12/2020","06/04/2021",96,95000000,57500000,18.80,20.50,20.02,21.54],
+    ["KKB050521T27","24/02/2021","05/05/2021",70,6583925,6583925,18.00,18.00,18.00,19.36],
+    ["KKB040621T19","25/02/2021","04/06/2021",99,97000000,59500000,18.00,19.00,18.64,19.94],
+    ["KKB070921T13","28/05/2021","07/09/2021",102,160175812,132963045,19.00,21.00,20.50,22.06],
+    ["KKB101221T13","07/09/2021","10/12/2021",94,146000000,93000000,19.25,21.00,20.41,22.01],
+    ["KKB070122T10","29/09/2021","07/01/2022",100,126500000,115000000,19.00,20.40,19.68,21.13],
+    ["KKB050422T19","29/09/2021","05/04/2022",188,15000000,15000000,19.00,20.50,19.53,20.46],
+    ["KKB040222T12","27/10/2021","04/02/2022",100,54000000,30000000,17.50,18.10,17.95,19.15],
+    ["KKB060422T18","29/12/2021","06/04/2022",98,130300000,90800000,18.00,20.00,19.10,20.48],
+    ["KKB150622T15","25/02/2022","15/06/2022",110,74000000,70000000,19.50,25.00,21.94,23.67],
+    ["KKB130522T18","03/03/2022","13/05/2022",71,30000000,30000000,22.05,25.00,23.85,26.26],
+    ["KKB080722T13","30/03/2022","08/07/2022",100,35000000,35000000,23.90,25.99,24.86,27.19],
+    ["KKB140722T15","06/04/2022","14/07/2022",99,74150000,74150000,24.25,25.50,25.04,27.41],
+    ["KKB050822T15","27/04/2022","05/08/2022",100,31000000,26000000,25.00,25.95,25.80,28.31],
+    ["KKB071022T19","28/06/2022","07/10/2022",101,263912751,219412751,25.50,28.00,26.61,29.27],
+    ["KKB011122T14","02/08/2022","01/11/2022",91,10600000,10600000,25.00,25.00,25.00,27.45],
+    ["KKB241022T18","24/08/2022","24/10/2022",61,50000000,50000000,26.00,26.00,26.00,28.98],
+    ["KKB081024T16","27/06/2024","08/10/2024",103,955000000,880000000,49.98,53.50,50.68,60.60],
+    ["KKB240125T16","31/10/2024","24/01/2025",85,790000000,335000000,48.00,50.00,49.30,59.48],
+    ["KKB240125T40","23/12/2024","24/01/2025",32,18503962,18503962,48.45,48.45,48.45,60.72],
+    ["KKB180425T11","28/02/2025","18/04/2025",49,2300000000,970000000,41.25,44.02,43.49,52.60],
+    ["KKB130625T14","30/04/2025","13/06/2025",44,1716000000,916000000,45.00,47.50,46.75,57.59],
+    ["KKB120925T12","28/05/2025","12/09/2025",107,2975000000,2375000000,46.00,49.50,47.81,56.43],
+    ["KKB140825T29","30/06/2025","14/08/2025",45,2450000000,995000000,45.68,47.25,46.27,56.83],
+    ["KKB071125T31","25/09/2025","07/11/2025",43,3260000000,2185000000,38.85,42.00,39.89,47.67],
+    ["KKB121225T41","31/10/2025","12/12/2025",42,2540000000,1095000000,39.50,40.89,40.22,48.17],
+    ["KKB261225T11","07/11/2025","26/12/2025",49,2745000000,2745000000,38.49,40.90,39.91,47.52],
+    ["KKB090126T48","28/11/2025","09/01/2026",42,1945000000,1085000000,39.00,40.50,40.02,47.88],
+    ["KKB260226T46","26/12/2025","26/02/2026",62,5890000000,3135000000,37.75,39.55,38.97,45.84],
+    ["KKB240426T12","26/02/2026","24/04/2026",57,7125000000,4710000000,35.00,36.00,35.47,41.23],
+    ["KKB050626T39","31/03/2026","05/06/2026",66,4190000000,3190000000,36.50,40.40,39.01,45.78],
+    ["KKB170726T59","24/04/2026","17/07/2026",84,7180000000,6380000000,38.00,42.06,40.68,47.53],
+    ["KKB280826T48","22/05/2026","28/08/2026",98,4040000000,3765000000,40.35,42.15,41.03,47.58],
+    ["KKB040926T11","05/06/2026","04/09/2026",91,4730000000,3470000000,40.99,42.20,41.80,48.83]
+  ],
+  fxRaw:[
+    ["KKB081222F12","ABD DOLARI","26.08.2022","8.12.2022",104,10690000,7690000,139547354,3.00,4.50,3.68,3.73],
+    ["KKB130123F17","ABD DOLARI","31.10.2022","13.01.2023",74,23500000,13250000,246291000,3.74,4.50,4.21,4.28],
+    ["KKB170223F12","AVRO","31.10.2022","17.02.2023",109,22100000,7000000,130785900,2.49,3.65,3.18,3.21],
+    ["KKB100323F18","ABD DOLARI","28.11.2022","10.03.2023",102,18850000,12000000,223285200,3.50,4.28,3.85,3.90],
+    ["KKB170323F11","AVRO","28.11.2022","17.03.2023",109,19250000,8000000,154936000,2.40,3.15,2.92,2.95],
+    ["KKB090623F18","ABD DOLARI","28.02.2023","9.06.2023",101,16000000,10104488,190602978,3.50,4.00,3.77,3.82],
+    ["KKB140723F10","ABD DOLARI","31.03.2023","14.07.2023",105,17280000,17280000,330842880,3.74,4.00,3.88,3.93],
+    ["KKB180823F15","AVRO","30.03.2023","18.08.2023",141,12500000,10500000,217561050,2.75,3.13,2.95,2.98],
+    ["KKB040823F37","ABD DOLARI","28.04.2023","4.08.2023",98,19200000,18200000,353267460,3.85,4.50,4.07,4.13],
+    ["KKB131023F16","ABD DOLARI","19.06.2023","13.10.2023",116,8900000,8900000,210385320,4.50,6.00,5.36,5.46],
+    ["KKB201023F17","ABD DOLARI","19.07.2023","20.10.2023",93,16600000,16600000,445265120,5.24,5.50,5.45,5.56],
+    ["KKB260424F18","ABD DOLARI","24.01.2024","26.04.2024",93,4040767,4040767,122105921,4.00,4.00,4.00,4.06],
+    ["KKB151024F13","ABD DOLARI","27.06.2024","15.10.2024",110,26700000,26700000,878536800,4.00,5.00,4.53,4.60],
+    ["KKB100125F18","ABD DOLARI","15.10.2024","10.01.2025",87,25000000,25000000,855085000,4.00,5.00,4.52,4.60],
+    ["KKB070225F12","ABD DOLARI","31.10.2024","7.02.2025",99,15600000,15100000,516563450,4.00,4.95,4.54,4.62],
+    ["KKB160525F26","ABD DOLARI","11.02.2025","16.05.2025",94,21500000,16250000,584107875,3.50,4.50,4.02,4.08],
+    ["KKB040625F11","ABD DOLARI","28.02.2025","4.06.2025",96,25100000,21100000,767305720,3.75,4.50,4.19,4.26],
+    ["KKB110725F11","ABD DOLARI","28.03.2025","11.07.2025",105,15800000,14800000,561398040,3.75,4.49,3.96,4.02],
+    ["KKB110725F29","İNGİLİZ STERLİNİ","28.03.2025","11.07.2025",105,16750000,16750000,819708150,3.25,4.00,3.73,3.78],
+    ["KKB210825F18","AVRO","28.04.2025","21.08.2025",115,15500000,14000000,607784800,2.74,3.50,3.05,3.08],
+    ["KKB140825F17","İNGİLİZ STERLİNİ","28.04.2025","14.08.2025",108,9750000,9750000,495306825,3.60,3.99,3.81,3.86],
+    ["KKB121225F13","ABD DOLARI","26.08.2025","12.12.2025",108,13219000,13219000,540928090,4.00,4.50,4.11,4.17],
+    ["KKB121225F21","AVRO","26.08.2025","12.12.2025",108,20500000,14500000,694220850,3.49,3.75,3.65,3.70],
+    ["KKB121225F39","İNGİLİZ STERLİNİ","26.08.2025","12.12.2025",108,22010000,20900000,1153075990,3.95,4.50,4.29,4.36],
+    ["KKB090126F10","ABD DOLARI","19.09.2025","9.01.2026",112,22200000,21700000,894929700,4.00,4.50,4.21,4.27],
+    ["KKB090126F28","AVRO","19.09.2025","9.01.2026",112,17250000,17250000,841292850,3.50,3.75,3.63,3.68],
+    ["KKB090126F36","İNGİLİZ STERLİNİ","19.09.2025","9.01.2026",112,24400000,21400000,1200953020,4.00,4.50,4.35,4.42],
+    ["KKB260226F18","ABD DOLARI","28.10.2025","26.02.2026",121,7100000,7100000,297276290,4.00,4.45,4.09,4.15],
+    ["KKB260226F34","İNGİLİZ STERLİNİ","28.10.2025","26.02.2026",121,4100000,4100000,228510630,4.25,4.49,4.38,4.44],
+    ["KKB090426F17","ABD DOLARI","12.12.2025","9.04.2026",118,8600000,8600000,365794980,4.00,4.35,4.05,4.11],
+    ["KKB090426F33","İNGİLİZ STERLİNİ","12.12.2025","9.04.2026",118,19000000,17000000,965380700,4.00,4.49,4.44,4.51],
+    ["KKB080526F17","ABD DOLARI","9.01.2026","8.05.2026",119,23400000,22150000,951889605,4.00,4.25,4.06,4.12],
+    ["KKB080526F33","İNGİLİZ STERLİNİ","9.01.2026","8.05.2026",119,44050000,40150000,2316016615,3.91,4.25,4.04,4.10],
+    ["KKB170726F14","ABD DOLARI","9.04.2026","17.07.2026",99,6550000,6550000,291165185,3.75,4.14,3.84,3.89],
+    ["KKB170726F22","AVRO","9.04.2026","17.07.2026",99,17600000,13600000,706762080,2.29,3.50,3.13,3.17],
+    ["KKB170726F30","İNGİLİZ STERLİNİ","9.04.2026","17.07.2026",99,18300000,18300000,1091110050,3.95,4.65,4.26,4.33],
+    ["KKB180926F11","ABD DOLARI","8.05.2026","18.09.2026",133,19450000,19450000,878295870,3.75,4.24,4.00,4.05],
+    ["KKB180926F37","İNGİLİZ STERLİNİ","8.05.2026","18.09.2026",133,35800000,35800000,2197557940,4.39,4.70,4.54,4.61]
+  ],
+  tlStockRaw:[
+    ["KKB180425T11","28/02/2025","18/04/2025",970000000,43.49],
+    ["KKB130625T14","30/04/2025","13/06/2025",916000000,46.75],
+    ["KKB120925T12","28/05/2025","12/09/2025",2375000000,47.81],
+    ["KKB140825T29","30/06/2025","14/08/2025",995000000,46.27],
+    ["KKB071125T31","25/09/2025","07/11/2025",2185000000,39.89],
+    ["KKB121225T41","31/10/2025","12/12/2025",1095000000,40.22],
+    ["KKB261225T11","07/11/2025","26/12/2025",2745000000,39.91],
+    ["KKB090126T48","28/11/2025","09/01/2026",1085000000,40.02],
+    ["KKB260226T46","26/12/2025","26/02/2026",3135000000,38.97],
+    ["KKB240426T12","26/02/2026","24/04/2026",4710000000,35.47],
+    ["KKB050626T39","31/03/2026","05/06/2026",3190000000,39.01],
+    ["KKB170726T59","24/04/2026","17/07/2026",6380000000,40.68],
+    ["KKB280826T48","22/05/2026","28/08/2026",3765000000,41.03],
+    ["KKB040926T11","05/06/2026","04/09/2026",3470000000,41.80]
+  ],
+  usdStockRaw:[
+    ["KKB070225F12","31/10/2024","7/02/2025",15100000,4.54],
+    ["KKB160525F26","11/02/2025","16/05/2025",16250000,4.02],
+    ["KKB040625F11","28/02/2025","4/06/2025",21100000,4.19],
+    ["KKB110725F11","28/03/2025","11/07/2025",14800000,3.96],
+    ["KKB121225F13","26/08/2025","12/12/2025",13219000,4.11],
+    ["KKB090126F10","19/09/2025","9/01/2026",21700000,4.21],
+    ["KKB260226F18","28/10/2025","26/02/2026",7100000,4.09],
+    ["KKB090426F17","12/12/2025","9/04/2026",8600000,4.05],
+    ["KKB080526F17","9/01/2026","8/05/2026",22150000,4.06],
+    ["KKB170726F14","9/04/2026","17/07/2026",6550000,3.84],
+    ["KKB180926F11","8/05/2026","18/09/2026",19450000,4.00]
+  ],
+  eurStockRaw:[
+    ["KKB210825F18","28/04/2025","21/08/2025",14000000,3.05],
+    ["KKB121225F21","26/08/2025","12/12/2025",14500000,3.65],
+    ["KKB090126F28","19/09/2025","9/01/2026",17250000,3.63],
+    ["KKB090426F25","12/12/2025","9/04/2026",16000000,3.75],
+    ["KKB080526F25","9/01/2026","8/05/2026",17300000,3.48],
+    ["KKB170726F22","9/04/2026","17/07/2026",13600000,3.13]
+  ],
+  gbpStockRaw:[
+    ["KKB110725F29","28/03/2025","11/07/2025",16750000,3.73],
+    ["KKB140825F17","28/04/2025","14/08/2025",9750000,3.81],
+    ["KKB121225F39","26/08/2025","12/12/2025",20900000,4.29],
+    ["KKB090126F36","19/09/2025","9/01/2026",21400000,4.35],
+    ["KKB260226F34","28/10/2025","26/02/2026",4100000,4.38],
+    ["KKB090426F33","12/12/2025","9/04/2026",17000000,4.44],
+    ["KKB080526F33","9/01/2026","8/05/2026",40150000,4.04],
+    ["KKB170726F30","9/04/2026","17/07/2026",18300000,4.26],
+    ["KKB180926F37","8/05/2026","18/09/2026",35800000,4.54]
+  ]
+};
 
-async function fetchAndProcess() {
-  const loadingSub = document.getElementById('loadingSub');
-  if(loadingSub) loadingSub.textContent = 'Güncel veriler yükleniyor...';
+/* ==========================================================
+   VERİ YÜKLEME
+   ========================================================== */
+async function loadData(){
+  // 1. Aynı kökenden data.json yükle (GitHub Pages — CORS sorunu yok)
+  try{
+    const r=await fetch('./data.json');
+    if(r.ok){
+      const d=await r.json();
+      return{src:'live',data:d};
+    }
+  }catch(e){console.warn('data.json yüklenemedi:',e)}
 
-  try {
-    const url = 'data.json?v=' + new Date().getTime();
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error('data.json dosyası henüz oluşturulmamış.');
-    
-    const data = await resp.json();
-    
-    // İhale Verileri
-    state.tlRecords = data.tlRaw ? processTLData(data.tlRaw) : [];
-    state.fxRecords = data.fxRaw ? processFXData(data.fxRaw) : [];
-    
-    // Stok Verileri
-    state.stockTL = processStockData(data.tlStockRaw, 'TL');
-    state.stockUSD = processStockData(data.usdStockRaw, 'USD');
-    state.stockEUR = processStockData(data.eurStockRaw, 'EUR');
-    state.stockGBP = processStockData(data.gbpStockRaw, 'GBP');
+  // 2. CORS proxy üzerinden deneme
+  const proxies=[
+    u=>`https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+    u=>`https://corsproxy.io/?${encodeURIComponent(u)}`
+  ];
+  for(const pfn of proxies){
+    try{
+      document.getElementById('loadSub').textContent='Proxy üzerinden deneniyor...';
+      const r=await fetch(pfn('https://mb.gov.ct.tr/tr/dibs-ihaleleri'),{signal:AbortSignal.timeout(12000)});
+      if(!r.ok)continue;
+      const ct=r.headers.get('content-type')||'';
+      let html;
+      if(ct.includes('json')){const j=await r.json();html=j.contents||j.data}
+      else{const t=await r.text();try{const j=JSON.parse(t);html=j.contents||j.data}catch(e){html=t}}
+      if(!html)continue;
+      // Sadece TL sayfası çekilebiliyor — demo ile birleştir
+      console.log('Proxy ile HTML alındı, tablo ayrıştırılıyor...');
+      // Bu noktada tam ayrıştırma karmaşık — demo veriye düş
+      break;
+    }catch(e){console.warn('Proxy başarısız:',e)}
+  }
 
-    state.source = 'live';
-    const timeStr = data.last_updated || new Date().toLocaleString('tr-TR');
-    document.getElementById('statusTime').textContent = 'Son güncelleme: ' + timeStr;
-    
-    updateStatus();
-    renderDashboard();
-    hideLoading();
-  } catch(e) {
-    console.error('Veri çekme hatası:', e);
-    showLoading('Bağlantı Hatası', 'Veriler okunamadı. Otomasyon henüz tamamlanmamış olabilir.');
+  // 3. Demo veri
+  return{src:'demo',data:DEMO};
+}
+
+function useDemo(){
+  S.tl=procTL(DEMO.tlRaw);S.fx=procFX(DEMO.fxRaw);
+  S.stk=[
+    ...procStock(DEMO.tlStockRaw,'TL'),
+    ...procStock(DEMO.usdStockRaw,'USD'),
+    ...procStock(DEMO.eurStockRaw,'EUR'),
+    ...procStock(DEMO.gbpStockRaw,'GBP')
+  ];
+  S.src='demo';updateStatus();render();hideLoader();
+}
+
+function hideLoader(){document.getElementById('loader').classList.add('hidden')}
+
+function updateStatus(){
+  const d=document.getElementById('sDot'),l=document.getElementById('sLabel');
+  d.className='status-dot';
+  if(S.src==='live'){d.classList.add('live');l.textContent='Canlı Veri'}
+  else if(S.src==='demo'){d.classList.add('demo');l.textContent='Demo Veri'}
+  else{d.classList.add('err');l.textContent='Bağlantı Hatası'}
+  document.getElementById('sTL').textContent='TL İhale: '+S.tl.length;
+  document.getElementById('sFX').textContent='FX İhale: '+S.fx.length;
+  document.getElementById('sStk').textContent='Stok: '+S.stk.length;
+  const t=new Date().toLocaleString('tr-TR');
+  document.getElementById('sTime').textContent=t;
+  document.getElementById('footTime').textContent=t;
+}
+
+/* ==========================================================
+   CHART.JS AYARLARI
+   ========================================================== */
+Chart.defaults.color='#8899b8';Chart.defaults.borderColor='#2a3654';
+Chart.defaults.font.family="'Source Sans 3',sans-serif";Chart.defaults.font.size=12;
+Chart.defaults.plugins.legend.labels.usePointStyle=true;
+Chart.defaults.plugins.tooltip.backgroundColor='#1a2235';
+Chart.defaults.plugins.tooltip.borderColor='#2a3654';
+Chart.defaults.plugins.tooltip.borderWidth=1;
+Chart.defaults.plugins.tooltip.cornerRadius=8;Chart.defaults.plugins.tooltip.padding=10;
+
+function mk(id,cfg){
+  if(S.charts[id])S.charts[id].destroy();
+  S.charts[id]=new Chart(document.getElementById(id),cfg);
+}
+
+/* ==========================================================
+   RENDER
+   ========================================================== */
+function render(){
+  renderKPI();renderInsights();
+  renderTrends();renderRates();renderCurrency();renderMaturity();
+  renderStock();renderTables();
+  // Fade-in
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.1});
+  document.querySelectorAll('.fade-in').forEach(e=>obs.observe(e));
+  setTimeout(()=>{document.querySelectorAll('.fade-in').forEach(e=>{if(e.getBoundingClientRect().top<innerHeight)e.classList.add('vis')})},80);
+}
+
+/* KPI */
+function renderKPI(){
+  const tlT=S.tl.reduce((s,r)=>s+(r.kabul||0),0);
+  const fxT=S.fx.reduce((s,r)=>s+(r.tlK||0),0);
+  const stkTL=S.stk.filter(r=>r.currency==='TL').reduce((s,r)=>s+(r.nominal||0),0);
+  const stkFX=S.stk.filter(r=>r.currency!=='TL').reduce((s,r)=>s+(r.nominal||0),0);
+  const tlR=S.tl.filter(r=>r.bil!=null).map(r=>r.bil);
+  const avgTL=tlR.length?tlR.reduce((a,b)=>a+b,0)/tlR.length:0;
+  const fxR=S.fx.filter(r=>r.ortF!=null).map(r=>r.ortF);
+  const avgFX=fxR.length?fxR.reduce((a,b)=>a+b,0)/fxR.length:0;
+  const avgVM=S.stk.length?S.stk.reduce((s,r)=>s+(r.faiz||0),0)/S.stk.filter(r=>r.faiz!=null).length:0;
+  const g=document.getElementById('kpis');g.innerHTML='';
+  const kpis=[
+    {l:'Toplam İhale Borçlanması',v:fb(tlT+fxT)+' Mrd',s:'TL + Döviz'},
+    {l:'TL İhale Toplamı',v:fb(tlT)+' Mrd',s:S.tl.length+' ihale'},
+    {l:'Döviz İhale (TL Karşılığı)',v:fb(fxT)+' Mrd',s:S.fx.length+' ihale'},
+    {l:'Mevcut TL Stok',v:fb(stkTL)+' Mrd',s:S.stk.filter(r=>r.currency==='TL').length+' borç'},
+    {l:'Mevcut Döviz Stok (Nominal)',v:fm(stkFX)+' M',s:'USD+EUR+GBP'},
+    {l:'TL Ort. Bileşik Faiz',v:'%'+avgTL.toFixed(1),s:'İhale ortalaması'},
+    {l:'Döviz Ort. Faiz',v:'%'+avgFX.toFixed(1),s:'İhale ortalaması'},
+    {l:'Stok Ort. Faiz',v:'%'+avgVM.toFixed(1),s:'Mevcut stok'}
+  ];
+  kpis.forEach(k=>{
+    const c=document.createElement('div');c.className='kpi-card';
+    c.innerHTML=`<div class="kpi-label">${k.l}</div><div class="kpi-value">${k.v}</div><div class="kpi-sub">${k.s}</div>`;
+    g.appendChild(c);
+  });
+}
+
+/* Bulgular */
+function renderInsights(){
+  const tlY=ylTL(S.tl),fxY=ylFX(S.fx);
+  const years=[...new Set([...Object.keys(tlY),...Object.keys(fxY)])].map(Number).sort((a,b)=>b-a);
+  const lastY=years[0];const lastTL=tlY[lastY]?.acc||0;const lastFX=fxY[lastY]?.accTL||0;
+  const stkTL=S.stk.filter(r=>r.currency==='TL').reduce((s,r)=>s+(r.nominal||0),0);
+  const maxTLR=S.tl.filter(r=>r.bil!=null).reduce((m,r)=>Math.max(m,r.bil),0);
+  document.getElementById('insights').innerHTML=`<h3>Temel Bulgular</h3><ul>
+    <li><strong>Veri kapsamı:</strong> ${Math.min(...years)}–${Math.max(...years)}, ${S.tl.length} TL + ${S.fx.length} döviz ihalesi, ${S.stk.length} stok kaydı.</li>
+    <li><strong>Son yıl (${lastY}) ihale:</strong> TL ${fb(lastTL)} Mrd + Döviz ${fb(lastFX)} Mrd = ${fb(lastTL+lastFX)} Mrd TL.</li>
+    <li><strong>Mevcut TL stok:</strong> ${fb(stkTL)} Mrd TL — vadesi gelmemiş borçlar.</li>
+    <li><strong>TL faiz uç noktası:</strong> En yüksek bileşik %${maxTLR.toFixed(1)}. 2024 sonunda %60'ları aşmış, 2026'da %35-48 bandına gerileme başladı.</li>
+    <li><strong>TL-Döviz faiz ucurumu:</strong> Döviz %3-5 vs TL %35-60 — ~40 puanlık fark döviz borçlanmayı teşvik ediyor.</li>
+    <li><strong>Kısa vadeli bağımlılık:</strong> Ortalama ihale vadesi TL ${S.tl.length?(S.tl.reduce((s,r)=>s+r.vade,0)/S.tl.length).toFixed(0):0} gün, FX ${S.fx.length?(S.fx.reduce((s,r)=>s+r.vade,0)/S.fx.length).toFixed(0):0} gün — rulo-over riski yüksek.</li>
+    <li><strong>GBP çeşitlendirmesi:</strong> 2025'ten itibaren İngiliz Sterlini ile borçlanma başladı — üç para birimine yayıldı.</li>
+  </ul>`;
+}
+
+/* TREND GRAFİKLERİ */
+function renderTrends(){
+  const tY=ylTL(S.tl),fY=ylFX(S.fx);
+  const tYrs=Object.keys(tY).sort(),fYrs=Object.keys(fY).sort();
+  const allY=[...new Set([...tYrs,...fYrs])].sort();
+
+  mk('cTLY',{type:'bar',data:{labels:tYrs,datasets:[{data:tYrs.map(y=>tY[y].acc/1e9),
+    backgroundColor:tYrs.map(y=>tY[y].acc/1e9>20?'rgba(230,57,70,.8)':tY[y].acc/1e9>5?'rgba(244,162,97,.8)':'rgba(46,196,182,.8)'),
+    borderRadius:6,borderSkipped:false}]},options:{responsive:true,plugins:{legend:{display:false}},
+    scales:{y:{title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,.5)'}},x:{grid:{display:false}}}}});
+
+  mk('cFXY',{type:'bar',data:{labels:fYrs,datasets:[{data:fYrs.map(y=>fY[y].accTL/1e9),
+    backgroundColor:'rgba(46,196,182,.8)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,plugins:{legend:{display:false}},
+    scales:{y:{title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,.5)'}},x:{grid:{display:false}}}}});
+
+  mk('cCmp',{type:'bar',data:{labels:allY,datasets:[
+    {label:'TL',data:allY.map(y=>(tY[y]?.acc||0)/1e9),backgroundColor:'rgba(230,57,70,.75)',borderRadius:4},
+    {label:'Döviz (TL Karşılığı)',data:allY.map(y=>(fY[y]?.accTL||0)/1e9),backgroundColor:'rgba(46,196,182,.75)',borderRadius:4}
+  ]},options:{responsive:true,plugins:{legend:{position:'top'}},
+    scales:{y:{stacked:true,title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,.5)'}},x:{stacked:true,grid:{display:false}}}}});
+
+  let cT=0,cF=0;const cd=allY.map(y=>{cT+=tY[y]?.acc||0;cF+=fY[y]?.accTL||0;return{y,tl:cT/1e9,fx:cF/1e9,t:(cT+cF)/1e9}});
+  mk('cCum',{type:'line',data:{labels:cd.map(d=>d.y),datasets:[
+    {label:'TL',data:cd.map(d=>d.tl),borderColor:'#e63946',backgroundColor:'rgba(230,57,70,.1)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#e63946'},
+    {label:'Döviz',data:cd.map(d=>d.fx),borderColor:'#2ec4b6',backgroundColor:'rgba(46,196,182,.1)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#2ec4b6'},
+    {label:'Toplam',data:cd.map(d=>d.t),borderColor:'#f4a261',borderDash:[6,3],tension:.3,pointRadius:2,pointBackgroundColor:'#f4a261'}
+  ]},options:{responsive:true,plugins:{legend:{position:'top'}},
+    scales:{y:{title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,.5)'}},x:{grid:{display:false}}}}});
+}
+
+/* FAİZ GRAFİKLERİ */
+function renderRates(){
+  const tlRD=S.tl.filter(r=>r.bil!=null&&r.kabul>0).map(r=>({x:r.valor.split(/[\/.]/).reverse().join('-'),y:r.bil,v:r.vade})).sort((a,b)=>a.x.localeCompare(b.x));
+  mk('cTLR',{type:'line',data:{labels:tlRD.map(d=>d.x),datasets:[{data:tlRD.map(d=>d.y),
+    borderColor:'#e63946',backgroundColor:'rgba(230,57,70,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#e63946'}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Bileşik Faiz (%)'},grid:{color:'rgba(42,54,84,.5)'}},x:{grid:{display:false},ticks:{maxRotation:45,maxTicksLimit:12}}}}});
+
+  const usdD=S.fx.filter(r=>r.doviz.includes('DOLAR')&&r.ortF!=null).map(r=>({x:r.valor.split(/[\/.]/).reverse().join('-'),y:r.ortF})).sort((a,b)=>a.x.localeCompare(b.x));
+  mk('cFXR',{type:'line',data:{labels:usdD.map(d=>d.x),datasets:[{data:usdD.map(d=>d.y),
+    borderColor:'#2ec4b6',backgroundColor:'rgba(46,196,182,.08)',fill:true,tension:.3,pointRadius:3,pointBackgroundColor:'#2ec4b6'}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Ort. Faiz (%)'},grid:{color:'rgba(42,54,84,.5)'}},x:{grid:{display:false},ticks:{maxRotation:45,maxTicksLimit:12}}}}});
+
+  const tlY=ylTL(S.tl),fxY=ylFX(S.fx);
+  const ry=[...new Set([...Object.keys(tlY),...Object.keys(fxY)])].sort();
+  mk('cRD',{type:'bar',data:{labels:ry,datasets:[
+    {label:'TL Ort. Bileşik (%)',data:ry.map(y=>{const a=tlY[y]?.rates;return a&&a.length?a.reduce((s,v)=>s+v,0)/a.length:null}),backgroundColor:'rgba(230,57,70,.75)',borderRadius:4},
+    {label:'Döviz Ort. Faiz (%)',data:ry.map(y=>{const a=fxY[y]?.rates;return a&&a.length?a.reduce((s,v)=>s+v,0)/a.length:null}),backgroundColor:'rgba(46,196,182,.75)',borderRadius:4}
+  ]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Faiz (%)'},grid:{color:'rgba(42,54,84,.5)'}},x:{grid:{display:false}}}}});
+}
+
+/* DÖVİZ DAĞILIMI */
+function renderCurrency(){
+  const cc={},ca={};S.fx.forEach(r=>{cc[r.doviz]=(cc[r.doviz]||0)+1;ca[r.doviz]=(ca[r.doviz]||0)+(r.tlK||0)});
+  const cls=S.fx.map(r=>r.doviz);const labs=[...new Set(cls)];
+  const col={USD:'#2ec4b6','ABD DOLARI':'#2ec4b6',AVRO:'#a78bfa',EUR:'#a78bfa','İNGİLİZ STERLİNİ':'#38bdf8',GBP:'#38bdf8'};
+  const nm={'ABD DOLARI':'USD','İNGİLİZ STERLİNİ':'GBP',AVRO:'EUR',USD:'USD',EUR:'EUR',GBP:'GBP'};
+  mk('cCC',{type:'doughnut',data:{labels:labs.map(c=>nm[c]||c),datasets:[{data:labs.map(c=>cc[c]),backgroundColor:labs.map(c=>col[c]||'#f4a261'),borderColor:'#1a2235',borderWidth:3}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
+  mk('cCA',{type:'doughnut',data:{labels:labs.map(c=>nm[c]||c),datasets:[{data:labs.map(c=>ca[c]/1e9),backgroundColor:labs.map(c=>col[c]||'#f4a261'),borderColor:'#1a2235',borderWidth:3}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.raw.toFixed(2)+' Mrd TL'}}}}});
+
+  const fY=ylFX(S.fx),fYrs=Object.keys(fY).sort();
+  const ac=[...new Set(S.fx.map(r=>r.doviz))];
+  mk('cFY',{type:'bar',data:{labels:fYrs,datasets:ac.map(c=>({label:nm[c]||c,
+    data:fYrs.map(y=>(fY[y]?.byC[c]?.accTL||0)/1e9),backgroundColor:col[c]||'rgba(244,162,97,.75)',borderRadius:4}))},
+    options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{stacked:true,title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,.5)'}},x:{stacked:true,grid:{display:false}}}}});
+}
+
+/* VADE YAPISI */
+function renderMaturity(){
+  const bk=[{l:'0-30',a:0,b:30},{l:'31-60',a:31,b:60},{l:'61-90',a:61,b:90},{l:'91-120',a:91,b:120},{l:'121-180',a:121,b:180},{l:'181+',a:181,b:9999}];
+  const tld=bk.map(b=>S.tl.filter(r=>r.vade>=b.a&&r.vade<=b.b).reduce((s,r)=>s+(r.kabul||0),0));
+  const fxd=bk.map(b=>S.fx.filter(r=>r.vade>=b.a&&r.vade<=b.b).reduce((s,r)=>s+(r.tlK||0),0));
+  mk('cTLM',{type:'bar',data:{labels:bk.map(b=>b.l+' gün'),datasets:[{data:tld.map(v=>v/1e9),backgroundColor:'rgba(230,57,70,.75)',borderRadius:4,borderSkipped:false}]},
+    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,.5)'}},y:{grid:{display:false}}}}});
+  mk('cFXM',{type:'bar',data:{labels:bk.map(b=>b.l+' gün'),datasets:[{data:fxd.map(v=>v/1e9),backgroundColor:'rgba(46,196,182,.75)',borderRadius:4,borderSkipped:false}]},
+    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,.5)'}},y:{grid:{display:false}}}}});
+
+  const tAM={},fAM={};
+  S.tl.forEach(r=>{const y=r.year;if(y){if(!tAM[y])tAM[y]=[];tAM[y].push(r.vade)}});
+  S.fx.forEach(r=>{const y=r.year;if(y){if(!fAM[y])fAM[y]=[];fAM[y].push(r.vade)}});
+  const ay=[...new Set([...Object.keys(tAM),...Object.keys(fAM)])].sort();
+  mk('cAM',{type:'line',data:{labels:ay,datasets:[
+    {label:'TL Ort. Vade',data:ay.map(y=>{const a=tAM[y];return a?a.reduce((s,v)=>s+v,0)/a.length:null}),borderColor:'#e63946',tension:.3,pointRadius:4,pointBackgroundColor:'#e63946'},
+    {label:'Döviz Ort. Vade',data:ay.map(y=>{const a=fAM[y];return a?a.reduce((s,v)=>s+v,0)/a.length:null}),borderColor:'#2ec4b6',tension:.3,pointRadius:4,pointBackgroundColor:'#2ec4b6'}
+  ]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Gün'},grid:{color:'rgba(42,54,84,.5)'}},x:{grid:{display:false}}}}});
+}
+
+/* BORÇ STOKU GRAFİKLERİ */
+function renderStock(){
+  // Para cinsine göre stok dağılımı
+  const byCur={};S.stk.forEach(r=>{byCur[r.currency]=(byCur[r.currency]||0)+(r.nominal||0)});
+  const curLabs=Object.keys(byCur);
+  const curCols={TL:'#e63946',USD:'#2ec4b6',EUR:'#a78bfa',GBP:'#38bdf8'};
+  const curTags={TL:'TL',USD:'USD',EUR:'EUR',GBP:'GBP'};
+
+  // Stok — TL karşılığı tahmini (döviz için kur yaklaşımı)
+  // Gerçek TL karşılığı stok tablosunda yoksa nominal gösterilir
+  const isTLStk=curLabs.includes('TL');
+
+  mk('cSP',{type:'doughnut',data:{labels:curLabs.map(c=>curTags[c]||c),datasets:[{data:curLabs.map(c=>byCur[c]/1e9),backgroundColor:curLabs.map(c=>curCols[c]||'#f4a261'),borderColor:'#1a2235',borderWidth:3}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.raw.toFixed(2)+' Mrd'}}}}});
+
+  // Vadeye kalan süre profili (maturity calendar)
+  const now=new Date();const thisYear=now.getFullYear();
+  const matBuckets=[
+    {l:'Vadesi Geçmiş',test:y=>y&&y<thisYear},
+    {l:thisYear+' İçinde',test:y=>y===thisYear},
+    {l:(thisYear+1)+' ',test:y=>y===thisYear+1},
+    {l:(thisYear+2)+' ',test:y=>y===thisYear+2},
+    {l:(thisYear+3)+' ',test:y=>y===thisYear+3},
+    {l:(thisYear+4)+'+',test:y=>y&&y>thisYear+3}
+  ];
+  const matByCur=curLabs.map(c=>{
+    const recs=S.stk.filter(r=>r.currency===c);
+    return matBuckets.map(b=>recs.filter(r=>b.test(r.matYear)).reduce((s,r)=>s+(r.nominal||0),0));
+  });
+
+  mk('cSM',{type:'bar',data:{labels:matBuckets.map(b=>b.l),datasets:curLabs.map((c,i)=>({label:curTags[c]||c,
+    data:matByCur[i].map(v=>v/1e9),backgroundColor:curCols[c]||'#f4a261',borderRadius:4}))},
+    options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{stacked:true,title:{display:true,text:'Milyar (Nominal)'},grid:{color:'rgba(42,54,84,.5)'}},x:{stacked:true,grid:{display:false}}}}});
+
+  // TL stok faiz dağılımı
+  const tlStk=S.stk.filter(r=>r.currency==='TL'&&r.faiz!=null);
+  const tlFB=[{l:'%35 altı',a:0,b:35},{l:'%35-40',a:35,b:40},{l:'%40-45',a:40,b:45},{l:'%45-50',a:45,b:50},{l:'%50 üstü',a:50,b:999}];
+  mk('cSFR',{type:'bar',data:{labels:tlFB.map(b=>b.l),datasets:[{data:tlFB.map(b=>tlStk.filter(r=>r.faiz>=b.a&&r.faiz<b.b).reduce((s,r)=>s+(r.nominal||0),0)/1e9),
+    backgroundColor:'rgba(230,57,70,.75)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},
+    scales:{y:{title:{display:true,text:'Milyar TL'},grid:{color:'rgba(42,54,84,.5)'}},x:{grid:{display:false}}}}});
+
+  // Döviz stok faiz dağılımı
+  const fxStk=S.stk.filter(r=>r.currency!=='TL'&&r.faiz!=null);
+  const fxFB=[{l:'%3 altı',a:0,b:3},{l:'%3-3.5',a:3,b:3.5},{l:'%3.5-4',a:3.5,b:4},{l:'%4-4.5',a:4,b:4.5},{l:'%4.5 üstü',a:4.5,b:999}];
+  mk('cSFXR',{type:'bar',data:{labels:fxFB.map(b=>b.l),datasets:[{data:fxFB.map(b=>fxStk.filter(r=>r.faiz>=b.a&&r.faiz<b.b).reduce((s,r)=>s+(r.nominal||0),0)/1e6),
+    backgroundColor:'rgba(46,196,182,.75)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},
+    scales:{y:{title:{display:true,text:'Milyon (Nominal)'},grid:{color:'rgba(42,54,84,.5)'}},x:{grid:{display:false}}}}});
+
+  // İhale vs Stok karşılaştırması
+  const stkTLTotal=S.stk.filter(r=>r.currency==='TL').reduce((s,r)=>s+(r.nominal||0),0);
+  const stkUSDT=S.stk.filter(r=>r.currency==='USD').reduce((s,r)=>s+(r.nominal||0),0);
+  const stkEURT=S.stk.filter(r=>r.currency==='EUR').reduce((s,r)=>s+(r.nominal||0),0);
+  const stkGBPT=S.stk.filter(r=>r.currency==='GBP').reduce((s,r)=>s+(r.nominal||0),0);
+
+  // Son 12 aylık ihale toplamı
+  const recentTL=S.tl.filter(r=>r.year>=thisYear-1).reduce((s,r)=>s+(r.kabul||0),0);
+  const recentFX=S.fx.filter(r=>r.year>=thisYear-1).reduce((s,r)=>s+(r.tlK||0),0);
+
+  mk('cSI',{type:'bar',data:{labels:['TL Stok','TL İhale (Son 2 Yıl)','Döviz Stok (Nominal)','Döviz İhale TL Karşılığı (Son 2 Yıl)'],
+    datasets:[{data:[stkTLTotal/1e9,recentTL/1e9,(stkUSDT+stkEURT+stkGBPT)/1e9,recentFX/1e9],
+    backgroundColor:['rgba(230,57,70,.75)','rgba(230,57,70,.35)','rgba(46,196,182,.75)','rgba(46,196,182,.35)'],borderRadius:6}]},
+    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Milyar'},grid:{color:'rgba(42,54,84,.5)'}},y:{grid:{display:false}}}}});
+}
+
+/* TABLOLAR */
+function renderTables(){
+  // TL İhale
+  let h='<table><thead><tr><th>ISIN</th><th>Valör</th><th>İtfa</th><th>Vade</th><th>Kabul (TL)</th><th>Ort. Faiz</th><th>Bileşik</th></tr></thead><tbody>';
+  S.tl.forEach(r=>{h+=`<tr><td>${r.isin}</td><td>${r.valor}</td><td>${r.itfa}</td><td>${r.vade}</td><td>${fn(r.kabul)}</td><td>${r.ortF!=null?r.ortF:'—'}</td><td>${r.bil!=null?r.bil:'—'}</td></tr>`});
+  h+='</tbody></table>';document.getElementById('st-tl').innerHTML=h;
+
+  // FX İhale
+  const tm={'ABD DOLARI':'tag-usd',USD:'tag-usd',AVRO:'tag-eur',EUR:'tag-eur','İNGİLİZ STERLİNİ':'tag-gbp',GBP:'tag-gbp'};
+  h='<table><thead><tr><th>ISIN</th><th>Döviz</th><th>Valör</th><th>İtfa</th><th>Vade</th><th>Kabul</th><th>TL Karşılığı</th><th>Ort. Faiz</th></tr></thead><tbody>';
+  S.fx.forEach(r=>{h+=`<tr><td>${r.isin}</td><td>${tm[r.doviz]?`<span class="tag ${tm[r.doviz]}">${r.doviz}</span>`:r.doviz}</td><td>${r.valor}</td><td>${r.itfa}</td><td>${r.vade}</td><td>${fn(r.kabul)}</td><td>${fn(r.tlK)}</td><td>${r.ortF!=null?r.ortF:'—'}</td></tr>`});
+  h+='</tbody></table>';document.getElementById('st-fx').innerHTML=h;
+
+  // Stok
+  const sc={TL:'tag-tl',USD:'tag-usd',EUR:'tag-eur',GBP:'tag-gbp'};
+  h='<table><thead><tr><th>ISIN</th><th>Para</th><th>Valör</th><th>İtfa</th><th>Nominal</th><th>Faiz</th></tr></thead><tbody>';
+  S.stk.forEach(r=>{h+=`<tr><td>${r.isin}</td><td>${sc[r.currency]?`<span class="tag ${sc[r.currency]}">${r.currency}</span>`:r.currency}</td><td>${r.valor}</td><td>${r.itfa}</td><td>${fn(r.nominal)}</td><td>${r.faiz!=null?r.faiz:'—'}</td></tr>`});
+  h+='</tbody></table>';document.getElementById('st-stk').innerHTML=h;
+}
+
+/* SEKME GEÇİŞLERİ */
+document.querySelectorAll('.tab-btn[data-t]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn[data-t]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+    document.getElementById('p-'+b.dataset.t).classList.add('active');
+  });
+});
+document.querySelectorAll('.tab-btn[data-st]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn[data-st]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    ['st-tl','st-fx','st-stk'].forEach(id=>{document.getElementById(id).style.display=b.dataset.st===id?'block':'none'});
+  });
+});
+
+/* BAŞLATMA */
+async function init(){
+  try{
+    const{src,data}=await loadData();
+    S.tl=procTL(data.tlRaw||[]);
+    S.fx=procFX(data.fxRaw||[]);
+    S.stk=[
+      ...procStock(data.tlStockRaw||[],'TL'),
+      ...procStock(data.usdStockRaw||[],'USD'),
+      ...procStock(data.eurStockRaw||[],'EUR'),
+      ...procStock(data.gbpStockRaw||[],'GBP')
+    ];
+    S.src=src;
+    updateStatus();render();hideLoader();
+  }catch(e){
+    console.error('Başlatma hatası:',e);useDemo();
   }
 }
-
-function refreshData() {
-  showLoading('Veriler yenileniyor...', 'GitHub üzerinden JSON dosyası okunuyor');
-  fetchAndProcess();
-}
-
-// ============================================================
-// YARDIMCI FONKSİYONLAR
-// ============================================================
-
-function updateStatus() {
-  const dot = document.getElementById('statusDot');
-  const label = document.getElementById('statusLabel');
-  dot.className = 'status-dot live';
-  label.textContent = 'Güncel Veri';
-}
-
-function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
-function showLoading(msg, sub) {
-  const overlay = document.getElementById('loadingOverlay');
-  overlay.classList.remove('hidden');
-  if (msg) document.getElementById('loadingText').textContent = msg;
-  if (sub) document.getElementById('loadingSub').textContent = sub;
-}
-
-function fmtNum(n, dec=0) { return n == null ? '—' : n.toLocaleString('tr-TR', {minimumFractionDigits:dec, maximumFractionDigits:dec}); }
-function fmtB(n) { return fmtNum(n/1e9, 2); }
-function fmtM(n) { return fmtNum(n/1e6, 2); }
-
-function yearlyTLSummary(records) {
-  const map = {};
-  records.forEach(r => {
-    const y = r.year;
-    if (!y) return;
-    if (!map[y]) map[y] = { totalOffer:0, totalAccepted:0, rates:[], count:0 };
-    map[y].totalOffer += r.teklif || 0;
-    map[y].totalAccepted += r.kabul || 0;
-    map[y].count++;
-    if (r.bilesik != null) map[y].rates.push(r.bilesik);
-  });
-  return map;
-}
-
-function yearlyFXSummary(records) {
-  const map = {};
-  records.forEach(r => {
-    const y = r.year;
-    if (!y) return;
-    if (!map[y]) map[y] = { totalOffer:0, totalAcceptedTL:0, rates:[], count:0, byCurrency:{} };
-    map[y].totalOffer += r.teklif || 0;
-    map[y].totalAcceptedTL += r.tlKarsilik || 0;
-    map[y].count++;
-    if (r.ortFaiz != null) map[y].rates.push(r.ortFaiz);
-    const cur = r.doviz;
-    if (!map[y].byCurrency[cur]) map[y].byCurrency[cur] = { totalAcceptedTL:0, count:0 };
-    map[y].byCurrency[cur].totalAcceptedTL += r.tlKarsilik || 0;
-    map[y].byCurrency[cur].count++;
-  });
-  return map;
-}
-
-// ============================================================
-// PANO RENDER
-// ============================================================
-
-function renderDashboard() {
-  renderStockKPIs();
-  renderKPIs();
-  renderInsights();
-  renderCharts();
-  renderTables();
-  observeFadeIns();
-}
-
-// STOK KPI GÖSTERİMİ
-function renderStockKPIs() {
-  const sumTL = state.stockTL.reduce((s, r) => s + r.amount, 0);
-  const sumUSD = state.stockUSD.reduce((s, r) => s + r.amount, 0);
-  const sumEUR = state.stockEUR.reduce((s, r) => s + r.amount, 0);
-  const sumGBP = state.stockGBP.reduce((s, r) => s + r.amount, 0);
-
-  const grid = document.getElementById('stockKpiGrid');
-  grid.innerHTML = '';
-  
-  const kpis = [
-    { label:'Mevcut TL Stoku', value:fmtB(sumTL)+' Mrd ₺', sub:state.stockTL.length+' aktif ihraç' },
-    { label:'Mevcut USD Stoku', value:fmtM(sumUSD)+' Milyon $', sub:state.stockUSD.length+' aktif ihraç' },
-    { label:'Mevcut EUR Stoku', value:fmtM(sumEUR)+' Milyon €', sub:state.stockEUR.length+' aktif ihraç' },
-    { label:'Mevcut GBP Stoku', value:fmtM(sumGBP)+' Milyon £', sub:state.stockGBP.length+' aktif ihraç' }
-  ];
-  
-  kpis.forEach((k, i) => {
-    const card = document.createElement('div');
-    card.className = 'kpi-card';
-    if(i===0) card.style.setProperty('--accent', 'var(--accent)');
-    if(i===1) card.style.setProperty('--accent', 'var(--accent3)');
-    if(i===2) card.style.setProperty('--accent', 'var(--accent4)');
-    if(i===3) card.style.setProperty('--accent', 'var(--accent5)');
-    
-    card.innerHTML = `<div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div><div class="kpi-sub">${k.sub}</div>`;
-    grid.appendChild(card);
-  });
-}
-
-// İHALE TREND KPI GÖSTERİMİ
-function renderKPIs() {
-  const tl = state.tlRecords;
-  const fx = state.fxRecords;
-
-  const totalTL = tl.reduce((s,r) => s + (r.kabul||0), 0);
-  const totalFX = fx.reduce((s,r) => s + (r.tlKarsilik||0), 0);
-
-  const tlRates = tl.filter(r=>r.bilesik!=null).map(r=>r.bilesik);
-  const avgTL = tlRates.length ? tlRates.reduce((a,b)=>a+b,0)/tlRates.length : 0;
-
-  const fxRates = fx.filter(r=>r.ortFaiz!=null).map(r=>r.ortFaiz);
-  const avgFX = fxRates.length ? fxRates.reduce((a,b)=>a+b,0)/fxRates.length : 0;
-
-  const grid = document.getElementById('kpiGrid');
-  grid.innerHTML = '';
-  const kpis = [
-    { label:'Tarihsel TL Borçlanma Toplamı', value:fmtB(totalTL)+' Mrd TL', sub:fmtNum(tl.length)+' ihale' },
-    { label:'Tarihsel Döviz Borçlanma (TL Karşılığı)', value:fmtB(totalFX)+' Mrd TL', sub:fmtNum(fx.length)+' ihale' },
-    { label:'TL Ort. Bileşik Faiz', value:avgTL.toFixed(1)+'%', sub:'Tarihsel Ortalama' },
-    { label:'Döviz Ort. Faiz (USD)', value:avgFX.toFixed(1)+'%', sub:'Tarihsel Ortalama' }
-  ];
-  kpis.forEach(k => {
-    const card = document.createElement('div');
-    card.className = 'kpi-card';
-    card.innerHTML = `<div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div><div class="kpi-sub">${k.sub}</div>`;
-    grid.appendChild(card);
-  });
-}
-
-function renderInsights() {
-  const tl = state.tlRecords;
-  const fx = state.fxRecords;
-  if (tl.length === 0 && fx.length === 0) return;
-
-  const tlY = yearlyTLSummary(tl);
-  const fxY = yearlyFXSummary(fx);
-
-  let maxYear = '', maxVal = 0;
-  Object.keys(tlY).forEach(y => {
-    const total = tlY[y].totalAccepted + (fxY[y]?.totalAcceptedTL || 0);
-    if (total > maxVal) { maxVal = total; maxYear = y; }
-  });
-
-  const currencies = [...new Set(fx.map(r=>r.doviz))];
-  const years = [...new Set([...Object.keys(tlY), ...Object.keys(fxY)])].map(Number).sort((a,b)=>b-a);
-  const lastYear = years.length > 0 ? years[0] : new Date().getFullYear();
-  const lastYearTL = tlY[lastYear]?.totalAccepted || 0;
-  const lastYearFX = fxY[lastYear]?.totalAcceptedTL || 0;
-
-  document.getElementById('mainInsights').innerHTML = `
-    <h3>Tarihsel İhale İstatistikleri Özeti</h3>
-    <ul>
-      <li><strong>Veri kapsamı:</strong> ${years.length > 0 ? Math.min(...years) : '-'}–${lastYear} yılları arasında toplam ${tl.length} TL ve ${fx.length} döviz ihalesi, ${fmtB(maxVal)} Mrd TL en yüksek yıllık borçlanma (${maxYear}).</li>
-      <li><strong>Son yıl (${lastYear}) ihale hacmi:</strong> TL ${fmtB(lastYearTL)} Mrd + Döviz ${fmtB(lastYearFX)} Mrd = ${fmtB(lastYearTL+lastYearFX)} Mrd TL toplam.</li>
-      <li><strong>Döviz çeşitlendirme:</strong> İhalelerde ${currencies.join(', ')} para birimleri kullanıldı.</li>
-    </ul>
-  `;
-}
-
-// ============================================================
-// GRAFİK RENDER
-// ============================================================
-
-function destroyChart(id) {
-  if (state.charts[id]) { state.charts[id].destroy(); delete state.charts[id]; }
-}
-
-Chart.defaults.color = '#8899b8';
-Chart.defaults.borderColor = '#2a3654';
-Chart.defaults.font.family = "'Source Sans 3', sans-serif";
-
-function renderCharts() {
-  // Stok Grafikleri
-  renderStockCountChart();
-  renderStockMaturityChart();
-  
-  // Trend Grafikleri
-  renderTLYearlyChart();
-  renderFXYearlyChart();
-  renderTLvsFXChart();
-  renderCumulativeChart();
-  renderTLRateChart();
-  renderFXRateChart();
-  renderRateDiffChart();
-  renderCurrencyCountChart();
-  renderCurrencyAmountChart();
-  renderFXByYearChart();
-  renderTLMaturityChart();
-  renderFXMaturityChart();
-  renderAvgMaturityChart();
-}
-
-function renderStockCountChart() {
-  destroyChart('chartStockCount');
-  const counts = [state.stockTL.length, state.stockUSD.length, state.stockEUR.length, state.stockGBP.length];
-  state.charts['chartStockCount'] = new Chart(document.getElementById('chartStockCount'), {
-    type:'doughnut',
-    data: {
-      labels: ['TL', 'USD', 'EUR', 'GBP'],
-      datasets:[{ data:counts, backgroundColor:['#e63946', '#2ec4b6', '#a78bfa', '#38bdf8'], borderColor:'#1a2235', borderWidth:3 }]
-    },
-    options:{ responsive:true, plugins:{legend:{position:'bottom'}} }
-  });
-}
-
-function renderStockMaturityChart() {
-  destroyChart('chartStockMaturity');
-  const allStock = [...state.stockTL, ...state.stockUSD, ...state.stockEUR, ...state.stockGBP];
-  const buckets = [{label:'0-30',min:0,max:30},{label:'31-90',min:31,max:90},{label:'91-180',min:91,max:180},{label:'181+',min:181,max:9999}];
-  const dist = buckets.map(b => allStock.filter(r=>r.vade>=b.min&&r.vade<=b.max).length);
-  
-  state.charts['chartStockMaturity'] = new Chart(document.getElementById('chartStockMaturity'), {
-    type:'bar',
-    data: {
-      labels: buckets.map(b=>b.label+' gün'),
-      datasets:[{ label:'Aktif İhraç Adedi', data:dist, backgroundColor:'rgba(244,162,97,0.8)', borderRadius:4 }]
-    },
-    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{ticks:{stepSize:1}, grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
-  });
-}
-
-// Diğer grafikler (Eski İhale grafikleri)
-function renderTLYearlyChart() {
-  destroyChart('chartTLYearly');
-  const tlY = yearlyTLSummary(state.tlRecords);
-  const years = Object.keys(tlY).sort();
-  state.charts['chartTLYearly'] = new Chart(document.getElementById('chartTLYearly'), {
-    type:'bar', data:{ labels:years, datasets:[{ label:'Kabul Edilen (Mrd TL)', data:years.map(y=>tlY[y].totalAccepted/1e9), backgroundColor:'rgba(230,57,70,0.8)', borderRadius:6 }] },
-    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
-  });
-}
-
-function renderFXYearlyChart() {
-  destroyChart('chartFXYearly');
-  const fxY = yearlyFXSummary(state.fxRecords);
-  const years = Object.keys(fxY).sort();
-  state.charts['chartFXYearly'] = new Chart(document.getElementById('chartFXYearly'), {
-    type:'bar', data:{ labels:years, datasets:[{ label:'TL Karşılığı (Mrd TL)', data:years.map(y=>fxY[y].totalAcceptedTL/1e9), backgroundColor:'rgba(46,196,182,0.8)', borderRadius:6 }] },
-    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
-  });
-}
-
-function renderTLvsFXChart() {
-  destroyChart('chartTLvsFX');
-  const tlY = yearlyTLSummary(state.tlRecords);
-  const fxY = yearlyFXSummary(state.fxRecords);
-  const years = [...new Set([...Object.keys(tlY),...Object.keys(fxY)])].sort();
-  state.charts['chartTLvsFX'] = new Chart(document.getElementById('chartTLvsFX'), {
-    type:'bar',
-    data:{
-      labels:years,
-      datasets:[ {label:'TL Borçlanma',data:years.map(y=>(tlY[y]?.totalAccepted||0)/1e9),backgroundColor:'rgba(230,57,70,0.75)'}, {label:'Döviz (TL Karşılığı)',data:years.map(y=>(fxY[y]?.totalAcceptedTL||0)/1e9),backgroundColor:'rgba(46,196,182,0.75)'} ]
-    },
-    options:{ responsive:true, scales:{ y:{stacked:true,grid:{color:'rgba(42,54,84,0.5)'}}, x:{stacked:true,grid:{display:false}} } }
-  });
-}
-
-function renderCumulativeChart() {
-  destroyChart('chartCumulative');
-  const tlY = yearlyTLSummary(state.tlRecords);
-  const fxY = yearlyFXSummary(state.fxRecords);
-  const years = [...new Set([...Object.keys(tlY),...Object.keys(fxY)])].sort();
-  let cumTL=0,cumFX=0;
-  const data = years.map(y=>{ cumTL+=tlY[y]?.totalAccepted||0; cumFX+=fxY[y]?.totalAcceptedTL||0; return {year:y,tl:cumTL/1e9,total:(cumTL+cumFX)/1e9}; });
-  state.charts['chartCumulative'] = new Chart(document.getElementById('chartCumulative'), {
-    type:'line',
-    data:{ labels:data.map(d=>d.year), datasets:[ {label:'Kümülatif Toplam',data:data.map(d=>d.total),borderColor:'#f4a261',tension:0.3,pointRadius:3} ] },
-    options:{ responsive:true, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
-  });
-}
-
-function renderTLRateChart() {
-  destroyChart('chartTLRate');
-  const r = state.tlRecords.filter(x=>x.bilesik!=null&&x.kabul>0).map(x=>({x:x.valor.split(/[\/.]/).reverse().join('-'), y:x.bilesik})).sort((a,b)=>a.x.localeCompare(b.x));
-  state.charts['chartTLRate'] = new Chart(document.getElementById('chartTLRate'), {
-    type:'line', data:{ labels:r.map(d=>d.x), datasets:[{ label:'Faiz (%)', data:r.map(d=>d.y), borderColor:'#e63946',tension:0.3,pointRadius:2 }] },
-    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false},ticks:{display:false}} } }
-  });
-}
-
-function renderFXRateChart() {
-  destroyChart('chartFXRate');
-  const r = state.fxRecords.filter(x=>x.doviz.includes('DOLAR')&&x.ortFaiz!=null).map(x=>({x:x.valor.split(/[\/.]/).reverse().join('-'), y:x.ortFaiz})).sort((a,b)=>a.x.localeCompare(b.x));
-  state.charts['chartFXRate'] = new Chart(document.getElementById('chartFXRate'), {
-    type:'line', data:{ labels:r.map(d=>d.x), datasets:[{ label:'Faiz (%)', data:r.map(d=>d.y), borderColor:'#2ec4b6',tension:0.3,pointRadius:2 }] },
-    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false},ticks:{display:false}} } }
-  });
-}
-
-function renderRateDiffChart() {
-  destroyChart('chartRateDiff');
-  const tlY = yearlyTLSummary(state.tlRecords), fxY = yearlyFXSummary(state.fxRecords);
-  const years = [...new Set([...Object.keys(tlY),...Object.keys(fxY)])].sort();
-  state.charts['chartRateDiff'] = new Chart(document.getElementById('chartRateDiff'), {
-    type:'bar',
-    data:{ labels:years, datasets:[ {label:'TL Faiz',data:years.map(y=>{const a=tlY[y]?.rates;return a&&a.length?a.reduce((s,v)=>s+v,0)/a.length:null}),backgroundColor:'rgba(230,57,70,0.75)'}, {label:'FX Faiz',data:years.map(y=>{const a=fxY[y]?.rates;return a&&a.length?a.reduce((s,v)=>s+v,0)/a.length:null}),backgroundColor:'rgba(46,196,182,0.75)'} ] },
-    options:{ responsive:true, scales:{ y:{grid:{color:'rgba(42,54,84,0.5)'}}, x:{grid:{display:false}} } }
-  });
-}
-
-function renderCurrencyCountChart() {
-  destroyChart('chartCurrencyCount');
-  const curCount = {}; state.fxRecords.forEach(r => curCount[r.doviz] = (curCount[r.doviz]||0)+1);
-  state.charts['chartCurrencyCount'] = new Chart(document.getElementById('chartCurrencyCount'), {
-    type:'doughnut', data:{ labels:Object.keys(curCount), datasets:[{data:Object.values(curCount),backgroundColor:['#2ec4b6','#a78bfa','#38bdf8','#f4a261'],borderColor:'#1a2235',borderWidth:2}] },
-    options:{ responsive:true, plugins:{legend:{position:'bottom'}} }
-  });
-}
-
-function renderCurrencyAmountChart() {
-  destroyChart('chartCurrencyAmount');
-  const curAmount = {}; state.fxRecords.forEach(r => curAmount[r.doviz] = (curAmount[r.doviz]||0)+(r.tlKarsilik||0));
-  state.charts['chartCurrencyAmount'] = new Chart(document.getElementById('chartCurrencyAmount'), {
-    type:'doughnut', data:{ labels:Object.keys(curAmount), datasets:[{data:Object.values(curAmount).map(x=>x/1e9),backgroundColor:['#2ec4b6','#a78bfa','#38bdf8','#f4a261'],borderColor:'#1a2235',borderWidth:2}] },
-    options:{ responsive:true, plugins:{legend:{position:'bottom'}} }
-  });
-}
-
-function renderFXByYearChart() {
-  destroyChart('chartFXByYear');
-  const fxY = yearlyFXSummary(state.fxRecords), years = Object.keys(fxY).sort(), allCur = [...new Set(state.fxRecords.map(r=>r.doviz))];
-  const colors = ['rgba(46,196,182,0.75)','rgba(167,139,250,0.75)','rgba(56,189,248,0.75)'];
-  state.charts['chartFXByYear'] = new Chart(document.getElementById('chartFXByYear'), {
-    type:'bar', data:{ labels:years, datasets:allCur.map((cur,i)=>({label:cur,data:years.map(y=>(fxY[y]?.byCurrency[cur]?.totalAcceptedTL||0)/1e9),backgroundColor:colors[i%colors.length]})) },
-    options:{ responsive:true, scales:{ y:{stacked:true,grid:{color:'rgba(42,54,84,0.5)'}}, x:{stacked:true,grid:{display:false}} } }
-  });
-}
-
-function renderTLMaturityChart() {
-  destroyChart('chartTLMaturity');
-  const buckets = [{label:'0-30',min:0,max:30},{label:'31-90',min:31,max:90},{label:'91-180',min:91,max:180},{label:'181+',min:181,max:9999}];
-  const dist = buckets.map(b => state.tlRecords.filter(r=>r.vade>=b.min&&r.vade<=b.max).reduce((s,r)=>s+(r.kabul||0),0));
-  state.charts['chartTLMaturity'] = new Chart(document.getElementById('chartTLMaturity'), {
-    type:'bar', data:{ labels:buckets.map(b=>b.label+' gün'), datasets:[{label:'Milyar TL',data:dist.map(v=>v/1e9),backgroundColor:'rgba(230,57,70,0.75)'}] },
-    options:{ indexAxis:'y', responsive:true, scales:{ x:{grid:{color:'rgba(42,54,84,0.5)'}}, y:{grid:{display:false}} } }
-  });
-}
-
-function renderFXMaturityChart() {
-  destroyChart('chartFXMaturity');
-  const buckets = [{label:'0-30',min:0,max:30},{label:'31-90',min:31,max:90},{label:'91-180',min:91,max:180},{label:'181+',min:181,max:9999}];
-  const dist = buckets.map(b => state.fxRecords.filter(r=>r.vade>=b.min&&r.vade<=b.max).reduce((s,r)=>s+(r.tlKarsilik||0),0));
-  state.charts['chartFXMaturity'] = new Chart(document.getElementById('chartFXMaturity'), {
-    type:'bar', data:{ labels:buckets.map(b=>b.label+' gün'), datasets:[{label:'Milyar TL',data:dist.map(v=>v/1e9),backgroundColor:'rgba(46,196,182,0.75)'}] },
-    options:{ indexAxis:'y', responsive:true, scales:{ x:{grid:{color:'rgba(42,54,84,0.5)'}}, y:{grid:{display:false}} } }
-  });
-}
-
-function renderAvgMaturityChart() {
-  destroyChart('chartAvgMaturity');
-  const tlAvg = {}, fxAvg = {};
-  state.tlRecords.forEach(r => { if(r.year) { tlAvg[r.year] = tlAvg[r.year]||[]; tlAvg[r.year].push(r.vade); }});
-  state.fxRecords.forEach(r => { if(r.year) { fxAvg[r.year] = fxAvg[r.year]||[]; fxAvg[r.year].push(r.vade); }});
-  const years = [...new Set([...Object.keys(tlAvg),...Object.keys(fxAvg)])].sort();
-  state.charts['chartAvgMaturity'] = new Chart(document.getElementById('chartAvgMaturity'), {
-    type:'line',
-    data:{
-      labels:years,
-      datasets:[
-        {label:'TL Vade',data:years.map(y=>tlAvg[y]?tlAvg[y].reduce((a,b)=>a+b,0)/tlAvg[y].length:null),borderColor:'#e63946'},
-        {label:'FX Vade',data:years.map(y=>fxAvg[y]?fxAvg[y].reduce((a,b)=>a+b,0)/fxAvg[y].length:null),borderColor:'#2ec4b6'}
-      ]
-    },
-    options:{ responsive:true, scales:{y:{grid:{color:'rgba(42,54,84,0.5)'}},x:{grid:{display:false}}} }
-  });
-}
-
-// ============================================================
-// TABLO RENDER VE EVENTLER
-// ============================================================
-
-function renderTables() {
-  // 1. STOK TABLOLARI RENDER (Yeni)
-  const buildStockTable = (records, cur) => {
-     if(records.length === 0) return '<p style="padding:1rem;color:var(--muted)">Güncel borç kaydı bulunmamaktadır.</p>';
-     let html = '<table><thead><tr><th>ISIN Kodu</th><th>Döviz</th><th>Valör Tarihi</th><th>İtfa Tarihi</th><th>Tahmini Vade</th><th>Nominal Tutar</th></tr></thead><tbody>';
-     records.forEach(r => {
-        html += `<tr>
-            <td>${r.isin}</td>
-            <td><span class="tag tag-${cur.toLowerCase()}">${r.currency}</span></td>
-            <td>${r.valor}</td>
-            <td>${r.itfa}</td>
-            <td>${r.vade} Gün</td>
-            <td style="font-weight:600">${fmtNum(r.amount)}</td>
-        </tr>`;
-     });
-     html += '</tbody></table>';
-     return html;
-  };
-
-  document.getElementById('stock-tl').innerHTML = buildStockTable(state.stockTL, 'TL');
-  document.getElementById('stock-usd').innerHTML = buildStockTable(state.stockUSD, 'USD');
-  document.getElementById('stock-eur').innerHTML = buildStockTable(state.stockEUR, 'EUR');
-  document.getElementById('stock-gbp').innerHTML = buildStockTable(state.stockGBP, 'GBP');
-
-
-  // 2. İHALE TABLOLARI RENDER (Tarihsel)
-  const tlHeaders = ['ISIN','Valör','İtfa','Vade','Teklif','Kabul','Min Faiz','Max Faiz','Ort. Faiz','Bileşik'];
-  let tlHTML = '<table><thead><tr>';
-  tlHeaders.forEach(h => tlHTML += `<th>${h}</th>`);
-  tlHTML += '</tr></thead><tbody>';
-  state.tlRecords.forEach(r => {
-    tlHTML += `<tr><td>${r.isin}</td><td>${r.valor}</td><td>${r.itfa}</td><td>${r.vade}</td><td>${fmtNum(r.teklif)}</td><td>${fmtNum(r.kabul)}</td><td>${r.minFaiz!=null?r.minFaiz:'—'}</td><td>${r.maxFaiz!=null?r.maxFaiz:'—'}</td><td>${r.ortFaiz!=null?r.ortFaiz:'—'}</td><td>${r.bilesik!=null?r.bilesik:'—'}</td></tr>`;
-  });
-  tlHTML += '</tbody></table>';
-  document.getElementById('tl-table').innerHTML = tlHTML;
-
-  const fxHeaders = ['ISIN','Döviz','Valör','İtfa','Vade','Teklif','Kabul','TL Karşılığı','Min','Max','Ort.','Bileşik'];
-  const tagMap = {'ABD DOLARI':'tag-usd',USD:'tag-usd',AVRO:'tag-eur',EUR:'tag-eur','İNGİLİZ STERLİNİ':'tag-gbp',GBP:'tag-gbp'};
-  let fxHTML = '<table><thead><tr>';
-  fxHeaders.forEach(h => fxHTML += `<th>${h}</th>`);
-  fxHTML += '</tr></thead><tbody>';
-  state.fxRecords.forEach(r => {
-    const tag = tagMap[r.doviz] || '';
-    fxHTML += `<tr><td>${r.isin}</td><td>${tag?`<span class="tag ${tag}">${r.doviz}</span>`:r.doviz}</td><td>${r.valor}</td><td>${r.itfa}</td><td>${r.vade}</td><td>${fmtNum(r.teklif)}</td><td>${fmtNum(r.kabul)}</td><td>${fmtNum(r.tlKarsilik)}</td><td>${r.minFaiz!=null?r.minFaiz:'—'}</td><td>${r.maxFaiz!=null?r.maxFaiz:'—'}</td><td>${r.ortFaiz!=null?r.ortFaiz:'—'}</td><td>${r.bilesik!=null?r.bilesik:'—'}</td></tr>`;
-  });
-  fxHTML += '</tbody></table>';
-  document.getElementById('fx-table').innerHTML = fxHTML;
-}
-
-// Ana Sekme Geçişleri
-document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn[data-tab]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
-  });
-});
-
-// Alt Tablo Geçişleri (Trend İhaleler)
-document.querySelectorAll('.tab-btn[data-subtab]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    // Sadece aynı kapsayıcı içindeki butonları bul ve active class'ını sil
-    const parentBar = btn.closest('.tab-bar');
-    parentBar.querySelectorAll('.tab-btn[data-subtab]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    const subtab = btn.dataset.subtab;
-    // Hangi alt sekme grubunda olduğumuzu anlamak için section'ı bul
-    const section = btn.closest('.chart-section');
-    section.querySelectorAll('.table-wrap').forEach(w => w.style.display = 'none');
-    document.getElementById(subtab).style.display = 'block';
-  });
-});
-
-function observeFadeIns() {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
-  }, {threshold:0.1});
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-  setTimeout(() => {
-    document.querySelectorAll('.fade-in').forEach(el => {
-      if(el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
-    });
-  }, 100);
-}
-
-// ============================================================
-// BAŞLATMA
-// ============================================================
-fetchAndProcess();
-
+init();
 </script>
 </body>
 </html>
