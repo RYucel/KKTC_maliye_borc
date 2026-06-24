@@ -1,35 +1,38 @@
-name: Otomatik DİBS Veri Güncelleme
+name: Veri Güncelle
 
 on:
+  # Günde iki kez çalıştır (06:00 ve 18:00 UTC = 09:00 ve 21:00 TR)
   schedule:
-    # UTC saatidir. Cuma günleri 14:30 UTC'de çalışır.
-    # (Kıbrıs yaz saatiyle 17:30'a denk gelir. MB'nin veriyi girmesi için 30 dk tolerans)
-    - cron: '30 14 * * 5'
-  workflow_dispatch: # Actions sekmesinden manuel tetiklemeye izin verir
+    - cron: '0 6 * * *'
+    - cron: '0 18 * * *'
+  # Manuel tetikleme
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  scrape-and-update:
+  update:
     runs-on: ubuntu-latest
     steps:
-      - name: Repoyu Çek (Checkout)
-        uses: actions/checkout@v3
+      - name: Depoyu çek
+        uses: actions/checkout@v4
 
-      - name: Python Ortamını Kur
-        uses: actions/setup-python@v4
+      - name: Python kur
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
-      - name: Gerekli Kütüphaneleri Yükle
-        run: pip install requests beautifulsoup4
+      - name: Bağımlılıkları kur
+        run: pip install -r requirements.txt
 
-      - name: Python Scriptini Çalıştır (Verileri Çek)
-        run: python scraper.py
+      - name: Scraper'ı çalıştır
+        run: python scraper.py data.json
 
-      - name: Değişiklikleri Commit Et ve Pushla
+      - name: Değişiklik varsa commit et
         run: |
-          git config user.name "GitHub Actions Bot"
+          git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add data.json
-          # Eğer veri değişmemişse commit hata vermesin diye || exit 0 ekliyoruz
-          git commit -m "Veri Güncelleme: DİBS İhaleleri (Otomatik)" || exit 0
+          git diff --staged --quiet || git commit -m "🔄 Veri güncellendi: $(date -u +%Y-%m-%d_%H:%M)"
           git push
