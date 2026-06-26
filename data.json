@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-26 08:59:11",
+  "last_updated": "2026-06-26 19:59:39",
   "sources": {
     "tlRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
@@ -11,7 +11,7 @@
     "fxRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4717",
       "status": "ok",
-      "rows": 175,
+      "rows": 178,
       "httpStatus": 200,
       "headersFound": 0
     },
@@ -3387,14 +3387,59 @@
       "4.00",
       "4.00",
       "4.06"
+    ],
+    [
+      "KKB281026F16",
+      "ABD DOLARI",
+      "26.06.2026",
+      "28.10.2026",
+      "124",
+      "gün",
+      "6,700,000",
+      "6,100,000",
+      "283,224,220",
+      "3.99",
+      "4.00",
+      "4.00",
+      "4.05"
+    ],
+    [
+      "KKB281026F24",
+      "AVRO",
+      "26.06.2026",
+      "28.10.2026",
+      "124",
+      "gün",
+      "3,100,000",
+      "3,100,000",
+      "163,424,870",
+      "3.30",
+      "3.48",
+      "3.38",
+      "3.42"
+    ],
+    [
+      "KKB281026F32",
+      "İNGİLİZ STERLİNİ",
+      "26.06.2026",
+      "28.10.2026",
+      "124",
+      "gün",
+      "10,250,000",
+      "10,250,000",
+      "626,007,475",
+      "4.30",
+      "4.74",
+      "4.53",
+      "4.60"
     ]
   ],
   "fxRaw_headers": [],
   "fxRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 177,
-    "dataRowsExtracted": 175,
+    "totalRowsInTable": 180,
+    "dataRowsExtracted": 178,
     "rawSnippet": "<!DOCTYPE html>\n\n<html lang=\"tr\" dir=\"ltr\"\n  xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"\n  xmlns:dc=\"http://purl.org/dc/terms/\"\n  xmlns:foaf=\"http://xmlns.com/foaf/0.1/\"\n  xmlns:og=\"http://ogp.me/ns#\"\n  xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"\n  xmlns:sioc=\"http://rdfs.org/sioc/ns#\"\n  xmlns:sioct=\"http://rdfs.org/sioc/types#\"\n  xmlns:skos=\"http://www.w3.org/2004/02/skos/core#\"\n  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n<link rel=\"canonical\" href=\"/tr/node/4717\" />\n<link rel=\"shortlink\" href=\"/tr/node/4717\" />\n<link rel=\"shortcut icon\" href=\"https://mb.gov.ct.tr/sites/default/files/logo_bordo-t_0.gif\" type=\"image/gif\" />\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<title>Yabancı Para Cinsinden DİBS İhalelelerine İlişkin Veriler- TÜM YILLAR | KKTC Merkez Bankası</title>\n<link type=\"text/css\" rel=\"stylesheet\" href=\"https://mb.gov.ct.tr/sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css\" media=\"all\" />\n<link type=\"text/css\" rel=\"stylesheet\" href=\"https://mb.gov.ct.tr/sites/default/files/css/css_n2K-Su2W-Byywbl2LbDy8gJafH6_yNQ9UY-BLcsy94w.css\" media=\"all\" />\n<link type=\"text/css\" rel=\"stylesheet\" href=\"https://mb.gov.ct.tr/sites/default/files/css/css_EMWfqvzLeCvHPNQArrfv6XxnSvhL27ca_ecErVLkwTg.css\" media=\"all\" />\n<link type=\"text/css\" rel=\"stylesheet\" href=\"https://mb.gov.ct.tr/sites/default/files/css/css_FqsF5EVwJE3Bfefz5u9wJ067CYS1ETYr_XnuzRtaA4Q.css\" media=\"all\" />\n<link type=\"text/css\" rel=\"stylesheet\" href=\"https://mb.gov.ct.tr/sites/default/files/css/css_Ga1ojl5NpLeUyK8yCi45wpVCaPTdBZUUeKojHRPUnMU.css\" media=\"all\" />\n<link type=\"text/css\" rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Open+Sans:600,regular&amp;subset=latin-ext\" media=\"all\" />\n<script type=\"text/javascript\" src=\"https://mb.gov.ct.tr/sites/default/files/js/js_6OSv7vhfNw9iz7nZ-i4lRH0YC8o57MDs_iHGVzj9zFw.js"
   },
   "tlStockRaw": [
