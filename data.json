@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-05 08:30:25",
+  "last_updated": "2026-08-05 19:44:20",
   "sources": {
     "tlRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
@@ -11,7 +11,7 @@
     "fxRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4717",
       "status": "ok",
-      "rows": 182,
+      "rows": 183,
       "httpStatus": 200,
       "headersFound": 0
     },
@@ -25,7 +25,7 @@
     "usdStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4718",
       "status": "ok",
-      "rows": 56,
+      "rows": 57,
       "httpStatus": 200,
       "headersFound": 0
     },
@@ -3518,14 +3518,29 @@
       "4.00",
       "4.00",
       "4.06"
+    ],
+    [
+      "KKB061126F453",
+      "ABD DOLARI",
+      "4.08.2026",
+      "6.11.2026",
+      "94",
+      "gün",
+      "1,010,301",
+      "1,010,301",
+      "47,938,497",
+      "4.00",
+      "4.00",
+      "4.00",
+      "4.06"
     ]
   ],
   "fxRaw_headers": [],
   "fxRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 184,
-    "dataRowsExtracted": 182,
+    "totalRowsInTable": 185,
+    "dataRowsExtracted": 183,
     "rawSnippet": "<!DOCTYPE html>\n<html lang=\"tr\" dir=\"ltr\">\n  <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"Generator\" content=\"Drupal 10 (https://www.drupal.org)\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<noscript><link rel=\"stylesheet\" href=\"/core/themes/claro/css/components/dropbutton-noscript.css?tj8pky\" />\n</noscript><link rel=\"icon\" href=\"/core/misc/favicon.ico\" type=\"image/vnd.microsoft.icon\" />\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://mb.gov.ct.tr/tr/node/4717\" />\n<link rel=\"alternate\" hreflang=\"en\" href=\"https://mb.gov.ct.tr/en/node/4717\" />\n<link rel=\"canonical\" href=\"https://mb.gov.ct.tr/tr/node/4717\" />\n<link rel=\"shortlink\" href=\"https://mb.gov.ct.tr/tr/node/4717\" />\n\n    <title>Yabancı Para Cinsinden DİBS İhalelelerine İlişkin Veriler- TÜM YILLAR | KKTC Merkez Bankası</title>\n    <link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_EXN4NTzSdIF4SeqO_uDCTHTqYCygFmpyeSiRHh-JVhA.css?delta=0&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_ErPe2Rsn34uM98Ht790FJXK7s6h_0NflE_jQo12gd1I.css?delta=1&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery.bxslider.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files"
   },
   "tlStockRaw": [
@@ -4265,14 +4280,20 @@
       "13,610,301.37",
       "9,578,356.16",
       "107,631,752.05"
+    ],
+    [
+      "Ağustos",
+      "1,010,301.37",
+      "1,010,082.19",
+      "107,631,971.23"
     ]
   ],
   "usdStockRaw_headers": [],
   "usdStockRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 57,
-    "dataRowsExtracted": 56,
+    "totalRowsInTable": 58,
+    "dataRowsExtracted": 57,
     "rawSnippet": "<!DOCTYPE html>\n<html lang=\"tr\" dir=\"ltr\">\n  <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"Generator\" content=\"Drupal 10 (https://www.drupal.org)\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<noscript><link rel=\"stylesheet\" href=\"/core/themes/claro/css/components/dropbutton-noscript.css?tj8pky\" />\n</noscript><link rel=\"icon\" href=\"/core/misc/favicon.ico\" type=\"image/vnd.microsoft.icon\" />\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://mb.gov.ct.tr/tr/node/4718\" />\n<link rel=\"alternate\" hreflang=\"en\" href=\"https://mb.gov.ct.tr/en/node/4718\" />\n<link rel=\"canonical\" href=\"https://mb.gov.ct.tr/tr/node/4718\" />\n<link rel=\"shortlink\" href=\"https://mb.gov.ct.tr/tr/node/4718\" />\n\n    <title>ABD Doları Cinsinden DİBS Stoku | KKTC Merkez Bankası</title>\n    <link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_EXN4NTzSdIF4SeqO_uDCTHTqYCygFmpyeSiRHh-JVhA.css?delta=0&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_ErPe2Rsn34uM98Ht790FJXK7s6h_0NflE_jQo12gd1I.css?delta=1&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery.bxslider.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_iqj0FjVRzNkq_QBmeyytHDfVie3p6"
   },
   "eurStockRaw": [
