@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-08-09 18:50:50",
+  "last_updated": "2026-08-10 07:25:34",
   "sources": {
     "tlRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
@@ -11,7 +11,7 @@
     "fxRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4717",
       "status": "ok",
-      "rows": 183,
+      "rows": 185,
       "httpStatus": 200,
       "headersFound": 0
     },
@@ -39,7 +39,7 @@
     "gbpStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/5694",
       "status": "ok",
-      "rows": 20,
+      "rows": 21,
       "httpStatus": 200,
       "headersFound": 0
     }
@@ -3533,14 +3533,44 @@
       "4.00",
       "4.00",
       "4.06"
+    ],
+    [
+      "KKB061126F13",
+      "ABD DOLARI",
+      "7.08.2026",
+      "11.12.2026",
+      "126",
+      "gün",
+      "11,300,000",
+      "11,300,000",
+      "536,812,150",
+      "4.00",
+      "4.60",
+      "4.17",
+      "4.23"
+    ],
+    [
+      "KKB061126F21",
+      "İNGİLİZ STERLİNİ",
+      "7.08.2026",
+      "11.12.2026",
+      "126",
+      "gün",
+      "13,400,000",
+      "13,400,000",
+      "855,465,380",
+      "4.49",
+      "4.75",
+      "4.64",
+      "4.71"
     ]
   ],
   "fxRaw_headers": [],
   "fxRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 185,
-    "dataRowsExtracted": 183,
+    "totalRowsInTable": 187,
+    "dataRowsExtracted": 185,
     "rawSnippet": "<!DOCTYPE html>\n<html lang=\"tr\" dir=\"ltr\">\n  <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"Generator\" content=\"Drupal 10 (https://www.drupal.org)\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<noscript><link rel=\"stylesheet\" href=\"/core/themes/claro/css/components/dropbutton-noscript.css?tjcclh\" />\n</noscript><link rel=\"icon\" href=\"/core/misc/favicon.ico\" type=\"image/vnd.microsoft.icon\" />\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://mb.gov.ct.tr/tr/node/4717\" />\n<link rel=\"alternate\" hreflang=\"en\" href=\"https://mb.gov.ct.tr/en/node/4717\" />\n<link rel=\"canonical\" href=\"https://mb.gov.ct.tr/tr/node/4717\" />\n<link rel=\"shortlink\" href=\"https://mb.gov.ct.tr/tr/node/4717\" />\n\n    <title>Yabancı Para Cinsinden DİBS İhalelelerine İlişkin Veriler- TÜM YILLAR | KKTC Merkez Bankası</title>\n    <link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_EXN4NTzSdIF4SeqO_uDCTHTqYCygFmpyeSiRHh-JVhA.css?delta=0&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_ErPe2Rsn34uM98Ht790FJXK7s6h_0NflE_jQo12gd1I.css?delta=1&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery.bxslider.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files"
   },
   "tlStockRaw": [
@@ -4283,9 +4313,9 @@
     ],
     [
       "Ağustos",
-      "1,010,301.37",
-      "1,010,082.19",
-      "107,631,971.23"
+      "12,310,301.37",
+      "7,810,082.19",
+      "112,131,971.23"
     ]
   ],
   "usdStockRaw_headers": [],
@@ -4693,14 +4723,20 @@
       "18,700,000.00",
       "18,300,000.00",
       "101,200,000.00"
+    ],
+    [
+      "Ağustos",
+      "13,400,000.00",
+      "19,350,000.00",
+      "95,250,000.00"
     ]
   ],
   "gbpStockRaw_headers": [],
   "gbpStockRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 21,
-    "dataRowsExtracted": 20,
+    "totalRowsInTable": 22,
+    "dataRowsExtracted": 21,
     "rawSnippet": "<!DOCTYPE html>\n<html lang=\"tr\" dir=\"ltr\">\n  <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"Generator\" content=\"Drupal 10 (https://www.drupal.org)\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<noscript><link rel=\"stylesheet\" href=\"/core/themes/claro/css/components/dropbutton-noscript.css?tjcclh\" />\n</noscript><link rel=\"icon\" href=\"/core/misc/favicon.ico\" type=\"image/vnd.microsoft.icon\" />\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://mb.gov.ct.tr/tr/node/5694\" />\n<link rel=\"alternate\" hreflang=\"en\" href=\"https://mb.gov.ct.tr/en/node/5694\" />\n<link rel=\"canonical\" href=\"https://mb.gov.ct.tr/tr/node/5694\" />\n<link rel=\"shortlink\" href=\"https://mb.gov.ct.tr/tr/node/5694\" />\n\n    <title>Sterlin Cinsinden DİBS Stoku | KKTC Merkez Bankası</title>\n    <link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_EXN4NTzSdIF4SeqO_uDCTHTqYCygFmpyeSiRHh-JVhA.css?delta=0&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_ErPe2Rsn34uM98Ht790FJXK7s6h_0NflE_jQo12gd1I.css?delta=1&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery.bxslider.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_iqj0FjVRzNkq_QBmeyytHDfVie3p6-2e"
   }
 }
