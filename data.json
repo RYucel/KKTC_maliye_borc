@@ -1,31 +1,31 @@
 {
-  "last_updated": "2026-09-02 10:34:19",
+  "last_updated": "2026-09-02 20:53:13",
   "sources": {
     "tlRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
       "status": "ok",
-      "rows": 59,
+      "rows": 60,
       "httpStatus": 200,
       "headersFound": 0
     },
     "fxRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4717",
       "status": "ok",
-      "rows": 189,
+      "rows": 190,
       "httpStatus": 200,
       "headersFound": 0
     },
     "tlStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-stoku",
       "status": "ok",
-      "rows": 64,
+      "rows": 65,
       "httpStatus": 200,
       "headersFound": 0
     },
     "usdStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4718",
       "status": "ok",
-      "rows": 57,
+      "rows": 58,
       "httpStatus": 200,
       "headersFound": 0
     },
@@ -802,14 +802,27 @@
       "39.99",
       "38.60",
       "44.56"
+    ],
+    [
+      "KKB011226T193",
+      "01/09/2026",
+      "01/12/2026",
+      "91",
+      "gün",
+      "439,391,781",
+      "439,391,781",
+      "39.50",
+      "39.50",
+      "39.50",
+      "45.75"
     ]
   ],
   "tlRaw_headers": [],
   "tlRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 61,
-    "dataRowsExtracted": 59,
+    "totalRowsInTable": 62,
+    "dataRowsExtracted": 60,
     "rawSnippet": "<!DOCTYPE html>\n<html lang=\"tr\" dir=\"ltr\">\n  <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<noscript><link rel=\"stylesheet\" href=\"/core/themes/claro/css/components/dropbutton-noscript.css?tjcclh\" />\n</noscript><link rel=\"icon\" href=\"/core/misc/favicon.ico\" type=\"image/vnd.microsoft.icon\" />\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://mb.gov.ct.tr/tr/dibs-ihaleleri\" />\n<link rel=\"alternate\" hreflang=\"en\" href=\"https://mb.gov.ct.tr/en/node/3823\" />\n<link rel=\"canonical\" href=\"https://mb.gov.ct.tr/tr/dibs-ihaleleri\" />\n<link rel=\"shortlink\" href=\"https://mb.gov.ct.tr/tr/node/3823\" />\n\n    <title>Türk Lirası Cinsinden DİBS İhalelerine İlişkin Veriler - TÜM YILLAR | KKTC Merkez Bankası</title>\n    <link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_EXN4NTzSdIF4SeqO_uDCTHTqYCygFmpyeSiRHh-JVhA.css?delta=0&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_ErPe2Rsn34uM98Ht790FJXK7s6h_0NflE_jQo12gd1I.css?delta=1&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery.bxslider.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_iqj0FjVRzNkq_QBmeyytHDfVie3p6-2eEjaS7PlozZk.css?delta="
   },
   "fxRaw": [
@@ -3636,14 +3649,29 @@
       "4.74",
       "4.74",
       "4.81"
+    ],
+    [
+      "KKB041226F122",
+      "ABD DOLARI",
+      "1.09.2026",
+      "4.12.2026",
+      "94",
+      "gün",
+      "3,030,904",
+      "3,030,904",
+      "146,012,290",
+      "4.00",
+      "4.00",
+      "4.00",
+      "4.06"
     ]
   ],
   "fxRaw_headers": [],
   "fxRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 191,
-    "dataRowsExtracted": 189,
+    "totalRowsInTable": 192,
+    "dataRowsExtracted": 190,
     "rawSnippet": "<!DOCTYPE html>\n<html lang=\"tr\" dir=\"ltr\">\n  <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<noscript><link rel=\"stylesheet\" href=\"/core/themes/claro/css/components/dropbutton-noscript.css?tjcclh\" />\n</noscript><link rel=\"icon\" href=\"/core/misc/favicon.ico\" type=\"image/vnd.microsoft.icon\" />\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://mb.gov.ct.tr/tr/node/4717\" />\n<link rel=\"alternate\" hreflang=\"en\" href=\"https://mb.gov.ct.tr/en/node/4717\" />\n<link rel=\"canonical\" href=\"https://mb.gov.ct.tr/tr/node/4717\" />\n<link rel=\"shortlink\" href=\"https://mb.gov.ct.tr/tr/node/4717\" />\n\n    <title>Yabancı Para Cinsinden DİBS İhalelelerine İlişkin Veriler- TÜM YILLAR | KKTC Merkez Bankası</title>\n    <link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_EXN4NTzSdIF4SeqO_uDCTHTqYCygFmpyeSiRHh-JVhA.css?delta=0&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_ErPe2Rsn34uM98Ht790FJXK7s6h_0NflE_jQo12gd1I.css?delta=1&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery.bxslider.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_iqj0FjVRzNkq_QBmeyytHDfVie3p6-2eEjaS7PlozZk.css?delta=4&amp;la"
   },
   "tlStockRaw": [
@@ -4037,14 +4065,20 @@
       "4,715,000,000.00",
       "3,765,000,000.00",
       "15,040,195,342.47"
+    ],
+    [
+      "Eylül",
+      "439,391,780.82",
+      "-",
+      "15,479,587,123.29"
     ]
   ],
   "tlStockRaw_headers": [],
   "tlStockRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 65,
-    "dataRowsExtracted": 64,
+    "totalRowsInTable": 66,
+    "dataRowsExtracted": 65,
     "rawSnippet": "<!DOCTYPE html>\n<html lang=\"tr\" dir=\"ltr\">\n  <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<noscript><link rel=\"stylesheet\" href=\"/core/themes/claro/css/components/dropbutton-noscript.css?tjcclh\" />\n</noscript><link rel=\"icon\" href=\"/core/misc/favicon.ico\" type=\"image/vnd.microsoft.icon\" />\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://mb.gov.ct.tr/tr/dibs-stoku\" />\n<link rel=\"alternate\" hreflang=\"en\" href=\"https://mb.gov.ct.tr/en/node/3824\" />\n<link rel=\"canonical\" href=\"https://mb.gov.ct.tr/tr/dibs-stoku\" />\n<link rel=\"shortlink\" href=\"https://mb.gov.ct.tr/tr/node/3824\" />\n\n    <title>Türk Lirası Cinsinden DİBS Stoku | KKTC Merkez Bankası</title>\n    <link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_EXN4NTzSdIF4SeqO_uDCTHTqYCygFmpyeSiRHh-JVhA.css?delta=0&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_ErPe2Rsn34uM98Ht790FJXK7s6h_0NflE_jQo12gd1I.css?delta=1&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery.bxslider.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_iqj0FjVRzNkq_QBmeyytHDfVie3p6-2eEjaS7PlozZk.css?delta=4&amp;language=tr&amp;theme=kktcmb&amp;incl"
   },
   "usdStockRaw": [
@@ -4395,14 +4429,20 @@
       "20,320,273.97",
       "25,820,054.79",
       "102,131,971.23"
+    ],
+    [
+      "Eylül",
+      "3,030,904.11",
+      "4,040,328.77",
+      "101,122,546.57"
     ]
   ],
   "usdStockRaw_headers": [],
   "usdStockRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 58,
-    "dataRowsExtracted": 57,
+    "totalRowsInTable": 59,
+    "dataRowsExtracted": 58,
     "rawSnippet": "<!DOCTYPE html>\n<html lang=\"tr\" dir=\"ltr\">\n  <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<noscript><link rel=\"stylesheet\" href=\"/core/themes/claro/css/components/dropbutton-noscript.css?tjcclh\" />\n</noscript><link rel=\"icon\" href=\"/core/misc/favicon.ico\" type=\"image/vnd.microsoft.icon\" />\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://mb.gov.ct.tr/tr/node/4718\" />\n<link rel=\"alternate\" hreflang=\"en\" href=\"https://mb.gov.ct.tr/en/node/4718\" />\n<link rel=\"canonical\" href=\"https://mb.gov.ct.tr/tr/node/4718\" />\n<link rel=\"shortlink\" href=\"https://mb.gov.ct.tr/tr/node/4718\" />\n\n    <title>ABD Doları Cinsinden DİBS Stoku | KKTC Merkez Bankası</title>\n    <link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_EXN4NTzSdIF4SeqO_uDCTHTqYCygFmpyeSiRHh-JVhA.css?delta=0&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_ErPe2Rsn34uM98Ht790FJXK7s6h_0NflE_jQo12gd1I.css?delta=1&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery.bxslider.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_iqj0FjVRzNkq_QBmeyytHDfVie3p6-2eEjaS7PlozZk.css?delta=4&amp;language=tr&amp;theme=kktcmb&amp;include"
   },
   "eurStockRaw": [
