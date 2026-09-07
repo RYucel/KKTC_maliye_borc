@@ -1,10 +1,10 @@
 {
-  "last_updated": "2026-09-06 20:16:12",
+  "last_updated": "2026-09-07 11:30:47",
   "sources": {
     "tlRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
       "status": "ok",
-      "rows": 60,
+      "rows": 62,
       "httpStatus": 200,
       "headersFound": 0
     },
@@ -815,14 +815,40 @@
       "39.50",
       "39.50",
       "45.75"
+    ],
+    [
+      "KKB111226T33",
+      "04/09/2026",
+      "11/12/2026",
+      "98",
+      "gün",
+      "6,120,000,000",
+      "4,086,000,000",
+      "37.40",
+      "39.60",
+      "38.92",
+      "44.80"
+    ],
+    [
+      "KKB041226F203",
+      "04/09/2026",
+      "04/12/2026",
+      "91",
+      "gün",
+      "87,579,178",
+      "87,579,178",
+      "38.00",
+      "38.00",
+      "38.00",
+      "43.77"
     ]
   ],
   "tlRaw_headers": [],
   "tlRaw_debug": {
     "httpStatus": 200,
     "headers": [],
-    "totalRowsInTable": 62,
-    "dataRowsExtracted": 60,
+    "totalRowsInTable": 64,
+    "dataRowsExtracted": 62,
     "rawSnippet": "<!DOCTYPE html>\n<html lang=\"tr\" dir=\"ltr\">\n  <head>\n    <meta charset=\"utf-8\" />\n<meta name=\"MobileOptimized\" content=\"width\" />\n<meta name=\"HandheldFriendly\" content=\"true\" />\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<noscript><link rel=\"stylesheet\" href=\"/core/themes/claro/css/components/dropbutton-noscript.css?tjcclh\" />\n</noscript><link rel=\"icon\" href=\"/core/misc/favicon.ico\" type=\"image/vnd.microsoft.icon\" />\n<link rel=\"alternate\" hreflang=\"tr\" href=\"https://mb.gov.ct.tr/tr/dibs-ihaleleri\" />\n<link rel=\"alternate\" hreflang=\"en\" href=\"https://mb.gov.ct.tr/en/node/3823\" />\n<link rel=\"canonical\" href=\"https://mb.gov.ct.tr/tr/dibs-ihaleleri\" />\n<link rel=\"shortlink\" href=\"https://mb.gov.ct.tr/tr/node/3823\" />\n\n    <title>Türk Lirası Cinsinden DİBS İhalelerine İlişkin Veriler - TÜM YILLAR | KKTC Merkez Bankası</title>\n    <link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_EXN4NTzSdIF4SeqO_uDCTHTqYCygFmpyeSiRHh-JVhA.css?delta=0&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_ErPe2Rsn34uM98Ht790FJXK7s6h_0NflE_jQo12gd1I.css?delta=1&amp;language=tr&amp;theme=kktcmb&amp;include=eJyFkEEOgzAMBD9EyanviULiUivGjmxTQV9fDtBWXLhYmtFqV3KuUNBF77HRPCLHlnKNyAXY40CSa_iHLlNSCds1W3uWArsZSYZEN_OVkMcui0Jg0SkRvqGDxTddQ9G5Jep37Gr1PA1hEHFzTe0rFiMsoAefyhWsCRu-IE7Aczhx_-u7TCqk2gTZL6PHuM0N9IH23P6C_gGvG37y\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.17/jquery.bxslider.min.css\" />\n<link rel=\"stylesheet\" media=\"all\" href=\"/sites/default/files/css/css_iqj0FjVRzNkq_QBmeyytHDfVie3p6-2eEjaS7PlozZk.css?delta="
   },
   "fxRaw": [
@@ -4068,9 +4094,9 @@
     ],
     [
       "Eylül",
-      "439,391,780.82",
-      "-",
-      "15,479,587,123.29"
+      "4,612,970,958.90",
+      "3,558,177,534.025",
+      "16,094,988,767.12"
     ]
   ],
   "tlStockRaw_headers": [],
