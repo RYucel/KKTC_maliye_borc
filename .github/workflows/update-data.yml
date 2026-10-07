@@ -29,10 +29,13 @@ jobs:
       - name: Scraper'ı çalıştır
         run: python scraper.py data.json
 
+      - name: Paylaşım önizleme görselini (og.png) üret
+        run: python og.py data.json og.png index.html
+
       - name: Değişiklik varsa commit et
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add data.json
+          git add data.json og.png index.html
           git diff --staged --quiet || git commit -m "🔄 Veri güncellendi: $(date -u +%Y-%m-%d_%H:%M)"
           git push
