@@ -91,6 +91,16 @@ footer{text-align:center;padding:1.5rem 1rem;border-top:1px solid var(--bdr);col
 table.proj-tbl th,table.proj-tbl td{text-align:right}
 table.proj-tbl th:first-child,table.proj-tbl td:first-child,table.proj-tbl.det th:nth-child(-n+3),table.proj-tbl.det td:nth-child(-n+3){text-align:left}
 table.proj-tbl tr.tot td{font-weight:700;border-top:2px solid var(--bdr)}
+.cv{position:relative;height:310px}.cv canvas{max-height:none!important}
+@media(max-width:600px){.cv{height:260px}}
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.7rem;margin:.6rem 0 1rem}
+.sim-in{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:.6rem .7rem}
+.sim-in .row{display:flex;justify-content:space-between;align-items:baseline;font-size:.74rem;color:var(--muted);margin-bottom:.3rem}
+.sim-in .row b{color:var(--fg);font-size:.85rem}
+.sim-in .def{font-size:.62rem;color:var(--muted);opacity:.75}
+.sim-in input[type=range]{width:100%;accent-color:var(--accent3)}
+.sim-presets{display:flex;gap:.4rem;flex-wrap:wrap}
+.delta-up{color:var(--red)}.delta-dn{color:var(--green)}
 .lg-dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:.35rem;vertical-align:middle}
 @media(max-width:600px){.kpi-grid{grid-template-columns:1fr 1fr}.cur-stats{gap:.5rem}}
 </style>
@@ -129,6 +139,9 @@ table.proj-tbl tr.tot td{font-weight:700;border-top:2px solid var(--bdr)}
     <button class="tab-btn" data-t="currency">Döviz Dağılımı</button>
     <button class="tab-btn" data-t="maturity">Vade Yapısı</button>
     <button class="tab-btn" data-t="proj">Ödeme Projeksiyonu</button>
+    <button class="tab-btn" data-t="sim">Senaryo Simülatörü</button>
+    <button class="tab-btn" data-t="risk">Risk Göstergeleri</button>
+    <button class="tab-btn" data-t="auc">İhale &amp; Maliyet</button>
     <button class="tab-btn" data-t="stock">Borç Stoku</button>
     <button class="tab-btn" data-t="table">Veri Tablosu</button>
   </div>
@@ -169,6 +182,9 @@ table.proj-tbl tr.tot td{font-weight:700;border-top:2px solid var(--bdr)}
   </div>
 
   <div class="tab-pane" id="p-proj"><div id="projContent"></div></div>
+  <div class="tab-pane" id="p-sim"><div id="simContent"></div></div>
+  <div class="tab-pane" id="p-risk"><div id="riskContent"></div></div>
+  <div class="tab-pane" id="p-auc"><div id="aucContent"></div></div>
 
   <div class="tab-pane" id="p-stock"><div id="stockContent"></div></div>
 
@@ -370,7 +386,7 @@ function mk(id,cfg){if(S.charts[id])S.charts[id].destroy();const el=document.get
 const gG={color:'rgba(42,54,84,.5)'},nG={display:false};
 
 /* RENDER */
-function render(){try{renderDebug()}catch(e){console.warn('debug:',e)}try{renderKPI()}catch(e){console.warn('kpi:',e)}try{renderInsights()}catch(e){console.warn('insights:',e)}try{renderTrends()}catch(e){console.warn('trends:',e)}try{renderRates()}catch(e){console.warn('rates:',e)}try{renderCurrency()}catch(e){console.warn('currency:',e)}try{renderMaturity()}catch(e){console.warn('maturity:',e)}try{renderProj()}catch(e){console.warn('proj:',e)}try{renderStock()}catch(e){console.warn('stock:',e)}try{renderTables()}catch(e){console.warn('tables:',e)}
+function render(){S._bills=null;try{renderDebug()}catch(e){console.warn('debug:',e)}try{renderKPI()}catch(e){console.warn('kpi:',e)}try{renderInsights()}catch(e){console.warn('insights:',e)}try{renderTrends()}catch(e){console.warn('trends:',e)}try{renderRates()}catch(e){console.warn('rates:',e)}try{renderCurrency()}catch(e){console.warn('currency:',e)}try{renderMaturity()}catch(e){console.warn('maturity:',e)}try{renderProj()}catch(e){console.warn('proj:',e)}try{renderSim()}catch(e){console.warn('sim:',e)}try{renderRisk()}catch(e){console.warn('risk:',e)}try{renderAuc()}catch(e){console.warn('auc:',e)}try{renderStock()}catch(e){console.warn('stock:',e)}try{renderTables()}catch(e){console.warn('tables:',e)}
 const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.1});document.querySelectorAll('.fade-in').forEach(e=>obs.observe(e));setTimeout(()=>{document.querySelectorAll('.fade-in').forEach(e=>{if(e.getBoundingClientRect().top<innerHeight)e.classList.add('vis')})},80)}
 
 function renderKPI(){
@@ -497,7 +513,7 @@ function renderProj(){
       <div class="cur-stat"><div class="val">${next.itfa.toLocaleDateString('tr-TR')}</div><div class="lbl">Sıradaki İtfa</div></div>
     </div></div>
     <div class="chart-box"><h3>Aylık Anapara ve Faiz Ödemeleri (Mrd TL)</h3><canvas id="cProj"></canvas><div class="table-wrap">${tbl}</div></div>
-    <p class="proj-note">Yalnızca ihalesi yapılmış ve vadesi gelmemiş DİBS'ler dahildir; yeni ihaleler, borç çevirme, dış borç ve krediler dahil değildir. Faiz, iskontolu bonoların ihaledeki ortalama basit faizi üzerinden ayrıştırılmıştır (anapara = nominal / (1 + faiz × gün/365)). Döviz bonoları güncel kurla TL'ye çevrilmiştir (${S.rates.ratesSrc==='live'?'canlı kur':'yaklaşık kur'}).</p></div></div>
+    <p class="proj-note">Yalnızca ihalesi yapılmış ve vadesi gelmemiş DİBS'ler dahildir; yeni ihaleler, borç çevirme, dış borç ve krediler dahil değildir. Faiz, iskontolu bonoların ihaledeki ortalama basit faizi üzerinden ayrıştırılmıştır (anapara = nominal / (1 + faiz × gün/365)). Döviz bonoları güncel kurla TL'ye çevrilmiştir (${S.rates.ratesSrc==='live'?'canlı kur':S.rates.ratesSrc==='son ihale kuru'?'son ihale kuru':'yaklaşık kur'}).</p></div></div>
     <div class="chart-section fade-in vis"><div class="chart-row c2">
       <div class="chart-box"><h3>Para Cinsine Göre Aylık Ödeme (Mrd TL)</h3><canvas id="cProjCur"></canvas></div>
       <div class="chart-box"><h3>Kümülatif Ödeme (Mrd TL)</h3><canvas id="cProjCum"></canvas></div>
@@ -514,6 +530,263 @@ function renderProj(){
   let cum=0;
   mk('cProjCum',{type:'line',data:{labels,datasets:[{label:'Kümülatif',data:M.map(m=>(cum+=m.tot)/1e9),borderColor:'#f4a261',backgroundColor:'rgba(244,162,97,.1)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:'#f4a261'}]},
     options:{responsive:true,plugins:{legend:{display:false},tooltip:tip},scales:{y:{title:{display:true,text:'Milyar TL'},grid:gG,beginAtZero:true},x:{grid:nG}}}});
+}
+
+/* ==========================================================
+   ANALİST MODÜLLERİ — ortak yardımcılar
+   Her ihale bir "bono" kaydına normalize edilir: valör (v),
+   itfa (i), gün (d), nominal, satış fiyatı (price), faiz (int).
+   Döviz bonolarında ihale günündeki örtük kur = TL karşılığı / nominal.
+   ========================================================== */
+const DAY=864e5,FXC=['USD','EUR','GBP'],CUR_COL={TL:'#e63946',USD:'#2ec4b6',EUR:'#a78bfa',GBP:'#38bdf8'};
+const mkey=d=>d.getFullYear()*100+d.getMonth()+1;
+const monthEnd=(y,m0)=>new Date(y,m0+1,0);
+const addM=(d,n)=>new Date(d.getFullYear(),d.getMonth()+n,d.getDate());
+const todayD=()=>{const t=new Date();t.setHours(0,0,0,0);return t};
+function wavg(arr,v,w){let s=0,t=0;arr.forEach(a=>{const x=v(a),y=w(a);if(x!=null&&!isNaN(x)&&y>0){s+=x*y;t+=y}});return t?s/t:null}
+function curRate(c){return c==='TL'?1:(S.rates[c+'_TRY']||0)}
+function mkA(id,cfg){cfg.options=cfg.options||{};cfg.options.maintainAspectRatio=false;mkU(id,cfg)}
+function mkU(id,cfg){const c=S.charts[id];if(c&&c.config.type===cfg.type&&document.getElementById(id)===c.canvas){c.data=cfg.data;c.options=cfg.options;c.update('none');return}mk(id,cfg)}
+function bills(){
+  if(S._bills)return S._bills;
+  const out=[];
+  const add=(r,cur,fx)=>{const v=pdate(r.valor),i=pdate(r.itfa);if(!v||!i||!(r.kabul>0))return;
+    const d=Math.max(1,Math.round((i-v)/DAY)),rr=(r.ortF||0)/100,price=r.kabul/(1+rr*d/365);
+    out.push({isin:r.isin,cur,v,i,d,nom:r.kabul,price,int:r.kabul-price,ortF:r.ortF,bil:r.bil,teklif:r.teklif,minF:r.minF,maxF:r.maxF,fxV:fx})};
+  S.tl.forEach(r=>add(r,'TL',1));
+  S.fx.forEach(r=>{const c=FX_CODE[r.doviz];if(c)add(r,c,r.tlK>0?r.tlK/r.kabul:null)});
+  out.sort((a,b)=>a.v-b.v);S._bills=out;return out;
+}
+/* Bir tarihteki örtük kur: o tarihe kadarki son ihalenin kuru */
+function implFX(cur,d){if(cur==='TL')return 1;const b=bills().filter(x=>x.cur===cur&&x.fxV);let r=null;for(const x of b){if(x.v<=d)r=x.fxV;else break}return r||(b[0]&&b[0].fxV)||curRate(cur)}
+/* Son n ayın çevirme oranı (ihraç / geri ödeme) — MB stok serisinden */
+function rollHist(curs,n=12){let i=0,p=0;curs.forEach(c=>{S.stk.filter(x=>x.currency===c).slice(-n).forEach(x=>{const k=c==='TL'?1:implFX(c,x.date);i+=x.issued*k;p+=x.repaid*k})});return p>0?i/p:null}
+function kpiGrid(items){return `<div class="kpi-grid">${items.map(k=>`<div class="kpi-card"><div class="kpi-label">${k.l}</div><div class="kpi-value">${k.v}</div><div class="kpi-sub">${k.s||''}</div></div>`).join('')}</div>`}
+const pct=(v,d=1)=>v==null?'—':'%'+fn(v,d);
+const f2=v=>fn(v/1e9,2);
+
+/* ==========================================================
+   SENARYO SİMÜLATÖRÜ — çevirme (rollover) projeksiyonu
+   Vadesi gelmemiş her bono itfa gününde ödenir; nominalin
+   "çevirme oranı" kadarı aynı gün yeni bonoyla yeniden borçlanılır
+   (yeni faiz ve vade ile). Yeni bonolar ufuk boyunca tekrar çevrilir.
+   ========================================================== */
+const SIM_IN=[
+  {k:'h',l:'Ufuk',min:6,max:24,step:6,fmt:v=>v+' ay'},
+  {k:'rollTL',l:'TL çevirme oranı',min:50,max:200,step:1,fmt:v=>'%'+v},
+  {k:'rTL',l:'TL ihale faizi (basit)',min:10,max:70,step:.5,fmt:v=>'%'+fn(v,1)},
+  {k:'dTL',l:'TL ihale vadesi',min:28,max:364,step:1,fmt:v=>v+' gün'},
+  {k:'rollFX',l:'Döviz çevirme oranı',min:50,max:200,step:1,fmt:v=>'%'+v},
+  {k:'dRFX',l:'Döviz faizi değişimi',min:-3,max:5,step:.25,fmt:v=>(v>0?'+':'')+fn(v,2)+' puan'},
+  {k:'dFX',l:'Döviz ihale vadesi',min:28,max:364,step:1,fmt:v=>v+' gün'},
+  {k:'shock',l:'Anlık kur şoku',min:0,max:60,step:1,fmt:v=>'%'+v},
+  {k:'dep',l:'Aylık TL değer kaybı',min:0,max:6,step:.25,fmt:v=>'%'+fn(v,2)}];
+function simDefaults(){
+  const B=bills(),T=todayD(),from=new Date(T-90*DAY);
+  const tlAll=B.filter(b=>b.cur==='TL'),fxAll=B.filter(b=>b.cur!=='TL');
+  const tlR=tlAll.filter(b=>b.v>=from),fxR=fxAll.filter(b=>b.v>=from);
+  const tlS=tlR.length?tlR:tlAll.slice(-3),fxS=fxR.length?fxR:fxAll.slice(-6);
+  const fxRate={};FXC.forEach(c=>{const a=B.filter(b=>b.cur===c&&b.v>=from);fxRate[c]=wavg(a.length?a:B.filter(b=>b.cur===c).slice(-3),b=>b.ortF,b=>b.nom)||4});
+  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  return{h:12,
+    rollTL:clamp(Math.round((rollHist(['TL'])||1)*100),50,200),
+    rTL:clamp(Math.round((wavg(tlS,b=>b.ortF,b=>b.nom)||40)*2)/2,10,70),
+    dTL:clamp(Math.round(wavg(tlS,b=>b.d,b=>b.nom)||90),28,364),
+    rollFX:clamp(Math.round((rollHist(FXC)||1)*100),50,200),
+    dRFX:0,
+    dFX:clamp(Math.round(wavg(fxS,b=>b.d,b=>b.nom*curRate(b.cur))||110),28,364),
+    shock:0,dep:0,fxRate};
+}
+function simulate(p){
+  const T=todayD(),E=monthEnd(T.getFullYear(),T.getMonth()+p.h-1);   // bu ay dahil h tam ay
+  const fxPath=(c,d)=>c==='TL'?1:curRate(c)*(1+p.shock/100)*Math.pow(1+p.dep/100,Math.max(0,(d-T)/DAY/30.4375));
+  const live=bills().filter(b=>b.i>T).map(b=>({cur:b.cur,v:b.v,i:b.i,nom:b.nom,price:b.price,int:b.int}));
+  const all=[...live],q=[...live];
+  const keys=[];for(let d=new Date(T.getFullYear(),T.getMonth(),1);d<=E;d=new Date(d.getFullYear(),d.getMonth()+1,1))keys.push(mkey(d));
+  const M={};keys.forEach(k=>M[k]={key:k,prin:0,int:0,matured:0,proceeds:0});
+  let guard=0;
+  while(q.length&&guard++<20000){
+    q.sort((a,b)=>a.i-b.i);const b=q.shift();if(b.i>E)break;
+    const m=M[mkey(b.i)];if(!m)continue;const fx=fxPath(b.cur,b.i);
+    m.prin+=b.price*fx;m.int+=b.int*fx;m.matured+=b.nom*fx;
+    const roll=(b.cur==='TL'?p.rollTL:p.rollFX)/100;if(roll<=0)continue;
+    const d=b.cur==='TL'?p.dTL:p.dFX,r=Math.max(0,b.cur==='TL'?p.rTL:(p.fxRate[b.cur]||4)+p.dRFX)/100;
+    const nom=b.nom*roll,price=nom/(1+r*d/365);
+    m.proceeds+=price*fx;
+    const nb={cur:b.cur,v:b.i,i:new Date(b.i.getTime()+d*DAY),nom,price,int:nom-price};
+    all.push(nb);q.push(nb);
+  }
+  const ends=[T,...keys.map(k=>{const e=monthEnd(Math.floor(k/100),k%100-1);return e>E?E:e})];
+  const stock=ends.map((e,j)=>{const lv=all.filter(b=>b.v<=e&&b.i>e);
+    const tl=lv.filter(b=>b.cur==='TL').reduce((s,b)=>s+b.nom,0),fx=lv.filter(b=>b.cur!=='TL').reduce((s,b)=>s+b.nom*fxPath(b.cur,e),0);
+    return{lbl:j===0?'Bugün':mLbl(keys[j-1]),tl,fx,tot:tl+fx}});
+  const months=keys.map(k=>M[k]);
+  const totInt=months.reduce((s,m)=>s+m.int,0),net=months.reduce((s,m)=>s+m.matured-m.proceeds,0);
+  return{months,stock,totInt,annInt:totInt*12/p.h,net,start:stock[0].tot,end:stock[stock.length-1].tot};
+}
+function renderSim(){
+  const el=document.getElementById('simContent');
+  if(!bills().some(b=>b.i>todayD())){el.innerHTML='<div class="cur-card"><p class="no-data">Vadesi gelmemiş DİBS yok — simülasyon için güncel veri gerekli.</p></div>';return}
+  const D=simDefaults();S.simDef=D;S.sim=S.sim&&S.sim._src===S.src?S.sim:{...D,_src:S.src};
+  el.innerHTML=`<div class="chart-section"><h2>Çevirme Senaryo Simülatörü</h2><div class="cur-card">
+    <div class="cur-card-head"><h3>Varsayımlar</h3><div class="sim-presets">
+      <button class="btn" data-pre="base">Tarihsel eğilim</button><button class="btn" data-pre="flat">Stok sabit</button><button class="btn" data-pre="rate">Faiz şoku</button>
+      <button class="btn" data-pre="fx">Kur krizi</button><button class="btn" data-pre="fisc">Mali disiplin</button></div></div>
+    <div class="sim-grid">${SIM_IN.map(x=>`<div class="sim-in"><div class="row"><span>${x.l}</span><b id="sv-${x.k}"></b></div>
+      <input type="range" id="si-${x.k}" min="${x.min}" max="${x.max}" step="${x.step}"><div class="def">Tarihsel: ${x.fmt(D[x.k])}</div></div>`).join('')}</div>
+    <div id="simKpi"></div>
+    <p class="proj-note">Varsayılanlar: çevirme oranı son 12 ayın ihraç/geri ödeme oranı (MB stok verisi), faiz ve vade son 90 günün nominal ağırlıklı ihale ortalaması. Çevirme oranı %100'ün üstündeyse net borçlanma, altındaysa net geri ödeme vardır. Kur şoku döviz stokuna hemen, aylık değer kaybı zamanla yansır. Kesik çizgi tarihsel eğilim (baz) senaryosudur.</p></div></div>
+    <div class="chart-section"><div class="chart-row c2">
+      <div class="chart-box"><h3>Borç Stoku Projeksiyonu (Mrd TL)</h3><div class="cv"><canvas id="cSimStk"></canvas></div></div>
+      <div class="chart-box"><h3>Aylık Faiz Ödemesi (Mrd TL)</h3><div class="cv"><canvas id="cSimInt"></canvas></div></div></div></div>
+    <div class="chart-section"><div class="chart-row c2">
+      <div class="chart-box"><h3>Bütçeden Net Nakit Çıkışı (Mrd TL)</h3><div class="cv"><canvas id="cSimNet"></canvas></div><p class="proj-note">İtfa edilen nominal − yeni ihale geliri. Pozitif: Hazine itfayı kendi kaynağından karşılar; negatif: net yeni borçlanma.</p></div>
+      <div class="chart-box"><h3>Aylık Anapara ve Faiz İtfası (Mrd TL)</h3><div class="cv"><canvas id="cSimPay"></canvas></div></div></div></div>`;
+  const setUI=()=>SIM_IN.forEach(x=>{document.getElementById('si-'+x.k).value=S.sim[x.k];document.getElementById('sv-'+x.k).textContent=x.fmt(S.sim[x.k])});
+  SIM_IN.forEach(x=>document.getElementById('si-'+x.k).addEventListener('input',e=>{S.sim[x.k]=+e.target.value;document.getElementById('sv-'+x.k).textContent=x.fmt(S.sim[x.k]);runSim()}));
+  const PRE={base:{},flat:{rollTL:100,rollFX:100},rate:{rTL:Math.min(70,D.rTL+10),dRFX:1.5},fx:{shock:30,dep:3,rollFX:Math.max(50,D.rollFX-20)},fisc:{rollTL:85,rollFX:85}};
+  el.querySelectorAll('[data-pre]').forEach(b=>b.addEventListener('click',()=>{const h=S.sim.h;S.sim={...D,...PRE[b.dataset.pre],h,_src:S.src};setUI();runSim()}));
+  setUI();runSim();
+}
+function runSim(){
+  const p=S.sim,R=simulate(p),B=simulate({...S.simDef,h:p.h});
+  const dv=(a,b)=>{const x=a-b;if(Math.abs(x)<5e5)return '<span>baz ile aynı</span>';return `<span class="${x>0?'delta-up':'delta-dn'}">baza göre ${x>0?'+':''}${f2(x)} Mrd</span>`};
+  document.getElementById('simKpi').innerHTML=kpiGrid([
+    {l:'Ufuk Sonu Stok',v:f2(R.end)+' Mrd TL',s:`bugün ${f2(R.start)} → ${R.end>=R.start?'+':''}${fn((R.end/R.start-1)*100,1)}% · ${dv(R.end,B.end)}`},
+    {l:'Ufuk Boyunca Faiz',v:f2(R.totInt)+' Mrd TL',s:dv(R.totInt,B.totInt)},
+    {l:'Yıllıklandırılmış Faiz',v:f2(R.annInt)+' Mrd TL',s:'ufuk faizinin 12 aya oranı'},
+    {l:'Bütçeden Net Nakit',v:f2(R.net)+' Mrd TL',s:R.net<0?'net yeni borçlanma':'net geri ödeme'},
+    {l:'Döviz Payı (Ufuk Sonu)',v:pct(R.stock[R.stock.length-1].fx/R.end*100),s:'bugün '+pct(R.stock[0].fx/R.start*100)}]);
+  const L=R.stock.map(s=>s.lbl),ML=R.months.map(m=>mLbl(m.key));
+  const tip={callbacks:{label:c=>c.dataset.label+': '+fn(c.raw,2)+' Mrd TL'}};
+  const base=(data)=>({type:'line',label:'Baz senaryo',data,borderColor:'#e8edf5',borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false});
+  mkA('cSimStk',{type:'bar',data:{labels:L,datasets:[base(B.stock.map(s=>s.tot/1e9)),
+    {label:'TL',data:R.stock.map(s=>s.tl/1e9),backgroundColor:CUR_COL.TL,borderRadius:3,stack:'s'},
+    {label:'Döviz (TL karşılığı)',data:R.stock.map(s=>s.fx/1e9),backgroundColor:CUR_COL.USD,borderRadius:3,stack:'s'}]},
+    options:{responsive:true,animation:false,plugins:{legend:{position:'top'},tooltip:tip},scales:{y:{stacked:true,title:{display:true,text:'Milyar TL'},grid:gG,beginAtZero:true},x:{stacked:true,grid:nG}}}});
+  mkA('cSimInt',{type:'bar',data:{labels:ML,datasets:[base(B.months.map(m=>m.int/1e9)),{label:'Faiz',data:R.months.map(m=>m.int/1e9),backgroundColor:'#f4a261',borderRadius:3}]},
+    options:{responsive:true,animation:false,plugins:{legend:{position:'top'},tooltip:tip},scales:{y:{title:{display:true,text:'Milyar TL'},grid:gG,beginAtZero:true},x:{grid:nG}}}});
+  const net=R.months.map(m=>(m.matured-m.proceeds)/1e9);
+  mkA('cSimNet',{type:'bar',data:{labels:ML,datasets:[{label:'Net nakit çıkışı',data:net,backgroundColor:net.map(v=>v>=0?'rgba(239,68,68,.75)':'rgba(46,196,182,.75)'),borderRadius:3}]},
+    options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:tip},scales:{y:{title:{display:true,text:'Milyar TL'},grid:gG},x:{grid:nG}}}});
+  mkA('cSimPay',{type:'bar',data:{labels:ML,datasets:[{label:'Anapara',data:R.months.map(m=>m.prin/1e9),backgroundColor:'#5b8def',borderRadius:3,stack:'p'},{label:'Faiz',data:R.months.map(m=>m.int/1e9),backgroundColor:'#f4a261',borderRadius:3,stack:'p'}]},
+    options:{responsive:true,animation:false,plugins:{legend:{position:'top'},tooltip:tip},scales:{y:{stacked:true,title:{display:true,text:'Milyar TL'},grid:gG},x:{stacked:true,grid:nG}}}});
+}
+
+/* ==========================================================
+   RİSK GÖSTERGELERİ — ihale kayıtlarından ay sonu stok yeniden kurulur
+   ========================================================== */
+function riskHistory(){
+  const B=bills(),T=todayD(),pts=[];
+  const s=S.stk.length?Math.min(...S.stk.map(x=>x.key)):202001;
+  let y=Math.floor(s/100),m=s%100-1;
+  for(let g=0;g<600;g++){
+    let e=monthEnd(y,m);if(e>T)e=T;
+    const fx={TL:1,USD:implFX('USD',e),EUR:implFX('EUR',e),GBP:implFX('GBP',e)};
+    const live=B.filter(b=>b.v<=e&&b.i>e),val=b=>b.nom*fx[b.cur];
+    const tl=live.filter(b=>b.cur==='TL'),fl=live.filter(b=>b.cur!=='TL');
+    const tlV=tl.reduce((a,b)=>a+val(b),0),fxV=fl.reduce((a,b)=>a+val(b),0);
+    pts.push({key:mkey(e),e,tlV,fxV,tlNom:tl.reduce((a,b)=>a+b.nom,0),fxShare:tlV+fxV?fxV/(tlV+fxV)*100:null,
+      wamTL:wavg(tl,b=>(b.i-e)/DAY,val),wamFX:wavg(fl,b=>(b.i-e)/DAY,val),rTL:wavg(tl,b=>b.bil,val),rFX:wavg(fl,b=>b.bil,val)});
+    if(e>=T)break;if(++m>11){m=0;y++}
+  }
+  S._riskHist=pts;return pts;
+}
+function renderRisk(){
+  const el=document.getElementById('riskContent');const B=bills(),T=todayD();
+  if(!B.length){el.innerHTML='<p class="no-data">İhale verisi yok.</p>';return}
+  const H=riskHistory().filter(p=>p.tlV+p.fxV>0);
+  const live=B.filter(b=>b.i>T),val=b=>b.nom*curRate(b.cur),tot=live.reduce((a,b)=>a+val(b),0);
+  const tl=live.filter(b=>b.cur==='TL'),fl=live.filter(b=>b.cur!=='TL'),fxV=fl.reduce((a,b)=>a+val(b),0);
+  const within=n=>tot?live.filter(b=>b.i-T<=n*DAY).reduce((a,b)=>a+val(b),0)/tot*100:null;
+  const rTL=rollHist(['TL']),rFX=rollHist(FXC);
+  el.innerHTML=`<div class="chart-section"><h2>Risk Göstergeleri</h2>
+    ${kpiGrid([
+      {l:'Ağırlıklı Ort. Kalan Vade',v:fn(wavg(live,b=>(b.i-T)/DAY,val),0)+' gün',s:`TL ${fn(wavg(tl,b=>(b.i-T)/DAY,val),0)} · Döviz ${fn(wavg(fl,b=>(b.i-T)/DAY,val),0)} gün`},
+      {l:'Ağırlıklı Ort. İhraç Vadesi',v:fn(wavg(live,b=>b.d,val),0)+' gün',s:'vadesi gelmemiş stok'},
+      {l:'30 / 90 Gün İçinde İtfa',v:pct(within(30),0)+' / '+pct(within(90),0),s:'stokun payı · yeniden finansman riski'},
+      {l:'Stok Ağırlıklı Bileşik Faiz',v:'TL '+pct(wavg(tl,b=>b.bil,val)),s:'Döviz '+pct(wavg(fl,b=>b.bil,val),2)},
+      {l:'Döviz Payı',v:pct(tot?fxV/tot*100:null),s:'güncel kurla'},
+      {l:'Kur Duyarlılığı',v:'+'+f2(fxV*.1)+' Mrd TL',s:'TL %10 değer kaybederse stok artışı'},
+      {l:'12 Ay Çevirme Oranı',v:'TL '+pct(rTL!=null?rTL*100:null,0),s:'Döviz '+pct(rFX!=null?rFX*100:null,0)+' · >%100 net borçlanma'}])}
+    <div class="chart-row c2">
+      <div class="chart-box"><h3>Ağırlıklı Ortalama Kalan Vade (gün)</h3><div class="cv"><canvas id="cRiskWam"></canvas></div></div>
+      <div class="chart-box"><h3>Döviz Cinsi Borç Payı (%)</h3><div class="cv"><canvas id="cRiskFx"></canvas></div></div></div></div>
+    <div class="chart-section"><div class="chart-row c2">
+      <div class="chart-box"><h3>Çevirme Oranı — İhraç / Geri Ödeme (%)</h3><div class="cv"><canvas id="cRiskRoll"></canvas></div></div>
+      <div class="chart-box"><h3>Stok Ağırlıklı Bileşik Faiz (%)</h3><div class="cv"><canvas id="cRiskRate"></canvas></div></div></div>
+    <p class="proj-note">Seriler, her ay sonunda vadesi gelmemiş ihaleler toplanarak yeniden kurulmuştur; döviz tutarları o tarihteki son ihalenin örtük kuruyla (TL karşılığı / nominal) TL'ye çevrilmiştir. Çevirme oranı MB'nin aylık ihraç ve geri ödeme verisinden hesaplanır.</p></div>`;
+  const L=H.map(p=>mLbl(p.key));
+  const line=(label,data,c,extra={})=>({label,data,borderColor:c,backgroundColor:c+'22',tension:.3,pointRadius:1.5,spanGaps:false,...extra});
+  const X={grid:nG,ticks:{maxRotation:45,maxTicksLimit:12}};
+  mkA('cRiskWam',{type:'line',data:{labels:L,datasets:[line('TL',H.map(p=>p.wamTL),CUR_COL.TL),line('Döviz',H.map(p=>p.wamFX),CUR_COL.USD)]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Gün'},grid:gG,beginAtZero:true},x:X}}});
+  mkA('cRiskFx',{type:'line',data:{labels:L,datasets:[line('Döviz payı',H.map(p=>p.fxShare),CUR_COL.USD,{fill:true})]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'%'},grid:gG,beginAtZero:true,max:100},x:X}}});
+  const st=S.stk.filter(x=>x.currency==='TL');const rk=st.map(x=>x.key);
+  const fxRoll=rk.map(k=>{let i=0,p=0;FXC.forEach(c=>{const r=S.stk.find(x=>x.currency===c&&x.key===k);if(r){const f=implFX(c,r.date);i+=r.issued*f;p+=r.repaid*f}});return p>0?i/p*100:null});
+  const roll12=st.map((x,j)=>{const w=st.slice(Math.max(0,j-11),j+1),p=w.reduce((a,b)=>a+b.repaid,0);return j>=11&&p>0?w.reduce((a,b)=>a+b.issued,0)/p*100:null});
+  mkA('cRiskRoll',{type:'bar',data:{labels:st.map(x=>x.year+' '+AY_KISA[x.monthIdx-1]),datasets:[
+    {type:'line',label:'TL 12 ay',data:roll12,borderColor:'#f4a261',pointRadius:0,tension:.3,spanGaps:true},
+    {type:'line',label:'%100 (stok sabit)',data:st.map(()=>100),borderColor:'#8899b8',borderDash:[4,4],pointRadius:0,borderWidth:1},
+    {label:'TL aylık',data:st.map(x=>x.repaid>0?x.issued/x.repaid*100:null),backgroundColor:'rgba(230,57,70,.55)',borderRadius:2},
+    {label:'Döviz aylık',data:fxRoll,backgroundColor:'rgba(46,196,182,.55)',borderRadius:2}]},
+    options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'% (eksen %300\'de kesildi)'},grid:gG,max:300,beginAtZero:true},x:X}}});
+  mkA('cRiskRate',{type:'line',data:{labels:L,datasets:[line('TL',H.map(p=>p.rTL),CUR_COL.TL),line('Döviz',H.map(p=>p.rFX),CUR_COL.USD,{yAxisID:'y1'})]},
+    options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'TL %'},grid:gG},y1:{position:'right',title:{display:true,text:'Döviz %'},grid:nG},x:X}}});
+}
+
+/* ==========================================================
+   İHALE & MALİYET ANALİZİ
+   ========================================================== */
+function renderAuc(){
+  const el=document.getElementById('aucContent');const B=bills(),T=todayD();
+  if(!B.length){el.innerHTML='<p class="no-data">İhale verisi yok.</p>';return}
+  const tl=B.filter(b=>b.cur==='TL'),fx=B.filter(b=>b.cur!=='TL');
+  const btc=b=>b.teklif>0?b.teklif/b.nom:null;
+  /* Gerçekleşen faiz gideri — itfa ayına göre, döviz itfa tarihindeki örtük kurla */
+  const paid={};B.filter(b=>b.i<=T).forEach(b=>{const k=mkey(b.i);const p=paid[k]||(paid[k]={tl:0,fx:0});if(b.cur==='TL')p.tl+=b.int;else p.fx+=b.int*implFX(b.cur,b.i)});
+  const s=S.stk.length?Math.min(...S.stk.map(x=>x.key)):202001;
+  const keys=[];for(let d=new Date(Math.floor(s/100),s%100-1,1);d<=T;d=new Date(d.getFullYear(),d.getMonth()+1,1))keys.push(mkey(d));
+  const pm=keys.map(k=>({k,tl:(paid[k]||{}).tl||0,fx:(paid[k]||{}).fx||0}));
+  const roll=pm.map((_,j)=>j>=11?pm.slice(j-11,j+1).reduce((a,b)=>a+b.tl+b.fx,0):null);
+  const last12=pm.slice(-12).reduce((a,b)=>a+b.tl+b.fx,0),prev12=pm.slice(-24,-12).reduce((a,b)=>a+b.tl+b.fx,0);
+  /* Cari faiz yükü: vadesi gelmemiş her bononun faizinin yıllıklandırılmış hali (basit, çevirmede bileşiklenmez) */
+  const liveB=B.filter(b=>b.i>T),liveV=liveB.reduce((a,b)=>a+b.nom*curRate(b.cur),0);
+  const runRate=liveB.reduce((a,b)=>a+b.int*curRate(b.cur)*365/b.d,0);
+  const yAgo=new Date(T-365*DAY),tl12=tl.filter(b=>b.v>=yAgo),fx12=fx.filter(b=>b.v>=yAgo);
+  const lastTL=tl[tl.length-1];
+  el.innerHTML=`<div class="chart-section"><h2>İhale ve Borçlanma Maliyeti</h2>
+    ${kpiGrid([
+      {l:'Son 12 Ay Faiz Gideri',v:f2(last12)+' Mrd TL',s:prev12>0?`önceki 12 ay ${f2(prev12)} · ${last12>=prev12?'+':''}${fn((last12/prev12-1)*100,0)}%`:'gerçekleşen itfalar'},
+      {l:'Cari Yıllık Faiz Yükü',v:f2(runRate)+' Mrd TL',s:`mevcut stok aynı faizle 1 yıl çevrilirse · stokun ${pct(liveV?runRate/liveV*100:null)}'i`},
+      {l:'TL Talep Oranı (12 ay)',v:fn(wavg(tl12,btc,b=>b.nom),2)+'x',s:'teklif / kabul · nominal ağırlıklı'},
+      {l:'Döviz Talep Oranı (12 ay)',v:fn(wavg(fx12,btc,b=>b.nom*curRate(b.cur)),2)+'x',s:'teklif / kabul'},
+      {l:'Son TL İhalesi',v:lastTL?pct(lastTL.bil,2):'—',s:lastTL?`bileşik · ${lastTL.v.toLocaleDateString('tr-TR')} · ${lastTL.d} gün`:''},
+      {l:'TL Ort. Faiz (12 ay)',v:pct(wavg(tl12,b=>b.bil,b=>b.nom),2),s:'bileşik · nominal ağırlıklı'}])}
+    <div class="chart-row c2">
+      <div class="chart-box"><h3>Gerçekleşen Aylık Faiz Gideri (Mrd TL)</h3><div class="cv"><canvas id="cAucInt"></canvas></div></div>
+      <div class="chart-box"><h3>İhale Talep Oranı — Teklif / Kabul (x)</h3><div class="cv"><canvas id="cAucBtc"></canvas></div></div></div></div>
+    <div class="chart-section"><div class="chart-row c2">
+      <div class="chart-box"><h3>Aylık Borçlanma Maliyeti — Nominal Ağırlıklı Bileşik Faiz (%)</h3><div class="cv"><canvas id="cAucCost"></canvas></div></div>
+      <div class="chart-box"><h3>TL İhale Faiz Aralığı — En Yüksek − En Düşük (puan)</h3><div class="cv"><canvas id="cAucSpr"></canvas></div></div></div>
+    <p class="proj-note">Faiz gideri, bononun itfa edildiği aya yazılır (iskontolu bonoda faiz itfada ödenir); döviz faizi itfa tarihindeki son ihale kuruyla TL'ye çevrilir. Talep oranı 1x'in altına inerse ihale talebi zayıflamış demektir. Geniş faiz aralığı, piyasada fiyatlama belirsizliğine işaret eder.</p></div>`;
+  const X={grid:nG,ticks:{maxRotation:45,maxTicksLimit:12}};
+  const tip={callbacks:{label:c=>c.dataset.label+': '+fn(c.raw,2)+' Mrd TL'}};
+  mkA('cAucInt',{type:'bar',data:{labels:pm.map(p=>mLbl(p.k)),datasets:[
+    {type:'line',label:'Son 12 ay toplamı',data:roll.map(v=>v==null?null:v/1e9),borderColor:'#f4a261',pointRadius:0,tension:.3,yAxisID:'y1',spanGaps:true},
+    {label:'TL',data:pm.map(p=>p.tl/1e9),backgroundColor:CUR_COL.TL,stack:'i',borderRadius:2},
+    {label:'Döviz',data:pm.map(p=>p.fx/1e9),backgroundColor:CUR_COL.USD,stack:'i',borderRadius:2}]},
+    options:{responsive:true,plugins:{legend:{position:'top'},tooltip:tip},scales:{y:{stacked:true,title:{display:true,text:'Aylık, Mrd TL'},grid:gG},y1:{position:'right',title:{display:true,text:'12 ay, Mrd TL'},grid:nG,beginAtZero:true},x:{...X,stacked:true}}}});
+  /* Talep oranı ve maliyet: valör ayına göre aylık seriler */
+  const byM=(arr,f,w)=>keys.map(k=>{const a=arr.filter(b=>mkey(b.v)===k);return a.length?wavg(a,f,w):null});
+  const line=(label,data,c,extra={})=>({label,data,borderColor:c,backgroundColor:c,tension:.3,pointRadius:2.5,spanGaps:false,showLine:true,...extra});
+  const KL=keys.map(mLbl);
+  mkA('cAucBtc',{type:'line',data:{labels:KL,datasets:[line('TL',byM(tl,btc,b=>b.nom),CUR_COL.TL),line('Döviz',byM(fx,btc,b=>b.nom*curRate(b.cur)),CUR_COL.USD),
+    {label:'1x',data:KL.map(()=>1),borderColor:'#8899b8',borderDash:[4,4],pointRadius:0,borderWidth:1}]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'x'},grid:gG,beginAtZero:true},x:X}}});
+  mkA('cAucCost',{type:'line',data:{labels:KL,datasets:[line('TL',byM(tl,b=>b.bil,b=>b.nom),CUR_COL.TL),line('Döviz',byM(fx,b=>b.bil,b=>b.nom*curRate(b.cur)),CUR_COL.USD,{yAxisID:'y1'})]},
+    options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'TL %'},grid:gG},y1:{position:'right',title:{display:true,text:'Döviz %'},grid:nG},x:X}}});
+  const spr=tl.filter(b=>b.minF!=null&&b.maxF!=null&&b.v.getFullYear()>=2020);
+  mkA('cAucSpr',{type:'bar',data:{labels:spr.map(b=>b.v.toLocaleDateString('tr-TR')),datasets:[{label:'Faiz aralığı',data:spr.map(b=>b.maxF-b.minF),backgroundColor:'rgba(167,139,250,.7)',borderRadius:2}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fn(c.raw,2)+' puan'}}},scales:{y:{title:{display:true,text:'Puan'},grid:gG,beginAtZero:true},x:X}}});
 }
 
 /* BORÇ STOKU — aylık zaman serisi (açık stok gelişimi) */
@@ -564,8 +837,12 @@ function renderTables(){
 }
 
 /* Sekmeler */
-document.querySelectorAll('.tab-btn[data-t]').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.tab-btn[data-t]').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));document.getElementById('p-'+b.dataset.t).classList.add('active')})});
+document.querySelectorAll('.tab-btn[data-t]').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.tab-btn[data-t]').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));document.getElementById('p-'+b.dataset.t).classList.add('active');requestAnimationFrame(()=>Object.values(S.charts).forEach(c=>{if(c&&c.canvas&&c.canvas.offsetParent)c.resize()}))})});
 document.querySelectorAll('.tab-btn[data-st]').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.tab-btn[data-st]').forEach(x=>x.classList.remove('active'));b.classList.add('active');['st-tl','st-fx','st-stk'].forEach(id=>{document.getElementById(id).style.display=b.dataset.st===id?'block':'none'})})});
+
+/* Canlı kur alınamazsa: son döviz ihalesinin örtük kuru (TL karşılığı / nominal) */
+function setImpliedRates(){S._bills=null;const r={};FXC.forEach(c=>{const b=bills().filter(x=>x.cur===c&&x.fxV);if(b.length)r[c]=b[b.length-1].fxV});
+  if(r.USD)S.rates={USD_TRY:r.USD,EUR_TRY:r.EUR||S.rates.EUR_TRY,GBP_TRY:r.GBP||S.rates.GBP_TRY,ratesSrc:'son ihale kuru'};S._bills=null}
 
 /* BAŞLATMA */
 async function init(){
@@ -575,6 +852,7 @@ async function init(){
     S.tl=procTL(data.tlRaw||[]);S.fx=procFX(data.fxRaw||[]);
     S.stk=[...procStock(data.tlStockRaw||[],'TL'),...procStock(data.usdStockRaw||[],'USD'),...procStock(data.eurStockRaw||[],'EUR'),...procStock(data.gbpStockRaw||[],'GBP')];
     S.src=src;
+    if(S.rates.ratesSrc!=='live')setImpliedRates();
     const totalParsed=S.tl.length+S.fx.length+S.stk.length;
     if(src==='live'&&totalParsed<10){console.warn('Canlı veri yetersiz ('+totalParsed+'), demo ile tamamlanıyor...');if(!S.tl.length)S.tl=procTL(DEMO.tlRaw);if(!S.fx.length)S.fx=procFX(DEMO.fxRaw);if(!S.stk.length)S.stk=[...procStock(DEMO.tlStockRaw,'TL'),...procStock(DEMO.usdStockRaw,'USD'),...procStock(DEMO.eurStockRaw,'EUR'),...procStock(DEMO.gbpStockRaw,'GBP')];S.src='partial'}
     updateStatus();render();
