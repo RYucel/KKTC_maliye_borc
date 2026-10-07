@@ -87,6 +87,11 @@ table tr:hover td{background:rgba(255,255,255,.03)}
 .fade-in.vis{opacity:1;transform:translateY(0)}
 footer{text-align:center;padding:1.5rem 1rem;border-top:1px solid var(--bdr);color:var(--muted);font-size:.72rem}
 .no-data{color:var(--muted);font-style:italic;font-size:.85rem;padding:2rem;text-align:center}
+.proj-note{font-size:.72rem;color:var(--muted);line-height:1.5;margin-top:.7rem}
+table.proj-tbl th,table.proj-tbl td{text-align:right}
+table.proj-tbl th:first-child,table.proj-tbl td:first-child,table.proj-tbl.det th:nth-child(-n+3),table.proj-tbl.det td:nth-child(-n+3){text-align:left}
+table.proj-tbl tr.tot td{font-weight:700;border-top:2px solid var(--bdr)}
+.lg-dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:.35rem;vertical-align:middle}
 @media(max-width:600px){.kpi-grid{grid-template-columns:1fr 1fr}.cur-stats{gap:.5rem}}
 </style>
 </head>
@@ -123,6 +128,7 @@ footer{text-align:center;padding:1.5rem 1rem;border-top:1px solid var(--bdr);col
     <button class="tab-btn" data-t="rates">Faiz Analizi</button>
     <button class="tab-btn" data-t="currency">Döviz Dağılımı</button>
     <button class="tab-btn" data-t="maturity">Vade Yapısı</button>
+    <button class="tab-btn" data-t="proj">Ödeme Projeksiyonu</button>
     <button class="tab-btn" data-t="stock">Borç Stoku</button>
     <button class="tab-btn" data-t="table">Veri Tablosu</button>
   </div>
@@ -161,6 +167,8 @@ footer{text-align:center;padding:1.5rem 1rem;border-top:1px solid var(--bdr);col
     </div></div>
     <div class="chart-section fade-in"><div class="chart-row"><div class="chart-box"><h3>Yıllara Göre Ortalama Vade</h3><canvas id="cAM"></canvas></div></div></div>
   </div>
+
+  <div class="tab-pane" id="p-proj"><div id="projContent"></div></div>
 
   <div class="tab-pane" id="p-stock"><div id="stockContent"></div></div>
 
@@ -362,7 +370,7 @@ function mk(id,cfg){if(S.charts[id])S.charts[id].destroy();const el=document.get
 const gG={color:'rgba(42,54,84,.5)'},nG={display:false};
 
 /* RENDER */
-function render(){try{renderDebug()}catch(e){console.warn('debug:',e)}try{renderKPI()}catch(e){console.warn('kpi:',e)}try{renderInsights()}catch(e){console.warn('insights:',e)}try{renderTrends()}catch(e){console.warn('trends:',e)}try{renderRates()}catch(e){console.warn('rates:',e)}try{renderCurrency()}catch(e){console.warn('currency:',e)}try{renderMaturity()}catch(e){console.warn('maturity:',e)}try{renderStock()}catch(e){console.warn('stock:',e)}try{renderTables()}catch(e){console.warn('tables:',e)}
+function render(){try{renderDebug()}catch(e){console.warn('debug:',e)}try{renderKPI()}catch(e){console.warn('kpi:',e)}try{renderInsights()}catch(e){console.warn('insights:',e)}try{renderTrends()}catch(e){console.warn('trends:',e)}try{renderRates()}catch(e){console.warn('rates:',e)}try{renderCurrency()}catch(e){console.warn('currency:',e)}try{renderMaturity()}catch(e){console.warn('maturity:',e)}try{renderProj()}catch(e){console.warn('proj:',e)}try{renderStock()}catch(e){console.warn('stock:',e)}try{renderTables()}catch(e){console.warn('tables:',e)}
 const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.1});document.querySelectorAll('.fade-in').forEach(e=>obs.observe(e));setTimeout(()=>{document.querySelectorAll('.fade-in').forEach(e=>{if(e.getBoundingClientRect().top<innerHeight)e.classList.add('vis')})},80)}
 
 function renderKPI(){
@@ -392,6 +400,8 @@ function renderInsights(){
   if(totalTL>0)items.push(`<strong>Güncel stok:</strong> TL ${fb(stkTL)} Mrd + ${fm(stkUSD)} M USD + ${fm(stkEUR)} M EUR + ${fm(stkGBP)} M GBP = <strong>${fb(totalTL)} Mrd TL</strong>`);
   items.push(`<strong>Kurlar (${S.rates.ratesSrc}):</strong> USD=${S.rates.USD_TRY.toFixed(2)} EUR=${S.rates.EUR_TRY.toFixed(2)} GBP=${S.rates.GBP_TRY.toFixed(2)}`);
   if(maxTLR>0)items.push(`<strong>TL faiz uç:</strong> %${maxTLR.toFixed(1)}`);
+  try{const P=buildProj();if(P.items.length){const in30=P.items.filter(i=>i.itfa-P.today<=30*864e5).reduce((s,i)=>s+i.totTL,0);const tot=P.items.reduce((s,i)=>s+i.totTL,0);
+    items.push(`<strong>Ödeme takvimi:</strong> önümüzdeki 30 günde ${fb(in30)} Mrd TL, vadesi gelmemiş DİBS'lerin tamamı için ${fb(tot)} Mrd TL itfa (anapara + faiz)`)}}catch(e){}
   if(!S.tl.length&&!S.fx.length)items.push('İhale verisi yüklenemedi — demo veri kullanılıyor olabilir. Debug panelinden ham verileri kontrol edin.');
   document.getElementById('insights').innerHTML=`<h3>Temel Bulgular</h3><ul>${items.map(i=>'<li>'+i+'</li>').join('')}</ul>`;
 }
@@ -425,6 +435,85 @@ function renderMaturity(){if(!S.tl.length)return;const bk=[{l:'0-30',a:0,b:30},{
   const tAM={},fAM={};S.tl.forEach(r=>{const y=r.year;if(y){if(!tAM[y])tAM[y]=[];tAM[y].push(r.vade)}});S.fx.forEach(r=>{const y=r.year;if(y){if(!fAM[y])fAM[y]=[];fAM[y].push(r.vade)}});
   const ay=[...new Set([...Object.keys(tAM),...Object.keys(fAM)])].sort();
   mk('cAM',{type:'line',data:{labels:ay,datasets:[{label:'TL',data:ay.map(y=>{const a=tAM[y];return a?a.reduce((s,v)=>s+v,0)/a.length:null}),borderColor:'#e63946',tension:.3,pointRadius:4,pointBackgroundColor:'#e63946'},{label:'Döviz',data:ay.map(y=>{const a=fAM[y];return a?a.reduce((s,v)=>s+v,0)/a.length:null}),borderColor:'#2ec4b6',tension:.3,pointRadius:4,pointBackgroundColor:'#2ec4b6'}]},options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Gün'},grid:gG},x:{grid:nG}}}});
+}
+
+/* ==========================================================
+   ÖDEME PROJEKSİYONU — vadesi gelmemiş DİBS'lerin itfa takvimi
+   DİBS'ler iskontolu: itfada nominal ödenir. İhaledeki ortalama
+   basit faizle satış fiyatı = nominal / (1 + r·gün/365).
+   Satış fiyatı → anapara, nominal − satış fiyatı → faiz.
+   Döviz bonoları güncel kurla TL'ye çevrilir.
+   ========================================================== */
+function pdate(s){const m=cs(s).match(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})/);if(!m)return null;let y=+m[3];if(y<100)y+=2000;return new Date(y,+m[2]-1,+m[1])}
+const FX_CODE={'ABD DOLARI':'USD',AVRO:'EUR','İNGİLİZ STERLİNİ':'GBP'};
+function buildProj(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const rate={TL:1,USD:S.rates.USD_TRY,EUR:S.rates.EUR_TRY,GBP:S.rates.GBP_TRY};
+  const items=[];
+  const add=(r,cur)=>{
+    const v=pdate(r.valor),it=pdate(r.itfa);if(!v||!it||it<today)return;
+    const days=Math.max(1,Math.round((it-v)/864e5));
+    const nom=r.kabul,rr=(r.ortF!=null?r.ortF:0)/100;
+    const prin=nom/(1+rr*days/365),int=nom-prin,k=rate[cur]||0;
+    items.push({isin:r.isin,cur,itfa:it,days,rate:r.ortF,nom,prinTL:prin*k,intTL:int*k,totTL:nom*k,
+      key:it.getFullYear()*100+it.getMonth()+1});
+  };
+  S.tl.forEach(r=>add(r,'TL'));
+  S.fx.forEach(r=>{const c=FX_CODE[r.doviz];if(c)add(r,c)});
+  items.sort((a,b)=>a.itfa-b.itfa);
+  const months={};
+  items.forEach(i=>{const m=months[i.key]||(months[i.key]={key:i.key,prin:0,int:0,tot:0,byCur:{TL:0,USD:0,EUR:0,GBP:0}});
+    m.prin+=i.prinTL;m.int+=i.intTL;m.tot+=i.totTL;m.byCur[i.cur]+=i.totTL});
+  return{today,items,months:Object.values(months).sort((a,b)=>a.key-b.key)};
+}
+const AY_KISA=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+const mLbl=k=>Math.floor(k/100)+' '+AY_KISA[k%100-1];
+
+function renderProj(){
+  const el=document.getElementById('projContent');const P=buildProj();
+  if(!P.items.length){el.innerHTML='<div class="chart-section"><h2>Ödeme Projeksiyonu</h2><div class="cur-card"><p class="no-data">Vadesi gelmemiş DİBS bulunamadı (veri güncel olmayabilir).</p></div></div>';return}
+  const M=P.months,sum=f=>M.reduce((s,m)=>s+f(m),0);
+  const totP=sum(m=>m.prin),totI=sum(m=>m.int),tot=totP+totI;
+  const in30=P.items.filter(i=>i.itfa-P.today<=30*864e5).reduce((s,i)=>s+i.totTL,0);
+  const peak=M.reduce((a,b)=>b.tot>a.tot?b:a);
+  const next=P.items[0];
+  const f2=v=>fn(v/1e9,2);
+  const CP='#5b8def',CI='#f4a261';
+  const curCol={TL:'#e63946',USD:'#2ec4b6',EUR:'#a78bfa',GBP:'#38bdf8'};
+  const usedCur=['TL','USD','EUR','GBP'].filter(c=>M.some(m=>m.byCur[c]>0));
+  const tbl=`<table class="proj-tbl"><thead><tr><th>Mrd TL</th>${M.map(m=>`<th>${mLbl(m.key)}</th>`).join('')}<th>Toplam</th></tr></thead><tbody>
+    <tr><td><span class="lg-dot" style="background:${CP}"></span>Anapara</td>${M.map(m=>`<td>${f2(m.prin)}</td>`).join('')}<td>${f2(totP)}</td></tr>
+    <tr><td><span class="lg-dot" style="background:${CI}"></span>Faiz</td>${M.map(m=>`<td>${f2(m.int)}</td>`).join('')}<td>${f2(totI)}</td></tr>
+    <tr class="tot"><td>Toplam</td>${M.map(m=>`<td>${f2(m.tot)}</td>`).join('')}<td>${f2(tot)}</td></tr></tbody></table>`;
+  const tm={TL:'tag-tl',USD:'tag-usd',EUR:'tag-eur',GBP:'tag-gbp'};
+  const det=`<table class="proj-tbl det"><thead><tr><th>İtfa</th><th>ISIN</th><th>Para</th><th>Vade (gün)</th><th>Faiz (%)</th><th>Nominal</th><th>Anapara (TL)</th><th>Faiz (TL)</th><th>Toplam (TL)</th></tr></thead><tbody>${
+    P.items.map(i=>`<tr><td>${i.itfa.toLocaleDateString('tr-TR')}</td><td>${i.isin}</td><td><span class="tag ${tm[i.cur]}">${i.cur}</span></td><td>${i.days}</td><td>${i.rate!=null?fn(i.rate,2):'—'}</td><td>${fn(i.nom)}</td><td>${fn(i.prinTL)}</td><td>${fn(i.intTL)}</td><td>${fn(i.totTL)}</td></tr>`).join('')}</tbody></table>`;
+  el.innerHTML=`<div class="chart-section fade-in vis"><h2>Merkezi Yönetim İç Borç Ödeme Projeksiyonu</h2>
+    <div class="cur-card"><div class="cur-card-head"><h3>Vadesi gelmemiş DİBS itfaları</h3><div class="cur-stats">
+      <div class="cur-stat"><div class="val">${f2(tot)}</div><div class="lbl">Toplam Ödeme (Mrd TL)</div></div>
+      <div class="cur-stat"><div class="val">${f2(totI)}</div><div class="lbl">Bunun Faizi</div></div>
+      <div class="cur-stat"><div class="val">${f2(in30)}</div><div class="lbl">Önümüzdeki 30 Gün</div></div>
+      <div class="cur-stat"><div class="val">${mLbl(peak.key)}</div><div class="lbl">En Yüklü Ay (${f2(peak.tot)})</div></div>
+      <div class="cur-stat"><div class="val">${next.itfa.toLocaleDateString('tr-TR')}</div><div class="lbl">Sıradaki İtfa</div></div>
+    </div></div>
+    <div class="chart-box"><h3>Aylık Anapara ve Faiz Ödemeleri (Mrd TL)</h3><canvas id="cProj"></canvas><div class="table-wrap">${tbl}</div></div>
+    <p class="proj-note">Yalnızca ihalesi yapılmış ve vadesi gelmemiş DİBS'ler dahildir; yeni ihaleler, borç çevirme, dış borç ve krediler dahil değildir. Faiz, iskontolu bonoların ihaledeki ortalama basit faizi üzerinden ayrıştırılmıştır (anapara = nominal / (1 + faiz × gün/365)). Döviz bonoları güncel kurla TL'ye çevrilmiştir (${S.rates.ratesSrc==='live'?'canlı kur':'yaklaşık kur'}).</p></div></div>
+    <div class="chart-section fade-in vis"><div class="chart-row c2">
+      <div class="chart-box"><h3>Para Cinsine Göre Aylık Ödeme (Mrd TL)</h3><canvas id="cProjCur"></canvas></div>
+      <div class="chart-box"><h3>Kümülatif Ödeme (Mrd TL)</h3><canvas id="cProjCum"></canvas></div>
+    </div></div>
+    <div class="chart-section fade-in vis"><h2>Bono Bazında İtfa Takvimi</h2><div class="cur-card table-wrap">${det}</div></div>`;
+  const labels=M.map(m=>mLbl(m.key));
+  const tip={callbacks:{label:c=>c.dataset.label+': '+fn(c.raw,2)+' Mrd TL'}};
+  mk('cProj',{type:'bar',data:{labels,datasets:[
+    {label:'Anapara',data:M.map(m=>m.prin/1e9),backgroundColor:CP,borderRadius:4},
+    {label:'Faiz',data:M.map(m=>m.int/1e9),backgroundColor:CI,borderRadius:4}]},
+    options:{responsive:true,plugins:{legend:{position:'top'},tooltip:tip},scales:{y:{title:{display:true,text:'Milyar TL'},grid:gG,beginAtZero:true},x:{grid:nG}}}});
+  mk('cProjCur',{type:'bar',data:{labels,datasets:usedCur.map(c=>({label:c,data:M.map(m=>m.byCur[c]/1e9),backgroundColor:curCol[c],borderRadius:3}))},
+    options:{responsive:true,plugins:{legend:{position:'top'},tooltip:tip},scales:{y:{stacked:true,title:{display:true,text:'Milyar TL'},grid:gG},x:{stacked:true,grid:nG}}}});
+  let cum=0;
+  mk('cProjCum',{type:'line',data:{labels,datasets:[{label:'Kümülatif',data:M.map(m=>(cum+=m.tot)/1e9),borderColor:'#f4a261',backgroundColor:'rgba(244,162,97,.1)',fill:true,tension:.3,pointRadius:4,pointBackgroundColor:'#f4a261'}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:tip},scales:{y:{title:{display:true,text:'Milyar TL'},grid:gG,beginAtZero:true},x:{grid:nG}}}});
 }
 
 /* BORÇ STOKU — aylık zaman serisi (açık stok gelişimi) */
