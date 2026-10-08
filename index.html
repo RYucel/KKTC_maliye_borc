@@ -13,14 +13,14 @@
 <meta property="og:title" content="KKTC Merkezi Hükümet Borç İlerlemesi">
 <meta property="og:description" content="Toplam DİBS stoku 30,07 Mrd TL. Önümüzdeki 30 günde 11,26 Mrd TL itfa. Ödeme takvimi, risk göstergeleri ve çevirme senaryo simülatörü.">
 <meta property="og:url" content="https://ryucel.github.io/KKTC_maliye_borc/">
-<meta property="og:image" content="https://ryucel.github.io/KKTC_maliye_borc/og.png?v=71a05fe394">
+<meta property="og:image" content="https://ryucel.github.io/KKTC_maliye_borc/og.png?v=238f6a3bfe">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="KKTC merkezi hükümet DİBS borç stoku, 24 aylık stok eğrisi ve ödeme göstergeleri">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="KKTC Merkezi Hükümet Borç İlerlemesi">
 <meta name="twitter:description" content="Toplam DİBS stoku 30,07 Mrd TL. Önümüzdeki 30 günde 11,26 Mrd TL itfa. Ödeme takvimi, risk göstergeleri ve çevirme senaryo simülatörü.">
-<meta name="twitter:image" content="https://ryucel.github.io/KKTC_maliye_borc/og.png?v=71a05fe394">
+<meta name="twitter:image" content="https://ryucel.github.io/KKTC_maliye_borc/og.png?v=238f6a3bfe">
 <meta name="theme-color" content="#0a0f1a">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
@@ -340,7 +340,8 @@ function procStock(rows,cur){
     if(cells.length<4)continue;
     const mi=TR_AY[cells[0].toLowerCase()];
     if(!mi||!year)continue;                                              // başlık/boş ay satırlarını atla
-    const issued=pn(cells[1]),repaid=pn(cells[2]),outstanding=pn(cells[3]);
+    const issued=pn(cells[1]),repaid=pn(cells[2]);let outstanding=pn(cells[3]);
+    if(outstanding==null&&/^[-–—]?$/.test(cells[3]))outstanding=0;      // MB tablosunda "-" = sıfır stok (veri yok değil)
     if(issued==null&&repaid==null&&outstanding==null)continue;
     result.push({currency:cur,year,month:cells[0],monthIdx:mi,key:year*100+mi,
       date:new Date(year,mi-1,1),issued:issued||0,repaid:repaid||0,outstanding});
@@ -393,6 +394,12 @@ function renderDebug(){
     if(hdrs.length>0){html+=`<div style="margin-top:.3rem;font-size:.65rem;color:var(--accent2)">Headers: ${hdrs.join(' | ')}</div>`}
     html+='</div>';
   });
+  try{const R=stockRecon();html+=`<div class="debug-item"><div class="key">Stok tutarlılığı (ihale ↔ MB stok)</div>${Object.entries(R).map(([c,o])=>{
+      const st=o.bad.length?'var(--red)':(o.last&&!o.last.ok)?'var(--yellow)':'var(--green)';
+      let t=`${c}: ${o.ok}/${o.n} ay birebir`;
+      if(o.bad.length)t+=` · uyumsuz: ${o.bad.slice(0,3).map(b=>b.lbl).join(', ')}`;
+      if(o.last&&!o.last.ok)t+=` · son ay (${o.last.lbl}) MB ${fn(o.last.mb)} / ihale ${fn(o.last.rec)}`;
+      return `<div class="val" style="color:${st}">${t}</div>`}).join('')}</div>`}catch(e){console.warn('recon:',e)}
   html+=`<div class="debug-item"><div class="key">Kurlar</div><div class="val">USD/TRY: ${S.rates.USD_TRY.toFixed(2)} | EUR/TRY: ${S.rates.EUR_TRY.toFixed(2)} | GBP/TRY: ${S.rates.GBP_TRY.toFixed(2)}</div><div style="color:${S.rates.ratesSrc==='live'?'var(--green)':'var(--yellow)'};font-weight:600;font-size:.7rem">${S.rates.ratesSrc==='live'?'✓ Canlı':'≈ Yaklaşık'}</div></div>`;
   html+='</div>';
   el.innerHTML=html;
@@ -436,6 +443,10 @@ function renderInsights(){
   if(maxTLR>0)items.push(`<strong>TL faiz uç:</strong> %${maxTLR.toFixed(1)}`);
   try{const P=buildProj();if(P.items.length){const in30=P.items.filter(i=>i.itfa-P.today<=30*864e5).reduce((s,i)=>s+i.totTL,0);const tot=P.items.reduce((s,i)=>s+i.totTL,0);
     items.push(`<strong>Ödeme takvimi:</strong> önümüzdeki 30 günde ${fb(in30)} Mrd TL, vadesi gelmemiş DİBS'lerin tamamı için ${fb(tot)} Mrd TL itfa (anapara + faiz)`)}}catch(e){}
+  try{const R=stockRecon(),v=Object.values(R),n=v.reduce((a,o)=>a+o.n,0),ok=v.reduce((a,o)=>a+o.ok,0),
+      bad=Object.entries(R).filter(([,o])=>o.bad.length).map(([c])=>c),lag=Object.entries(R).filter(([,o])=>o.last&&!o.last.ok).map(([c,o])=>c+' '+o.last.lbl);
+    if(n)items.push(bad.length?`<strong style="color:var(--red)">Veri tutarlılığı:</strong> ${bad.join(', ')} stokunda ihale kayıtlarıyla uyuşmayan aylar var (${ok}/${n}) — ayrıntı Debug panelinde`
+      :`<strong>Veri tutarlılığı:</strong> MB'nin yayımladığı ${n} ay sonu stokun ${ok}'i ihale kayıtlarından birebir yeniden üretiliyor${lag.length?` · son ayda yayın farkı: ${lag.join(', ')}`:' ✓'}`)}catch(e){}
   if(!S.tl.length&&!S.fx.length)items.push('İhale verisi yüklenemedi — demo veri kullanılıyor olabilir. Debug panelinden ham verileri kontrol edin.');
   document.getElementById('insights').innerHTML=`<h3>Temel Bulgular</h3><ul>${items.map(i=>'<li>'+i+'</li>').join('')}</ul>`;
 }
@@ -577,6 +588,27 @@ function bills(){
 }
 /* Bir tarihteki örtük kur: o tarihe kadarki son ihalenin kuru */
 function implFX(cur,d){if(cur==='TL')return 1;const b=bills().filter(x=>x.cur===cur&&x.fxV);let r=null;for(const x of b){if(x.v<=d)r=x.fxV;else break}return r||(b[0]&&b[0].fxV)||curRate(cur)}
+/* ==========================================================
+   TUTARLILIK KONTROLÜ — ihalelerden yeniden kurulan ay sonu stok,
+   MB'nin yayımladığı stokla aynı mı? Tamamlanmış aylar birebir
+   tutmalı; son (devam eden) ayda iki MB sayfası arasında yayın
+   gecikmesi olabileceği için fark yalnızca uyarı sayılır.
+   ========================================================== */
+function stockRecon(){
+  const B=bills(),out={};
+  let asOf=pdate(cs(S.rawData&&S.rawData.last_updated).slice(0,10).split('-').reverse().join('.'))||todayD();
+  ['TL',...FXC].forEach(c=>{
+    const rows=S.stk.filter(r=>r.currency===c&&r.outstanding!=null);const lastKey=rows.length?rows[rows.length-1].key:0;
+    const o={n:0,ok:0,bad:[],last:null};
+    rows.forEach(r=>{let e=monthEnd(r.year,r.monthIdx-1);const isLast=r.key===lastKey;if(isLast&&asOf<e)e=asOf;
+      const rec=B.filter(b=>b.cur===c&&b.v<=e&&b.i>e).reduce((a,b)=>a+b.nom,0);
+      const ok=Math.abs(rec-r.outstanding)<=Math.max(1,Math.abs(r.outstanding)*1e-6);
+      if(isLast){o.last={lbl:r.year+' '+r.month,mb:r.outstanding,rec,ok};if(ok){o.n++;o.ok++}return}
+      o.n++;if(ok)o.ok++;else o.bad.push({lbl:r.year+' '+r.month,mb:r.outstanding,rec})});
+    out[c]=o});
+  return out;
+}
+
 /* Son n ayın çevirme oranı (ihraç / geri ödeme) — MB stok serisinden */
 function rollHist(curs,n=12){let i=0,p=0;curs.forEach(c=>{S.stk.filter(x=>x.currency===c).slice(-n).forEach(x=>{const k=c==='TL'?1:implFX(c,x.date);i+=x.issued*k;p+=x.repaid*k})});return p>0?i/p:null}
 function kpiGrid(items){return `<div class="kpi-grid">${items.map(k=>`<div class="kpi-card"><div class="kpi-label">${k.l}</div><div class="kpi-value">${k.v}</div><div class="kpi-sub">${k.s||''}</div></div>`).join('')}</div>`}
@@ -834,11 +866,18 @@ function renderStock(){
   if(grandTotal>0){
     mk('cTotStk',{type:'doughnut',data:{labels:['TL','USD (TL)','EUR (TL)','GBP (TL)'],datasets:[{data:order.map(c=>totals[c].tl/1e9),backgroundColor:['#e63946','#2ec4b6','#a78bfa','#38bdf8'],borderColor:'#1a2235',borderWidth:3}]},options:{responsive:true,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.raw.toFixed(2)+' Mrd TL'}}}}});
     const allKeys=[...new Set(S.stk.filter(r=>r.outstanding!=null).map(r=>r.key))].sort((a,b)=>a-b);
-    const lbl=allKeys.map(k=>Math.floor(k/100)+' '+String(k%100).padStart(2,'0'));
+    const lbl=allKeys.map(mLbl);
+    /* MB tablosunda olmayan aylar (ör. stokun sıfır olduğu 2023) bir önceki ayın değeriyle doldurulur */
     const ff=cur=>{const m={};S.stk.filter(r=>r.currency===cur&&r.outstanding!=null).forEach(r=>m[r.key]=r.outstanding);let last=0;return allKeys.map(k=>{if(m[k]!=null)last=m[k];return last})};
     const series={};order.forEach(c=>series[c]=ff(c));
-    const totSeries=allKeys.map((k,i)=>order.reduce((s,c)=>s+series[c][i]*curCfg[c].rate,0)/1e9);
-    mk('cTotStkT',{type:'line',data:{labels:lbl,datasets:[{label:'Toplam (Mrd TL)',data:totSeries,borderColor:'#f4a261',backgroundColor:'rgba(244,162,97,.1)',fill:true,tension:.3,pointRadius:2}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Mrd TL'},grid:gG},x:{grid:nG,ticks:{maxRotation:45,maxTicksLimit:12}}}}});
+    /* Her ay o ayın kuruyla (o tarihteki son ihalenin örtük kuru); karşılaştırma için bugünün kuruyla */
+    const fxAt=(c,k)=>c==='TL'?1:implFX(c,monthEnd(Math.floor(k/100),k%100-1));
+    const totSeries=allKeys.map((k,i)=>order.reduce((s,c)=>s+series[c][i]*fxAt(c,k),0)/1e9);
+    const totNow=allKeys.map((k,i)=>order.reduce((s,c)=>s+series[c][i]*curCfg[c].rate,0)/1e9);
+    mk('cTotStkT',{type:'line',data:{labels:lbl,datasets:[
+      {label:'O ayın kuruyla',data:totSeries,borderColor:'#f4a261',backgroundColor:'rgba(244,162,97,.1)',fill:true,tension:.3,pointRadius:2},
+      {label:'Bugünün kuruyla',data:totNow,borderColor:'#8899b8',borderDash:[5,4],borderWidth:1.5,pointRadius:0,tension:.3,fill:false}]},
+      options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fn(c.raw,2)+' Mrd TL'}}},scales:{y:{title:{display:true,text:'Mrd TL'},grid:gG,beginAtZero:true},x:{grid:nG,ticks:{maxRotation:45,maxTicksLimit:12}}}}});
   }
 }
 
