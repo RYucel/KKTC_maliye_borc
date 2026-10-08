@@ -97,6 +97,8 @@ def stock_series(rows):
             continue
         mi = TR_AY.get(cells[0].lower())
         val = num(cells[3])
+        if val is None and cells[3] in ("", "-", "—", "–"):
+            val = 0.0  # MB tablosunda "-" = sıfır stok (veri yok değil)
         if mi and val is not None:
             res[(year, mi)] = val
     return res
