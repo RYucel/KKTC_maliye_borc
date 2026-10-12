@@ -26,8 +26,11 @@ jobs:
       - name: Bağımlılıkları kur
         run: pip install -r requirements.txt
 
-      - name: Scraper'ı çalıştır
+      - name: Scraper'ı çalıştır (DİBS Borç)
         run: python scraper.py data.json
+
+      - name: Maliye Bütçe Raporu Scraper'ı çalıştır
+        run: python budget_scraper.py
 
       - name: Paylaşım önizleme görselini (og.png) üret
         run: python og.py data.json og.png index.html
@@ -36,6 +39,6 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add data.json og.png index.html
+          git add data.json budget_data.json og.png index.html
           git diff --staged --quiet || git commit -m "🔄 Veri güncellendi: $(date -u +%Y-%m-%d_%H:%M)"
           git push

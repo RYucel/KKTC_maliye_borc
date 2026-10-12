@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KKTC Merkezi Hükümet Borç İlerlemesi</title>
+<title>KKTC Maliye Gelir-Gider & DİBS Borç Takip Paneli</title>
 <meta name="description" content="Toplam DİBS stoku 30,10 Mrd TL. Önümüzdeki 30 günde 3,42 Mrd TL itfa. Ödeme takvimi, risk göstergeleri ve çevirme senaryo simülatörü.">
 <link rel="canonical" href="https://ryucel.github.io/KKTC_maliye_borc/">
 <!-- Paylaşım önizlemesi (og.py tarafından güncellenir: görsel sürümü ve açıklama) -->
@@ -121,6 +121,49 @@ table.proj-tbl tr.tot td{font-weight:700;border-top:2px solid var(--bdr)}
 .delta-up{color:var(--red)}.delta-dn{color:var(--green)}
 .lg-dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:.35rem;vertical-align:middle}
 @media(max-width:600px){.kpi-grid{grid-template-columns:1fr 1fr}.cur-stats{gap:.5rem}}
+
+/* Master Navigation & Module Switching */
+.master-nav{display:flex;justify-content:center;gap:.75rem;margin-top:1.2rem;flex-wrap:wrap}
+.master-tab{display:flex;align-items:center;gap:.7rem;padding:.6rem 1.2rem;background:var(--card);border:1px solid var(--bdr);border-radius:12px;color:var(--muted);cursor:pointer;transition:all .25s ease;text-align:left}
+.master-tab:hover{background:var(--card-h);border-color:var(--accent3);color:var(--fg);transform:translateY(-1px)}
+.master-tab.active{background:linear-gradient(135deg,rgba(46,196,182,.18),rgba(26,34,53,.95));border-color:var(--accent3);color:#fff;box-shadow:0 4px 18px rgba(46,196,182,.15)}
+.master-tab .m-icon{font-size:1.35rem}
+.master-tab .m-title{font-size:.86rem;font-weight:700;color:var(--fg);line-height:1.2}
+.master-tab.active .m-title{color:#fff}
+.master-tab .m-sub{font-size:.67rem;color:var(--muted)}
+.master-tab .m-badge{background:var(--accent);color:#fff;font-size:.6rem;font-weight:700;padding:.15rem .45rem;border-radius:999px;text-transform:uppercase;letter-spacing:.05em}
+
+/* Budget Meta Bar */
+.budget-meta-bar{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:.85rem 1.2rem;margin-bottom:1.3rem;flex-wrap:wrap;gap:.8rem}
+.budget-meta-left{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.meta-tag{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .6rem;background:rgba(46,196,182,.15);color:var(--accent3);font-size:.74rem;font-weight:700;border-radius:6px}
+.meta-period{font-size:.9rem;font-weight:700;color:var(--fg)}
+.meta-status{font-size:.72rem;color:var(--muted);background:rgba(255,255,255,.05);padding:.2rem .5rem;border-radius:4px}
+.btn-pdf{display:inline-flex;align-items:center;gap:.4rem;background:rgba(230,57,70,.15);color:var(--accent);border-color:rgba(230,57,70,.3);font-weight:600;text-decoration:none}
+.btn-pdf:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Budget KPI Extras */
+.kpi-card .kpi-bar-wrap{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:.45rem;overflow:hidden}
+.kpi-card .kpi-bar-fill{height:100%;border-radius:2px;background:var(--accent3)}
+.kpi-card .kpi-extra{display:flex;justify-content:space-between;align-items:center;font-size:.64rem;color:var(--muted);margin-top:.3rem}
+.kpi-val-pos{color:var(--green)!important}
+.kpi-val-neg{color:var(--red)!important}
+
+/* Table Filters & Search */
+.table-ctrls{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.7rem;margin-bottom:.8rem}
+.table-search{flex:1;min-width:220px;max-width:400px;position:relative}
+.table-search input{width:100%;background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:.45rem .8rem .45rem 2rem;font-size:.78rem;color:var(--fg);outline:none;transition:border-color .2s}
+.table-search input:focus{border-color:var(--accent3)}
+.table-search::before{content:'🔍';position:absolute;left:.65rem;top:50%;transform:translateY(-50%);font-size:.72rem;opacity:.6}
+.table-filters{display:flex;gap:.35rem;flex-wrap:wrap}
+.filter-btn{padding:.35rem .75rem;background:var(--card);border:1px solid var(--bdr);border-radius:6px;font-size:.72rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s}
+.filter-btn:hover{background:var(--card-h);color:var(--fg)}
+.filter-btn.active{background:var(--accent3);color:#0a0f1a;border-color:var(--accent3)}
+.tag-gelir{background:rgba(34,197,94,.15);color:var(--green)}
+.tag-gider{background:rgba(239,68,68,.15);color:var(--red)}
+.tag-tc{background:rgba(244,162,97,.15);color:var(--accent2)}
+.tr-main-item td{font-weight:700;background:rgba(255,255,255,.02);color:var(--accent2)}
+
 </style>
 </head>
 <body>
@@ -135,8 +178,25 @@ table.proj-tbl tr.tot td{font-weight:700;border-top:2px solid var(--bdr)}
 </div>
 
 <header>
-  <h1>KKTC Merkezi Hükümet Borç İlerlemesi</h1>
-  <p>TL ve Yabancı Para DİBS İhale + Borç Stoku — Canlı Kur ile TL Karşılığı</p>
+  <h1 id="pageMainTitle">KKTC Maliye Gelir-Gider &amp; Bütçe Dengesi</h1>
+  <p id="pageMainSub">KKTC Maliye Bakanlığı Genel Bütçe Gerçekleşmesi ve Merkezi Hükümet Borç Takip Paneli</p>
+  <nav class="master-nav">
+    <button class="master-tab active" id="tabBtnBudget" onclick="switchMod('budget')">
+      <span class="m-icon">🏛️</span>
+      <div class="m-info">
+        <div class="m-title">Maliye Gelir-Gider Dengesi</div>
+        <div class="m-sub">Genel Bütçe &amp; Harcama Analizi</div>
+      </div>
+      <span class="m-badge">Yeni Özellik</span>
+    </button>
+    <button class="master-tab" id="tabBtnDebt" onclick="switchMod('debt')">
+      <span class="m-icon">💳</span>
+      <div class="m-info">
+        <div class="m-title">Merkezi Hükümet DİBS Borcu</div>
+        <div class="m-sub">İç Borç Stoku &amp; İtfa Takvimi</div>
+      </div>
+    </button>
+  </nav>
 </header>
 
 <div class="status-bar">
@@ -147,6 +207,174 @@ table.proj-tbl tr.tot td{font-weight:700;border-top:2px solid var(--bdr)}
 </div>
 
 <main>
+  <!-- ==========================================================
+       MODÜL 1: MALİYE GENEL GELİR-GİDER & BÜTÇE DENGESİ
+       ========================================================== -->
+  <div id="module-budget" class="module-pane active">
+    <div class="budget-meta-bar fade-in">
+      <div class="budget-meta-left">
+        <span class="meta-tag">🏛️ KKTC Maliye Bakanlığı</span>
+        <span class="meta-period" id="bReportPeriod">2026 Temmuz Genel Gelir Gider Raporu</span>
+        <span class="meta-status" id="bReportStatus">7 Aylık Kümülatif Veri</span>
+      </div>
+      <div class="budget-meta-right">
+        <a href="https://maliye.gov.ct.tr/downloads/raporlar/genel-gelir-gider/2026-07-genel-gelir-gider-raporu.pdf" target="_blank" rel="noopener" class="btn btn-pdf" id="bPdfLink">
+          <span>📥</span> Orijinal PDF Raporu
+        </a>
+      </div>
+    </div>
+
+    <!-- BÜTÇE KPIS -->
+    <div class="kpi-grid fade-in" id="b-kpis"></div>
+
+    <!-- BÜTÇE İÇGÖRÜLER -->
+    <div class="insight-box fade-in" id="b-insights"></div>
+
+    <!-- BÜTÇE ALT SEKMELER -->
+    <div class="tab-bar fade-in">
+      <button class="tab-btn active" data-bt="flow">Aylık Nakit Akışı &amp; Denge</button>
+      <button class="tab-btn" data-bt="rev">Gelir Analizi</button>
+      <button class="tab-btn" data-bt="exp">Harcama Kalemleri</button>
+      <button class="tab-btn" data-bt="perf">Bütçe Hedefi vs Gerçekleşme</button>
+      <button class="tab-btn" data-bt="corr">Bütçe Açığı &amp; Borçlanma</button>
+      <button class="tab-btn" data-bt="table">Detaylı Kalem Tablosu</button>
+    </div>
+
+    <!-- PANE: FLOW -->
+    <div class="tab-pane active" id="bp-flow">
+      <div class="chart-section fade-in">
+        <h2>Aylık Bütçe Nakit Akışı ve Net Bütçe Dengesi</h2>
+        <div class="chart-row">
+          <div class="chart-box">
+            <h3>Aylık Genel Gelir, Genel Gider ve Net Denge (Mrd TL)</h3>
+            <canvas id="cBudgetMonthlyFlow"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="chart-section fade-in">
+        <h2>Kümülatif Gelişim ve Yerel Bütçe Karşılaştırması</h2>
+        <div class="chart-row c2">
+          <div class="chart-box">
+            <h3>Kümülatif Gelir vs Gider vs Net Açık (Mrd TL)</h3>
+            <canvas id="cBudgetMonthlyCum"></canvas>
+          </div>
+          <div class="chart-box">
+            <h3>Genel Bütçe vs Yerel Bütçe (TC Hibeleri Hariç)</h3>
+            <canvas id="cBudgetLocalVsGen"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE: REVENUE -->
+    <div class="tab-pane" id="bp-rev">
+      <div class="chart-section fade-in">
+        <h2>Gelir Kaynakları ve Vergi Dağılımı</h2>
+        <div class="chart-row c2">
+          <div class="chart-box">
+            <h3>Toplam Gelir Dağılımı (Mrd TL)</h3>
+            <canvas id="cBudgetRevPie"></canvas>
+          </div>
+          <div class="chart-box">
+            <h3>Vergi Gelirleri Kalemleri (Mrd TL)</h3>
+            <canvas id="cBudgetTaxBreakdown"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE: EXPENSES -->
+    <div class="tab-pane" id="bp-exp">
+      <div class="chart-section fade-in">
+        <h2>Harcama Kalemleri ve Maaş Baskısı</h2>
+        <div class="chart-row c2">
+          <div class="chart-box">
+            <h3>Harcama Grupları Dağılımı (Mrd TL)</h3>
+            <canvas id="cBudgetExpPie"></canvas>
+          </div>
+          <div class="chart-box">
+            <h3>Sabit Maaş &amp; Transferler vs Esnek Harcamalar</h3>
+            <canvas id="cBudgetRigidExp"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE: PERFORMANCE -->
+    <div class="tab-pane" id="bp-perf">
+      <div class="chart-section fade-in">
+        <h2>2026 Bütçe Hedefleri vs Fiili Gerçekleşme Oranları (%)</h2>
+        <div class="chart-row">
+          <div class="chart-box">
+            <h3>Kalem Bazında Gerçekleşme Oranı vs Normatif %58.3 Eşiği</h3>
+            <canvas id="cBudgetRealization"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE: CORRELATION -->
+    <div class="tab-pane" id="bp-corr">
+      <div class="chart-section fade-in">
+        <h2>Bütçe Nakit Açığı ile DİBS İhale Borçlanması İlişkisi</h2>
+        <div class="chart-row">
+          <div class="chart-box">
+            <h3>Aylık Bütçe Açığı vs Merkez Bankası DİBS İhale Kabul Hacmi (Mrd TL)</h3>
+            <canvas id="cBudgetDebtCorr"></canvas>
+          </div>
+        </div>
+        <div class="insight-box" style="margin-top:1rem">
+          <h3>💡 Bütçe Açığı ve İç Borç Finansmanı Mekanizması</h3>
+          <ul>
+            <li>KKTC kamu maliyesinde Şubat, Mart, Nisan ve Haziran aylarında oluşan bütçe açıkları, Maliye Bakanlığı'nın Merkez Bankası aracılığıyla düzenlediği kısa vadeli (30-120 gün) TL ve Döviz DİBS ihaleleriyle finanse edilmektedir.</li>
+            <li>Ocak ve Temmuz aylarındaki kurumlar ve gelir vergisi/harç tahsilat piklerinde bütçe fazla vermiş ve DİBS borçlanma ihtiyacı geçici olarak azalmıştır.</li>
+            <li>Toplam 87.36 Mrd TL'lik giderin 47.17 Mrd TL'si (%54'ü) doğrudan kamu personeli maaşları ve emekli ikramiye/maaş transferlerinden oluştuğu için mali harcama esnekliği son derece sınırlıdır.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANE: TABLE -->
+    <div class="tab-pane" id="bp-table">
+      <div class="chart-section fade-in">
+        <h2>Detaylı Bütçe Kalemleri Tablosu</h2>
+        <div class="table-ctrls">
+          <div class="table-search">
+            <input type="text" id="bTableSearch" placeholder="Kalem ara (örn: KDV, Personel, Fon, Maaş)..." oninput="filterBudgetTable()">
+          </div>
+          <div class="table-filters">
+            <button class="filter-btn active" data-f="all" onclick="setBudgetTableFilter('all', this)">Tümü</button>
+            <button class="filter-btn" data-f="gelir" onclick="setBudgetTableFilter('gelir', this)">Gelirler</button>
+            <button class="filter-btn" data-f="gider" onclick="setBudgetTableFilter('gider', this)">Giderler</button>
+            <button class="filter-btn" data-f="main" onclick="setBudgetTableFilter('main', this)">Ana Kalemler</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="bDataTable">
+            <thead>
+              <tr>
+                <th>Kalem Adı</th>
+                <th>Tür</th>
+                <th>2026 Bütçe</th>
+                <th>2026 Tadil</th>
+                <th>2026 Gerçekleşme (YTD)</th>
+                <th>2025 Gerçekleşme (YTD)</th>
+                <th>Değişim (%)</th>
+                <th>Bütçe Oranı (%)</th>
+              </tr>
+            </thead>
+            <tbody id="bTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       MODÜL 2: MERKEZİ HÜKÜMET DİBS BORÇ STOKU
+       ========================================================== -->
+  <div id="module-debt" class="module-pane" style="display:none">
+
   <div class="debug-panel fade-in"><details id="debugDetails"><summary>Veri Kalitesi ve Ham Veri Debug</summary><div id="debugContent"></div></details></div>
   <div class="kpi-grid fade-in" id="kpis"></div>
   <div class="insight-box fade-in" id="insights"></div>
@@ -217,6 +445,8 @@ table.proj-tbl tr.tot td{font-weight:700;border-top:2px solid var(--bdr)}
       <div id="st-fx" class="table-wrap" style="display:none"></div>
       <div id="st-stk" class="table-wrap" style="display:none"></div>
     </div>
+  </div>
+
   </div>
 </main>
 <footer>Kaynak: KKTC Merkez Bankası · Son güncelleme: <span id="footTime">—</span></footer>
@@ -901,10 +1131,4206 @@ document.querySelectorAll('.tab-btn[data-st]').forEach(b=>{b.addEventListener('c
 function setImpliedRates(){S._bills=null;const r={};FXC.forEach(c=>{const b=bills().filter(x=>x.cur===c&&x.fxV);if(b.length)r[c]=b[b.length-1].fxV});
   if(r.USD)S.rates={USD_TRY:r.USD,EUR_TRY:r.EUR||S.rates.EUR_TRY,GBP_TRY:r.GBP||S.rates.GBP_TRY,ratesSrc:'son ihale kuru'};S._bills=null}
 
+
+/* ==========================================================
+   BÜTÇE MODÜLÜ VERİ VE RENDER MOTORU
+   ========================================================== */
+S.budget = null;
+S.activeModule = 'budget';
+S.budgetFilter = 'all';
+S.budgetSearch = '';
+
+const BUDGET_FALLBACK = {
+  "metadata": {
+    "budget_year": 2026,
+    "report_period": "2026 Temmuz",
+    "active_months_count": 7,
+    "active_month_names": [
+      "OCAK",
+      "ŞUBAT",
+      "MART",
+      "NİSAN",
+      "MAYIS",
+      "HAZİRAN",
+      "TEMMUZ"
+    ],
+    "title": "2026 Temmuz Genel Gelir Gider Raporu",
+    "source_url": "https://maliye.gov.ct.tr/downloads/raporlar/genel-gelir-gider/2026-07-genel-gelir-gider-raporu.pdf",
+    "parsed_at": "2026-10-12 10:45:05"
+  },
+  "kpis": {
+    "total_revenue": 83496006741.0,
+    "total_revenue_budget": 174237475257.0,
+    "total_revenue_rate": 50.47,
+    "total_expense": 87361316101.0,
+    "total_expense_budget": 199268761079.0,
+    "total_expense_rate": 45.83,
+    "budget_balance": -3865309360.0,
+    "advance_amount": 538453190.0,
+    "balance_with_advance": -4192263134.0,
+    "local_revenue": 74799873488.0,
+    "local_expense": 78453683431.0,
+    "local_balance": -3653809943.0,
+    "prev_year_revenue_ytd": 62131299696.0,
+    "prev_year_expense_ytd": 63541868422.0,
+    "prev_year_balance_ytd": -1410568726.0
+  },
+  "monthly_series": [
+    {
+      "month_index": 1,
+      "month_name": "Ocak",
+      "expense": 7322136983.0,
+      "revenue": 14863949143.0,
+      "balance": 7541812160.0,
+      "local_expense": 6782883538.0,
+      "local_revenue": 14247035129.0,
+      "local_balance": 7464151591.0
+    },
+    {
+      "month_index": 2,
+      "month_name": "Şubat",
+      "expense": 12595174770.0,
+      "revenue": 9014245830.0,
+      "balance": -3580928940.0,
+      "local_expense": 11651220088.0,
+      "local_revenue": 8477310967.0,
+      "local_balance": -3173909121.0
+    },
+    {
+      "month_index": 3,
+      "month_name": "Mart",
+      "expense": 12188347214.0,
+      "revenue": 9645533060.0,
+      "balance": -2542814154.0,
+      "local_expense": 11346983420.0,
+      "local_revenue": 8373628972.0,
+      "local_balance": -2973354448.0
+    },
+    {
+      "month_index": 4,
+      "month_name": "Ni̇san",
+      "expense": 13755467876.0,
+      "revenue": 11730629964.0,
+      "balance": -2024837912.0,
+      "local_expense": 10899791376.0,
+      "local_revenue": 8759246950.0,
+      "local_balance": -2140544426.0
+    },
+    {
+      "month_index": 5,
+      "month_name": "Mayis",
+      "expense": 12048844340.0,
+      "revenue": 10186596391.0,
+      "balance": -1862247949.0,
+      "local_expense": 11444594267.0,
+      "local_revenue": 9540744406.0,
+      "local_balance": -1903849861.0
+    },
+    {
+      "month_index": 6,
+      "month_name": "Hazi̇ran",
+      "expense": 13461407305.0,
+      "revenue": 10758954078.0,
+      "balance": -2702453227.0,
+      "local_expense": 11664762165.0,
+      "local_revenue": 9409786238.0,
+      "local_balance": -2254975927.0
+    },
+    {
+      "month_index": 7,
+      "month_name": "Temmuz",
+      "expense": 15989937613.0,
+      "revenue": 17296098276.0,
+      "balance": 1306160663.0,
+      "local_expense": 14663448577.0,
+      "local_revenue": 15992120826.0,
+      "local_balance": 1328672249.0
+    }
+  ],
+  "revenue_breakdown": [
+    {
+      "name": "VERGİ GELİRLERİ",
+      "amount": 57288276060.0,
+      "budget": 122623979468.0,
+      "rate": 46.72
+    },
+    {
+      "name": "Gelir Vergisi",
+      "amount": 22910163139.0,
+      "budget": 42914007000.0,
+      "rate": 53.39
+    },
+    {
+      "name": "Kurumlar Vergisi",
+      "amount": 6222639857.0,
+      "budget": 15845065000.0,
+      "rate": 39.27
+    },
+    {
+      "name": "Dahilde Alınan Katma Değer Vergisi",
+      "amount": 6248739379.0,
+      "budget": 13783465000.0,
+      "rate": 45.34
+    },
+    {
+      "name": "Gümrük Vergileri",
+      "amount": 1483015975.0,
+      "budget": 3549649000.0,
+      "rate": 41.78
+    },
+    {
+      "name": "İthalattan Alınan Katma Değer Vergisi",
+      "amount": 10127855455.0,
+      "budget": 24539134000.0,
+      "rate": 41.27
+    },
+    {
+      "name": "Harçlar",
+      "amount": 3662368161.0,
+      "budget": 6797998468.0,
+      "rate": 53.88
+    },
+    {
+      "name": "SERMAYE GELİRLERİ",
+      "amount": 20084694.0,
+      "budget": 21434000.0,
+      "rate": 93.7
+    },
+    {
+      "name": "VERGİ DIŞI MAHALLİ GELİRLER",
+      "amount": 9982145077.0,
+      "budget": 5346353634.0,
+      "rate": 204.24
+    },
+    {
+      "name": "FON GELİRLERİ",
+      "amount": 5564563417.0,
+      "budget": 13231764000.0,
+      "rate": 42.06
+    },
+    {
+      "name": "TC YARDIMLARI",
+      "amount": 8028316438.0,
+      "budget": 26447650390.0,
+      "rate": 42.25
+    },
+    {
+      "name": "TC KREDİLERİ",
+      "amount": 319099754.0,
+      "budget": 2300000000.0,
+      "rate": 13.87
+    }
+  ],
+  "expense_breakdown": [
+    {
+      "name": "PERSONEL GİDERLERİ",
+      "amount": 25895595066.0,
+      "budget": 48913136458.0,
+      "rate": 50.88
+    },
+    {
+      "name": "MAAŞ/ÜCRET",
+      "amount": 23915590240.0,
+      "budget": 46931627043.0,
+      "rate": 51.0
+    },
+    {
+      "name": "SOSYAL GÜVENLİK",
+      "amount": 2184484913.0,
+      "budget": 3969488430.0,
+      "rate": 55.34
+    },
+    {
+      "name": "(D) Hane Halkına Transferler",
+      "amount": 21274339961.0,
+      "budget": 44120226431.0,
+      "rate": 49.56
+    },
+    {
+      "name": "Emekli Maaşları",
+      "amount": 9806645288.0,
+      "budget": 15500000000.0,
+      "rate": 63.27
+    },
+    {
+      "name": "MAHALLİ YATIRIM",
+      "amount": 1641891502.0,
+      "budget": 9014093204.0,
+      "rate": 19.08
+    },
+    {
+      "name": "FİYAT İSTİKRAR FONU GİDERLERİ",
+      "amount": 2006964212.0,
+      "budget": 3510000000.0,
+      "rate": 51.46
+    },
+    {
+      "name": "TC YARDIM VE KREDİLERİ TOPLAMI",
+      "amount": 8907632669.0,
+      "budget": 29447650390.0,
+      "rate": 40.49
+    },
+    {
+      "name": "TC YATIRIM (CARİ YIL)",
+      "amount": 2961558255.0,
+      "budget": 12701227660.0,
+      "rate": 32.91
+    },
+    {
+      "name": "SAVUNMA (CARİ YIL)",
+      "amount": 5550769548.0,
+      "budget": 12653645319.0,
+      "rate": 55.51
+    }
+  ],
+  "all_revenues": [
+    {
+      "name": "Tarımsal KİTler Görev Zararları",
+      "budget_prev": 1200000000.0,
+      "actual_prev_full": 974903315.0,
+      "budget_curr": 1600000000.0,
+      "budget_curr_revised": 1440000000.0,
+      "monthly": [
+        105999404.0,
+        58316203.0,
+        62150549.0,
+        94755525.0,
+        300852414.0,
+        74374208.0,
+        98284196.0,
+        45725758.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 379733492.0,
+      "actual_curr_ytd": 794732497.0,
+      "rate_prev": 31.64,
+      "rate_curr": 49.67
+    },
+    {
+      "name": "Turizm Teşvik Fonu",
+      "budget_prev": 400000000.0,
+      "actual_prev_full": 352940288.0,
+      "budget_curr": 600000000.0,
+      "budget_curr_revised": 538137000.0,
+      "monthly": [
+        1786623.0,
+        17763092.0,
+        17842099.0,
+        7497170.0,
+        26909957.0,
+        29938463.0,
+        99429173.0,
+        46252353.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 108720128.0,
+      "actual_curr_ytd": 201166577.0,
+      "rate_prev": 27.18,
+      "rate_curr": 33.53
+    },
+    {
+      "name": "Spor Fonu",
+      "budget_prev": 220000000.0,
+      "actual_prev_full": 224867220.0,
+      "budget_curr": 359179000.0,
+      "budget_curr_revised": 324364000.0,
+      "monthly": [
+        0.0,
+        45943335.0,
+        3623114.0,
+        62023422.0,
+        8140052.0,
+        48883827.0,
+        10372198.0,
+        5174733.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 141089797.0,
+      "actual_curr_ytd": 178985949.0,
+      "rate_prev": 64.13,
+      "rate_curr": 49.83
+    },
+    {
+      "name": "DÜÇ Döner Ser.",
+      "budget_prev": 14400000.0,
+      "actual_prev_full": 32933306.0,
+      "budget_curr": 27000000.0,
+      "budget_curr_revised": 37915000.0,
+      "monthly": [
+        3905074.0,
+        325385.0,
+        6982040.0,
+        3728047.0,
+        2492580.0,
+        5361506.0,
+        3927949.0,
+        798537.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 17738556.0,
+      "actual_curr_ytd": 26722582.0,
+      "rate_prev": 123.18,
+      "rate_curr": 98.97
+    },
+    {
+      "name": "Orman Dairesi Döner Ser.",
+      "budget_prev": 31500000.0,
+      "actual_prev_full": 44875946.0,
+      "budget_curr": 45000000.0,
+      "budget_curr_revised": 53239000.0,
+      "monthly": [
+        1620805.0,
+        3336945.0,
+        3206464.0,
+        4440230.0,
+        3497430.0,
+        3808395.0,
+        4195125.0,
+        3160445.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 18212477.0,
+      "actual_curr_ytd": 24105394.0,
+      "rate_prev": 57.82,
+      "rate_curr": 53.57
+    },
+    {
+      "name": "Tarımsal Araş. Döner Ser.",
+      "budget_prev": 3600000.0,
+      "actual_prev_full": 7824205.0,
+      "budget_curr": 6300000.0,
+      "budget_curr_revised": 5915000.0,
+      "monthly": [
+        409849.0,
+        574006.0,
+        654418.0,
+        40638.0,
+        140780.0,
+        155040.0,
+        186986.0,
+        427739.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4458500.0,
+      "actual_curr_ytd": 2161717.0,
+      "rate_prev": 123.85,
+      "rate_curr": 34.31
+    },
+    {
+      "name": "TC YARDIM VE KREDİLERİ TOPLAMI",
+      "budget_prev": 15900000000.0,
+      "actual_prev_full": 18786096097.0,
+      "budget_curr": 22000000000.0,
+      "budget_curr_revised": 29447650390.0,
+      "monthly": [
+        539253445.0,
+        943954682.0,
+        841363794.0,
+        2855676500.0,
+        604250073.0,
+        1796645140.0,
+        1326489036.0,
+        1135244576.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 8967955731.0,
+      "actual_curr_ytd": 8907632669.0,
+      "rate_prev": 56.4,
+      "rate_curr": 40.49
+    },
+    {
+      "name": "TC HİBE TOPLAMI",
+      "budget_prev": 14500000000.0,
+      "actual_prev_full": 17386747916.0,
+      "budget_curr": 19000000000.0,
+      "budget_curr_revised": 26447650390.0,
+      "monthly": [
+        539253445.0,
+        943954682.0,
+        831862028.0,
+        2855676500.0,
+        604250073.0,
+        1796645140.0,
+        1093413346.0,
+        1040622053.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 8324575929.0,
+      "actual_curr_ytd": 8665055214.0,
+      "rate_prev": 57.41,
+      "rate_curr": 45.61
+    },
+    {
+      "name": "TC YATIRIM (CARİ YIL)",
+      "budget_prev": 8500000000.0,
+      "actual_prev_full": 8680285151.0,
+      "budget_curr": 9000000000.0,
+      "budget_curr_revised": 12701227660.0,
+      "monthly": [
+        0.0,
+        0.0,
+        79437512.0,
+        2225898969.0,
+        0.0,
+        535941179.0,
+        120280595.0,
+        137176140.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4353736560.0,
+      "actual_curr_ytd": 2961558255.0,
+      "rate_prev": 51.22,
+      "rate_curr": 32.91
+    },
+    {
+      "name": "SAVUNMA (CARİ YIL)",
+      "budget_prev": 6000000000.0,
+      "actual_prev_full": 8018798585.0,
+      "budget_curr": 10000000000.0,
+      "budget_curr_revised": 12653645319.0,
+      "monthly": [
+        539253445.0,
+        871954682.0,
+        746126763.0,
+        603164031.0,
+        604250073.0,
+        1212887803.0,
+        973132750.0,
+        903445913.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 3820624474.0,
+      "actual_curr_ytd": 5550769548.0,
+      "rate_prev": 63.68,
+      "rate_curr": 55.51
+    },
+    {
+      "name": "REEL SEKTÖR",
+      "budget_prev": 0.0,
+      "actual_prev_full": 687664180.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 1092777410.0,
+      "monthly": [
+        0.0,
+        72000000.0,
+        6297753.0,
+        26613500.0,
+        0.0,
+        47816157.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 150214895.0,
+      "actual_curr_ytd": 152727410.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "TC KREDİLERİ TOPLAMI",
+      "budget_prev": 1400000000.0,
+      "actual_prev_full": 1399348181.0,
+      "budget_curr": 3000000000.0,
+      "budget_curr_revised": 3000000000.0,
+      "monthly": [
+        0.0,
+        0.0,
+        9501766.0,
+        0.0,
+        0.0,
+        0.0,
+        233075690.0,
+        94622523.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 643379802.0,
+      "actual_curr_ytd": 242577456.0,
+      "rate_prev": 45.96,
+      "rate_curr": 8.09
+    },
+    {
+      "name": "67/2005 Yasa Gereği Ödemeler",
+      "budget_prev": 1400000000.0,
+      "actual_prev_full": 1399348181.0,
+      "budget_curr": 3000000000.0,
+      "budget_curr_revised": 3000000000.0,
+      "monthly": [
+        0.0,
+        0.0,
+        9501766.0,
+        0.0,
+        0.0,
+        0.0,
+        233075690.0,
+        94622523.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 643379802.0,
+      "actual_curr_ytd": 242577456.0,
+      "rate_prev": 45.96,
+      "rate_curr": 8.09
+    },
+    {
+      "name": "DIŞ YARDIMLAR",
+      "budget_prev": 0.0,
+      "actual_prev_full": 10523629.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 0.0,
+      "monthly": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 0.0,
+      "actual_curr_ytd": 0.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "GELİRLER GENEL TOPLAMI",
+      "budget_prev": 118662000000.0,
+      "actual_prev_full": 114805516290.0,
+      "budget_curr": 165434000000.0,
+      "budget_curr_revised": 174237475257.0,
+      "monthly": [
+        14863949143.0,
+        9014245830.0,
+        9645533060.0,
+        11730629964.0,
+        10186596391.0,
+        10758954078.0,
+        17296098276.0,
+        8052473702.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 62131299696.0,
+      "actual_curr_ytd": 83496006741.0,
+      "rate_prev": 52.36,
+      "rate_curr": 50.47
+    },
+    {
+      "name": "TOPLAM YEREL GELİRLER",
+      "budget_prev": 100162000000.0,
+      "actual_prev_full": 96226509172.0,
+      "budget_curr": 144134000000.0,
+      "budget_curr_revised": 144669794787.0,
+      "monthly": [
+        14247035129.0,
+        8477310967.0,
+        8373628972.0,
+        8759246950.0,
+        9540744406.0,
+        9409786238.0,
+        15992120826.0,
+        7380751636.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 53355037017.0,
+      "actual_curr_ytd": 74799873488.0,
+      "rate_prev": 53.27,
+      "rate_curr": 51.9
+    },
+    {
+      "name": "MAHALLİ GELİRLER",
+      "budget_prev": 86084000000.0,
+      "actual_prev_full": 84187965978.0,
+      "budget_curr": 126456000000.0,
+      "budget_curr_revised": 126915559102.0,
+      "monthly": [
+        12747545602.0,
+        7642118439.0,
+        7637525844.0,
+        7357116288.0,
+        8422406830.0,
+        8570770230.0,
+        14446068247.0,
+        6435739805.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 46539211146.0,
+      "actual_curr_ytd": 66823551480.0,
+      "rate_prev": 54.06,
+      "rate_curr": 52.84
+    },
+    {
+      "name": "VERGİ GELİRLERİ",
+      "budget_prev": 83801067000.0,
+      "actual_prev_full": 76287351472.0,
+      "budget_curr": 122623387000.0,
+      "budget_curr_revised": 122623979468.0,
+      "monthly": [
+        6924619406.0,
+        6438801365.0,
+        6463593174.0,
+        6887073726.0,
+        8005902596.0,
+        8434510481.0,
+        14133775313.0,
+        6192810882.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 39982136959.0,
+      "actual_curr_ytd": 57288276060.0,
+      "rate_prev": 47.71,
+      "rate_curr": 46.72
+    },
+    {
+      "name": "Gelir Vergisi",
+      "budget_prev": 26976083000.0,
+      "actual_prev_full": 26624868461.0,
+      "budget_curr": 42914007000.0,
+      "budget_curr_revised": 42914007000.0,
+      "monthly": [
+        2477406287.0,
+        2252239930.0,
+        2209602336.0,
+        2275313360.0,
+        2475272254.0,
+        2533544812.0,
+        8686784160.0,
+        2271055528.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 14878312164.0,
+      "actual_curr_ytd": 22910163139.0,
+      "rate_prev": 55.15,
+      "rate_curr": 53.39
+    },
+    {
+      "name": "Kurumlar Vergisi",
+      "budget_prev": 10188886000.0,
+      "actual_prev_full": 9018873520.0,
+      "budget_curr": 15845065000.0,
+      "budget_curr_revised": 15845065000.0,
+      "monthly": [
+        1026279899.0,
+        462881922.0,
+        843220017.0,
+        415354065.0,
+        914600830.0,
+        2053993708.0,
+        506309417.0,
+        466151731.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4455352776.0,
+      "actual_curr_ytd": 6222639857.0,
+      "rate_prev": 43.73,
+      "rate_curr": 39.27
+    },
+    {
+      "name": "Dahilde Alınan Katma Değer Vergisi",
+      "budget_prev": 8674800000.0,
+      "actual_prev_full": 9160261446.0,
+      "budget_curr": 13783465000.0,
+      "budget_curr_revised": 13783465000.0,
+      "monthly": [
+        1052563458.0,
+        890943238.0,
+        700613032.0,
+        1023374284.0,
+        864882641.0,
+        780894961.0,
+        935467764.0,
+        853754633.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4482275375.0,
+      "actual_curr_ytd": 6248739379.0,
+      "rate_prev": 51.67,
+      "rate_curr": 45.34
+    },
+    {
+      "name": "Mülkiyet Üzerinden Alınan Vergiler",
+      "budget_prev": 3781598000.0,
+      "actual_prev_full": 2877523723.0,
+      "budget_curr": 4921088000.0,
+      "budget_curr_revised": 4921088000.0,
+      "monthly": [
+        469599078.0,
+        244698834.0,
+        240814156.0,
+        326979480.0,
+        280389012.0,
+        246275925.0,
+        352245994.0,
+        218660058.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1615602562.0,
+      "actual_curr_ytd": 2161002480.0,
+      "rate_prev": 42.72,
+      "rate_curr": 43.91
+    },
+    {
+      "name": "Uluslararası Ticaret ve Muamelelerden Alınan",
+      "budget_prev": 22292555000.0,
+      "actual_prev_full": 18761249051.0,
+      "budget_curr": 29107673000.0,
+      "budget_curr_revised": 29107673000.0,
+      "monthly": [
+        1166215621.0,
+        1674089590.0,
+        1553555154.0,
+        1783892045.0,
+        2077707157.0,
+        1602686554.0,
+        2145896075.0,
+        1623527590.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 9404753604.0,
+      "actual_curr_ytd": 12004042196.0,
+      "rate_prev": 42.19,
+      "rate_curr": 41.24
+    },
+    {
+      "name": "Gümrük Vergileri",
+      "budget_prev": 2566650000.0,
+      "actual_prev_full": 2287194847.0,
+      "budget_curr": 3549649000.0,
+      "budget_curr_revised": 3549649000.0,
+      "monthly": [
+        120548460.0,
+        203933984.0,
+        195879044.0,
+        239259817.0,
+        255302867.0,
+        211299165.0,
+        256792639.0,
+        201252474.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1104530538.0,
+      "actual_curr_ytd": 1483015975.0,
+      "rate_prev": 43.03,
+      "rate_curr": 41.78
+    },
+    {
+      "name": "İthalattan Alınan Katma Değer Vergisi",
+      "budget_prev": 18904120000.0,
+      "actual_prev_full": 15745552035.0,
+      "budget_curr": 24539134000.0,
+      "budget_curr_revised": 24539134000.0,
+      "monthly": [
+        1002372968.0,
+        1415317115.0,
+        1301963442.0,
+        1490534344.0,
+        1764226887.0,
+        1343631834.0,
+        1809808866.0,
+        1363851019.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 7949325267.0,
+      "actual_curr_ytd": 10127855455.0,
+      "rate_prev": 42.05,
+      "rate_curr": 41.27
+    },
+    {
+      "name": "Diğer",
+      "budget_prev": 821785000.0,
+      "actual_prev_full": 728502169.0,
+      "budget_curr": 1018890000.0,
+      "budget_curr_revised": 1018890000.0,
+      "monthly": [
+        43294192.0,
+        54838492.0,
+        55712668.0,
+        54097884.0,
+        58177404.0,
+        47755555.0,
+        79294571.0,
+        58424098.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 350897799.0,
+      "actual_curr_ytd": 393170766.0,
+      "rate_prev": 42.7,
+      "rate_curr": 38.59
+    },
+    {
+      "name": "Motorlu Taşıtlar Vergisi",
+      "budget_prev": 761789000.0,
+      "actual_prev_full": 838307248.0,
+      "budget_curr": 1113347000.0,
+      "budget_curr_revised": 1113347000.0,
+      "monthly": [
+        56259091.0,
+        67188850.0,
+        67683454.0,
+        66272974.0,
+        88329048.0,
+        86990708.0,
+        100514076.0,
+        73308288.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 438062440.0,
+      "actual_curr_ytd": 533238202.0,
+      "rate_prev": 57.5,
+      "rate_curr": 47.9
+    },
+    {
+      "name": "Harçlar",
+      "budget_prev": 4691478000.0,
+      "actual_prev_full": 4084027299.0,
+      "budget_curr": 6797406000.0,
+      "budget_curr_revised": 6797998468.0,
+      "monthly": [
+        240834328.0,
+        334989250.0,
+        347339773.0,
+        487489276.0,
+        775860415.0,
+        620872933.0,
+        854982187.0,
+        276723862.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 2101893317.0,
+      "actual_curr_ytd": 3662368161.0,
+      "rate_prev": 44.8,
+      "rate_curr": 53.88
+    },
+    {
+      "name": "SERMAYE GELİRLERİ",
+      "budget_prev": 21611000.0,
+      "actual_prev_full": 12330697.0,
+      "budget_curr": 21434000.0,
+      "budget_curr_revised": 21434000.0,
+      "monthly": [
+        102619.0,
+        4535479.0,
+        379912.0,
+        1168216.0,
+        4803270.0,
+        5442797.0,
+        3652399.0,
+        4742615.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 6059780.0,
+      "actual_curr_ytd": 20084694.0,
+      "rate_prev": 28.04,
+      "rate_curr": 93.7
+    },
+    {
+      "name": "VERGİ DIŞI MAHALLİ GELİRLER",
+      "budget_prev": 2819813000.0,
+      "actual_prev_full": 8840400108.0,
+      "budget_curr": 4887387000.0,
+      "budget_curr_revised": 5346353634.0,
+      "monthly": [
+        5830210238.0,
+        1209794527.0,
+        1195714137.0,
+        517044024.0,
+        431750425.0,
+        372604918.0,
+        425026807.0,
+        350165970.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 7008389540.0,
+      "actual_curr_ytd": 9982145077.0,
+      "rate_prev": 248.54,
+      "rate_curr": 204.24
+    },
+    {
+      "name": "RED VE İADELER",
+      "budget_prev": -558491000.0,
+      "actual_prev_full": -952116297.0,
+      "budget_curr": -1076208000.0,
+      "budget_curr_revised": -1076208000.0,
+      "monthly": [
+        -7386662.0,
+        -11012933.0,
+        -22161379.0,
+        -48169678.0,
+        -20049461.0,
+        -241787966.0,
+        -116386272.0,
+        -111979662.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": -457375134.0,
+      "actual_curr_ytd": -466954350.0,
+      "rate_prev": 81.9,
+      "rate_curr": 43.39
+    },
+    {
+      "name": "VERGİ DIŞI GELİRLER",
+      "budget_prev": 14078000000.0,
+      "actual_prev_full": 12038543194.0,
+      "budget_curr": 17678000000.0,
+      "budget_curr_revised": 17754235684.0,
+      "monthly": [
+        1499489528.0,
+        835192529.0,
+        736103128.0,
+        1402130662.0,
+        1118337576.0,
+        839016008.0,
+        1546052579.0,
+        945011830.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 6815825871.0,
+      "actual_curr_ytd": 7976322008.0,
+      "rate_prev": 48.42,
+      "rate_curr": 45.12
+    },
+    {
+      "name": "FON GELİRLERİ",
+      "budget_prev": 10402570000.0,
+      "actual_prev_full": 7927933143.0,
+      "budget_curr": 13231764000.0,
+      "budget_curr_revised": 13231764000.0,
+      "monthly": [
+        558477483.0,
+        652827337.0,
+        623371135.0,
+        965908215.0,
+        960848748.0,
+        728788240.0,
+        1074342260.0,
+        807803881.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 3761299600.0,
+      "actual_curr_ytd": 5564563417.0,
+      "rate_prev": 36.16,
+      "rate_curr": 42.06
+    },
+    {
+      "name": "FİF FONU GELİRLERİ",
+      "budget_prev": 9452570000.0,
+      "actual_prev_full": 6863085568.0,
+      "budget_curr": 11881764000.0,
+      "budget_curr_revised": 11881764000.0,
+      "monthly": [
+        544637241.0,
+        639337964.0,
+        596377842.0,
+        587217407.0,
+        772829283.0,
+        712471843.0,
+        889090189.0,
+        600812904.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 3368601193.0,
+      "actual_curr_ytd": 4741961769.0,
+      "rate_prev": 35.64,
+      "rate_curr": 39.91
+    },
+    {
+      "name": "FAİZ FARKI FONU GELİRLERİ",
+      "budget_prev": 0.0,
+      "actual_prev_full": 38481692.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 0.0,
+      "monthly": [
+        0.0,
+        16242.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3255890.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 7975516.0,
+      "actual_curr_ytd": 16242.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "DİĞER FON GELİRLERİ",
+      "budget_prev": 950000000.0,
+      "actual_prev_full": 1032726136.0,
+      "budget_curr": 1350000000.0,
+      "budget_curr_revised": 1350000000.0,
+      "monthly": [
+        13840242.0,
+        13473131.0,
+        26993293.0,
+        378690808.0,
+        188329193.0,
+        16316397.0,
+        185320524.0,
+        203752991.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 385193474.0,
+      "actual_curr_ytd": 822963587.0,
+      "rate_prev": 40.55,
+      "rate_curr": 60.96
+    },
+    {
+      "name": "Spor Fonu Gelirleri",
+      "budget_prev": 250000000.0,
+      "actual_prev_full": 258918713.0,
+      "budget_curr": 400000000.0,
+      "budget_curr_revised": 400000000.0,
+      "monthly": [
+        4691797.0,
+        1288865.0,
+        722124.0,
+        180575371.0,
+        703099.0,
+        254669.0,
+        829832.0,
+        165419344.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 6690325.0,
+      "actual_curr_ytd": 189065757.0,
+      "rate_prev": 2.68,
+      "rate_curr": 47.27
+    },
+    {
+      "name": "Turizm Teşvik Fonu Gelirleri",
+      "budget_prev": 700000000.0,
+      "actual_prev_full": 773801622.0,
+      "budget_curr": 950000000.0,
+      "budget_curr_revised": 950000000.0,
+      "monthly": [
+        9148445.0,
+        12184265.0,
+        26271170.0,
+        198115437.0,
+        187626093.0,
+        16061728.0,
+        184490692.0,
+        38333647.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 378497347.0,
+      "actual_curr_ytd": 633897830.0,
+      "rate_prev": 54.07,
+      "rate_curr": 66.73
+    },
+    {
+      "name": "Sığınak Fonu Gazimağusa Hastanesi",
+      "budget_prev": 0.0,
+      "actual_prev_full": 5801.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 0.0,
+      "monthly": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 5801.0,
+      "actual_curr_ytd": 0.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "DÖNER SERMAYE GELİRLERİ",
+      "budget_prev": 55000000.0,
+      "actual_prev_full": 125000634.0,
+      "budget_curr": 87000000.0,
+      "budget_curr_revised": 108349000.0,
+      "monthly": [
+        11373342.0,
+        31651082.0,
+        8668146.0,
+        8735468.0,
+        24140723.0,
+        11549004.0,
+        13998759.0,
+        4380998.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 84572230.0,
+      "actual_curr_ytd": 110116525.0,
+      "rate_prev": 153.77,
+      "rate_curr": 126.57
+    },
+    {
+      "name": "Orman Dairesi Döner Sermaye Gelirleri",
+      "budget_prev": 35000000.0,
+      "actual_prev_full": 75510005.0,
+      "budget_curr": 50000000.0,
+      "budget_curr_revised": 59919000.0,
+      "monthly": [
+        4313010.0,
+        24428218.0,
+        4987685.0,
+        2403588.0,
+        9859745.0,
+        4085682.0,
+        9078294.0,
+        758099.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 51003831.0,
+      "actual_curr_ytd": 59156221.0,
+      "rate_prev": 145.73,
+      "rate_curr": 118.31
+    },
+    {
+      "name": "Devlet Üretme Ciftlikleri Döner Sermaye Gelirleri",
+      "budget_prev": 16000000.0,
+      "actual_prev_full": 34560134.0,
+      "budget_curr": 30000000.0,
+      "budget_curr_revised": 41430000.0,
+      "monthly": [
+        5927615.0,
+        5997867.0,
+        2866990.0,
+        5833839.0,
+        12652821.0,
+        6816011.0,
+        3916007.0,
+        1443360.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 25214750.0,
+      "actual_curr_ytd": 44011151.0,
+      "rate_prev": 157.59,
+      "rate_curr": 146.7
+    },
+    {
+      "name": "Tarımsal Araşt. Enst. Dair. Döner Sermaye Gelirleri",
+      "budget_prev": 4000000.0,
+      "actual_prev_full": 14930494.0,
+      "budget_curr": 7000000.0,
+      "budget_curr_revised": 7000000.0,
+      "monthly": [
+        1132716.0,
+        1224998.0,
+        813472.0,
+        498041.0,
+        1233297.0,
+        647311.0,
+        1399318.0,
+        265157.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 8353649.0,
+      "actual_curr_ytd": 6949153.0,
+      "rate_prev": 208.84,
+      "rate_curr": 99.27
+    },
+    {
+      "name": "Tarım Dairesi Döner Sermaye Gelirleri",
+      "budget_prev": 0.0,
+      "actual_prev_full": 0.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 0.0,
+      "monthly": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        394860.0,
+        0.0,
+        -394860.0,
+        1914383.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 0.0,
+      "actual_curr_ytd": 0.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "ÖZEL GELİRLER",
+      "budget_prev": 3620430000.0,
+      "actual_prev_full": 3985609417.0,
+      "budget_curr": 4359236000.0,
+      "budget_curr_revised": 4414122684.0,
+      "monthly": [
+        929638703.0,
+        150714110.0,
+        104063847.0,
+        427486979.0,
+        133348105.0,
+        98678763.0,
+        457711560.0,
+        132826951.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 2969954041.0,
+      "actual_curr_ytd": 2301642066.0,
+      "rate_prev": 82.03,
+      "rate_curr": 52.8
+    },
+    {
+      "name": "KARA SINIR KAPILARINDAKİ GEÇİŞLERDE SİGORTA",
+      "budget_prev": 32898000.0,
+      "actual_prev_full": 15323596.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 0.0,
+      "monthly": [
+        0.0,
+        24007.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1006740.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 13306728.0,
+      "actual_curr_ytd": 24007.0,
+      "rate_prev": 40.45,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "Av Üretme Gelirleri",
+      "budget_prev": 48675000.0,
+      "actual_prev_full": 25960941.0,
+      "budget_curr": 60455000.0,
+      "budget_curr_revised": 108502938.0,
+      "monthly": [
+        249074.0,
+        41325693.0,
+        13639.0,
+        0.0,
+        4041.0,
+        0.0,
+        0.0,
+        2846602.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 26397051.0,
+      "actual_curr_ytd": 41592447.0,
+      "rate_prev": 54.23,
+      "rate_curr": 68.8
+    },
+    {
+      "name": "Deprem ile İlgili Toplanan Vergi Gelirleri",
+      "budget_prev": 0.0,
+      "actual_prev_full": 95347174.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 6047063.0,
+      "monthly": [
+        6225793.0,
+        111196.0,
+        78125.0,
+        90200.0,
+        237721.0,
+        32661.0,
+        23070.0,
+        1294383.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 97617560.0,
+      "actual_curr_ytd": 6798765.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "Taşınmaz Mal Komisyonu Adı Altında Tazminat İçin",
+      "budget_prev": 1412984000.0,
+      "actual_prev_full": 1234549675.0,
+      "budget_curr": 1475352000.0,
+      "budget_curr_revised": 1475352000.0,
+      "monthly": [
+        43851263.0,
+        54771367.0,
+        53718674.0,
+        69506313.0,
+        73000035.0,
+        51339895.0,
+        81888895.0,
+        65223544.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 833313893.0,
+      "actual_curr_ytd": 428076441.0,
+      "rate_prev": 58.98,
+      "rate_curr": 29.02
+    },
+    {
+      "name": "Konut Edindirme Amacıyla Alınan Tapu Harcı",
+      "budget_prev": 797054000.0,
+      "actual_prev_full": 1411193942.0,
+      "budget_curr": 840000000.0,
+      "budget_curr_revised": 840000000.0,
+      "monthly": [
+        39264154.0,
+        49735154.0,
+        47749931.0,
+        45747432.0,
+        53968662.0,
+        45510156.0,
+        63300196.0,
+        60097901.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1163400629.0,
+      "actual_curr_ytd": 345275685.0,
+      "rate_prev": 145.96,
+      "rate_curr": 41.1
+    },
+    {
+      "name": "Bilgisayar Denetimli Merkezi Alarm Sistemi Gelirleri",
+      "budget_prev": 11165000.0,
+      "actual_prev_full": 10029532.0,
+      "budget_curr": 14595000.0,
+      "budget_curr_revised": 14595000.0,
+      "monthly": [
+        0.0,
+        76342.0,
+        163669.0,
+        5677411.0,
+        5649069.0,
+        1349222.0,
+        166700.0,
+        41394.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 9898301.0,
+      "actual_curr_ytd": 13082412.0,
+      "rate_prev": 88.66,
+      "rate_curr": 89.64
+    },
+    {
+      "name": "Deprem ile İlgili Toplanan Vergi Dışı Gelirler",
+      "budget_prev": 0.0,
+      "actual_prev_full": 11087302.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 791683.0,
+      "monthly": [
+        791683.0,
+        2580.0,
+        13088.0,
+        8100.0,
+        12240.0,
+        3440.0,
+        4980.0,
+        10284.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 11697815.0,
+      "actual_curr_ytd": 836111.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "Sabit Görüntülü Radar Sistemi Cezaları",
+      "budget_prev": 42000000.0,
+      "actual_prev_full": 41209076.0,
+      "budget_curr": 58716000.0,
+      "budget_curr_revised": 58716000.0,
+      "monthly": [
+        2090665.0,
+        2152040.0,
+        1840372.0,
+        483938.0,
+        75009.0,
+        79416.0,
+        195386.0,
+        2071975.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 20251335.0,
+      "actual_curr_ytd": 6916826.0,
+      "rate_prev": 48.22,
+      "rate_curr": 11.78
+    },
+    {
+      "name": "OSB (Organize Sanayi Bölgeleri) Ortak Hizmetlere",
+      "budget_prev": 8115000.0,
+      "actual_prev_full": 10134939.0,
+      "budget_curr": 11345000.0,
+      "budget_curr_revised": 11345000.0,
+      "monthly": [
+        2072098.0,
+        2515729.0,
+        486350.0,
+        524479.0,
+        401328.0,
+        363973.0,
+        468764.0,
+        234128.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 6806282.0,
+      "actual_curr_ytd": 6832720.0,
+      "rate_prev": 83.87,
+      "rate_curr": 60.23
+    },
+    {
+      "name": "Ercan Havaalanı Özelleştirme Gelirleri",
+      "budget_prev": 1267539000.0,
+      "actual_prev_full": 1130773239.0,
+      "budget_curr": 1898773000.0,
+      "budget_curr_revised": 1898773000.0,
+      "monthly": [
+        835093974.0,
+        0.0,
+        0.0,
+        305449106.0,
+        0.0,
+        0.0,
+        311663570.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 787264449.0,
+      "actual_curr_ytd": 1452206649.0,
+      "rate_prev": 62.11,
+      "rate_curr": 76.48
+    },
+    {
+      "name": "TOPLAM TC YARDIM VE KREDİLERİ",
+      "budget_prev": 18500000000.0,
+      "actual_prev_full": 18449480466.0,
+      "budget_curr": 21300000000.0,
+      "budget_curr_revised": 28747650390.0,
+      "monthly": [
+        537959173.0,
+        536628649.0,
+        1191432932.0,
+        2913159119.0,
+        601622012.0,
+        1346501651.0,
+        1220112656.0,
+        670602067.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 8771781098.0,
+      "actual_curr_ytd": 8347416192.0,
+      "rate_prev": 47.42,
+      "rate_curr": 39.19
+    },
+    {
+      "name": "TC YARDIMLARI",
+      "budget_prev": 14500000000.0,
+      "actual_prev_full": 17386747916.0,
+      "budget_curr": 19000000000.0,
+      "budget_curr_revised": 26447650390.0,
+      "monthly": [
+        537959173.0,
+        536628649.0,
+        1191432932.0,
+        2913159119.0,
+        601622012.0,
+        1346501651.0,
+        901012902.0,
+        557203232.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 8308955745.0,
+      "actual_curr_ytd": 8028316438.0,
+      "rate_prev": 57.3,
+      "rate_curr": 42.25
+    },
+    {
+      "name": "TC Yatırım (Cari Yıl)",
+      "budget_prev": 8500000000.0,
+      "actual_prev_full": 8680285151.0,
+      "budget_curr": 9000000000.0,
+      "budget_curr_revised": 12701227660.0,
+      "monthly": [
+        0.0,
+        0.0,
+        31098866.0,
+        2274237615.0,
+        0.0,
+        535941179.0,
+        117641232.0,
+        126107786.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4353736560.0,
+      "actual_curr_ytd": 2958918891.0,
+      "rate_prev": 51.22,
+      "rate_curr": 32.88
+    },
+    {
+      "name": "Savunma (Cari Yıl)",
+      "budget_prev": 6000000000.0,
+      "actual_prev_full": 8018798585.0,
+      "budget_curr": 10000000000.0,
+      "budget_curr_revised": 12653645319.0,
+      "monthly": [
+        537959173.0,
+        536628649.0,
+        1088334066.0,
+        606010251.0,
+        601622012.0,
+        762744314.0,
+        783371670.0,
+        431095446.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 3805004290.0,
+      "actual_curr_ytd": 4916670136.0,
+      "rate_prev": 63.42,
+      "rate_curr": 49.17
+    },
+    {
+      "name": "Reel Sektörün Desteklenmesi",
+      "budget_prev": 0.0,
+      "actual_prev_full": 687664180.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 1092777410.0,
+      "monthly": [
+        0.0,
+        0.0,
+        72000000.0,
+        32911253.0,
+        0.0,
+        47816157.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 150214895.0,
+      "actual_curr_ytd": 152727410.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "TC KREDİLERİ",
+      "budget_prev": 4000000000.0,
+      "actual_prev_full": 1062732550.0,
+      "budget_curr": 2300000000.0,
+      "budget_curr_revised": 2300000000.0,
+      "monthly": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        319099754.0,
+        113398835.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 462825353.0,
+      "actual_curr_ytd": 319099754.0,
+      "rate_prev": 11.57,
+      "rate_curr": 13.87
+    },
+    {
+      "name": "Kamu Maliyesinin Desteklenmesi",
+      "budget_prev": 4000000000.0,
+      "actual_prev_full": 1062732550.0,
+      "budget_curr": 2300000000.0,
+      "budget_curr_revised": 2300000000.0,
+      "monthly": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        319099754.0,
+        113398835.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 462825353.0,
+      "actual_curr_ytd": 319099754.0,
+      "rate_prev": 11.57,
+      "rate_curr": 13.87
+    },
+    {
+      "name": "YURT İÇİNDEN ALINAN BAĞIŞ YARDIM VE KREDİLER",
+      "budget_prev": 0.0,
+      "actual_prev_full": 112307182.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 820030080.0,
+      "monthly": [
+        78954840.0,
+        0.0,
+        80471155.0,
+        58223895.0,
+        44229973.0,
+        2666189.0,
+        83864795.0,
+        1120000.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4481582.0,
+      "actual_curr_ytd": 348410847.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "67/2005 Sayılı Yasa İle İlgili Alınan Yardım ve Bağışlar",
+      "budget_prev": 0.0,
+      "actual_prev_full": 2000.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 0.0,
+      "monthly": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        18468060.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 2000.0,
+      "actual_curr_ytd": 18468060.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "Kurumlardan ve Kişilerden Alınan Yardım ve Bağışlar",
+      "budget_prev": 0.0,
+      "actual_prev_full": 112305182.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 820030080.0,
+      "monthly": [
+        78954840.0,
+        0.0,
+        80471155.0,
+        58223895.0,
+        44229973.0,
+        2666189.0,
+        65396735.0,
+        1120000.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4479582.0,
+      "actual_curr_ytd": 329942787.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    }
+  ],
+  "all_expenses": [
+    {
+      "name": "GİDERLER GENEL TOPLAMI",
+      "budget_prev": 136941000000.0,
+      "actual_prev_full": 129839075419.0,
+      "budget_curr": 190634850000.0,
+      "budget_curr_revised": 199268761079.0,
+      "monthly": [
+        7322136983.0,
+        12595174770.0,
+        12188347214.0,
+        13755467876.0,
+        12048844340.0,
+        13461407305.0,
+        15989937613.0,
+        9546824107.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 63541868422.0,
+      "actual_curr_ytd": 87361316101.0,
+      "rate_prev": 46.4,
+      "rate_curr": 45.83
+    },
+    {
+      "name": "YEREL GİDERLER TOPLAMI",
+      "budget_prev": 121041000000.0,
+      "actual_prev_full": 111042455692.0,
+      "budget_curr": 168634850000.0,
+      "budget_curr_revised": 169821110689.0,
+      "monthly": [
+        6782883538.0,
+        11651220088.0,
+        11346983420.0,
+        10899791376.0,
+        11444594267.0,
+        11664762165.0,
+        14663448577.0,
+        8411579532.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 54573912691.0,
+      "actual_curr_ytd": 78453683431.0,
+      "rate_prev": 45.09,
+      "rate_curr": 46.52
+    },
+    {
+      "name": "MAHALLİ GİDERLER",
+      "budget_prev": 117471450000.0,
+      "actual_prev_full": 107551698137.0,
+      "budget_curr": 163697321000.0,
+      "budget_curr_revised": 165341490689.0,
+      "monthly": [
+        6651131216.0,
+        11476624822.0,
+        10850163895.0,
+        10665040799.0,
+        10941686942.0,
+        11020746689.0,
+        14408182639.0,
+        8222878016.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 53074745865.0,
+      "actual_curr_ytd": 76013577001.0,
+      "rate_prev": 45.18,
+      "rate_curr": 46.44
+    },
+    {
+      "name": "PERSONEL GİDERLERİ",
+      "budget_prev": 37742567000.0,
+      "actual_prev_full": 35751684934.0,
+      "budget_curr": 50890210000.0,
+      "budget_curr_revised": 48913136458.0,
+      "monthly": [
+        3223735277.0,
+        3888345383.0,
+        3448771076.0,
+        3538313974.0,
+        3823665236.0,
+        3656968932.0,
+        4315795189.0,
+        2911571854.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 17748993978.0,
+      "actual_curr_ytd": 25895595066.0,
+      "rate_prev": 47.03,
+      "rate_curr": 50.88
+    },
+    {
+      "name": "MAAŞ/ÜCRET",
+      "budget_prev": 34742567000.0,
+      "actual_prev_full": 32762891185.0,
+      "budget_curr": 46890210000.0,
+      "budget_curr_revised": 46931627043.0,
+      "monthly": [
+        3223570511.0,
+        3246478496.0,
+        3447558791.0,
+        3273265959.0,
+        3466220532.0,
+        3322024869.0,
+        3936471080.0,
+        2622717910.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 16271481732.0,
+      "actual_curr_ytd": 23915590240.0,
+      "rate_prev": 46.83,
+      "rate_curr": 51.0
+    },
+    {
+      "name": "EKMESAİ",
+      "budget_prev": 3000000000.0,
+      "actual_prev_full": 2988793749.0,
+      "budget_curr": 4000000000.0,
+      "budget_curr_revised": 1981509415.0,
+      "monthly": [
+        164766.0,
+        641866887.0,
+        1212284.0,
+        265048014.0,
+        357444703.0,
+        334944063.0,
+        379324109.0,
+        288853944.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1477512246.0,
+      "actual_curr_ytd": 1980004827.0,
+      "rate_prev": 49.25,
+      "rate_curr": 49.5
+    },
+    {
+      "name": "SOSYAL GÜVENLİK",
+      "budget_prev": 2599436000.0,
+      "actual_prev_full": 2571474465.0,
+      "budget_curr": 3947658000.0,
+      "budget_curr_revised": 3969488430.0,
+      "monthly": [
+        290636050.0,
+        291738469.0,
+        302620667.0,
+        307418286.0,
+        310470956.0,
+        310599349.0,
+        371001135.0,
+        225680831.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1375731257.0,
+      "actual_curr_ytd": 2184484913.0,
+      "rate_prev": 52.92,
+      "rate_curr": 55.34
+    },
+    {
+      "name": "MAL VE HİZMET ALIM GİDERLERİ",
+      "budget_prev": 10204708000.0,
+      "actual_prev_full": 10104432091.0,
+      "budget_curr": 13761937000.0,
+      "budget_curr_revised": 13407171528.0,
+      "monthly": [
+        141529140.0,
+        747062318.0,
+        793297275.0,
+        934889923.0,
+        1523118223.0,
+        1301658626.0,
+        1083968971.0,
+        718898778.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 5020422730.0,
+      "actual_curr_ytd": 6525524475.0,
+      "rate_prev": 49.2,
+      "rate_curr": 47.42
+    },
+    {
+      "name": "FAİZ GİDERLERİ",
+      "budget_prev": 1000000000.0,
+      "actual_prev_full": 3850755991.0,
+      "budget_curr": 6500000000.0,
+      "budget_curr_revised": 6958966634.0,
+      "monthly": [
+        0.0,
+        1105076909.0,
+        484753761.0,
+        306050243.0,
+        889231703.0,
+        310306353.0,
+        615936709.0,
+        218676869.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1611105300.0,
+      "actual_curr_ytd": 3711355680.0,
+      "rate_prev": 161.11,
+      "rate_curr": 57.1
+    },
+    {
+      "name": "CARİ TRANSFER",
+      "budget_prev": 55917629000.0,
+      "actual_prev_full": 51524787547.0,
+      "budget_curr": 72993366000.0,
+      "budget_curr_revised": 74060205388.0,
+      "monthly": [
+        2962374504.0,
+        5315639025.0,
+        5586579986.0,
+        5444808752.0,
+        4219051378.0,
+        5163319032.0,
+        7362952689.0,
+        3884869665.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 26407909415.0,
+      "actual_curr_ytd": 36054725365.0,
+      "rate_prev": 47.23,
+      "rate_curr": 49.4
+    },
+    {
+      "name": "(A) Görev Zararı",
+      "budget_prev": 1400000000.0,
+      "actual_prev_full": 1290137878.0,
+      "budget_curr": 1725000000.0,
+      "budget_curr_revised": 1725000000.0,
+      "monthly": [
+        0.0,
+        127387095.0,
+        127810073.0,
+        124619795.0,
+        0.0,
+        127759117.0,
+        251050342.0,
+        104389647.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 664281654.0,
+      "actual_curr_ytd": 758626423.0,
+      "rate_prev": 47.45,
+      "rate_curr": 43.98
+    },
+    {
+      "name": "Sosyal Sigortalar (Özel Uygulama)",
+      "budget_prev": 1400000000.0,
+      "actual_prev_full": 1290137878.0,
+      "budget_curr": 1725000000.0,
+      "budget_curr_revised": 1725000000.0,
+      "monthly": [
+        0.0,
+        127387095.0,
+        127810073.0,
+        124619795.0,
+        0.0,
+        127759117.0,
+        251050342.0,
+        104389647.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 664281654.0,
+      "actual_curr_ytd": 758626423.0,
+      "rate_prev": 47.45,
+      "rate_curr": 43.98
+    },
+    {
+      "name": "(B) Hazine Yardımı",
+      "budget_prev": 18959200000.0,
+      "actual_prev_full": 18531049035.0,
+      "budget_curr": 26425117000.0,
+      "budget_curr_revised": 26400308520.0,
+      "monthly": [
+        1105744830.0,
+        2063613717.0,
+        1949856194.0,
+        2032648952.0,
+        1176585043.0,
+        1927633292.0,
+        2769733817.0,
+        1456723481.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 10014767338.0,
+      "actual_curr_ytd": 13025815844.0,
+      "rate_prev": 52.82,
+      "rate_curr": 49.29
+    },
+    {
+      "name": "BRT Hazine Yardımı",
+      "budget_prev": 1650900000.0,
+      "actual_prev_full": 1438907746.0,
+      "budget_curr": 2124665000.0,
+      "budget_curr_revised": 2124665000.0,
+      "monthly": [
+        135095908.0,
+        180350354.0,
+        160487246.0,
+        136148051.0,
+        156790143.0,
+        156987503.0,
+        152796592.0,
+        115264091.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 753041527.0,
+      "actual_curr_ytd": 1078655797.0,
+      "rate_prev": 45.61,
+      "rate_curr": 50.77
+    },
+    {
+      "name": "Belediyelere Hazine Yardımı",
+      "budget_prev": 7962770000.0,
+      "actual_prev_full": 7962770000.0,
+      "budget_curr": 11697180000.0,
+      "budget_curr_revised": 11697180000.0,
+      "monthly": [
+        844434170.0,
+        955131984.0,
+        899783077.0,
+        899783077.0,
+        899783077.0,
+        899783077.0,
+        899783077.0,
+        612520769.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4287645385.0,
+      "actual_curr_ytd": 6298481538.0,
+      "rate_prev": 53.85,
+      "rate_curr": 53.85
+    },
+    {
+      "name": "Sosyal Sigortalar III. Ayak Devlet Primleri",
+      "budget_prev": 8000000000.0,
+      "actual_prev_full": 7945793825.0,
+      "budget_curr": 10858000000.0,
+      "budget_curr_revised": 10858000000.0,
+      "monthly": [
+        0.0,
+        802306983.0,
+        769977745.0,
+        875509244.0,
+        0.0,
+        746664353.0,
+        1584968488.0,
+        630653765.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4344421323.0,
+      "actual_curr_ytd": 4779426812.0,
+      "rate_prev": 54.3,
+      "rate_curr": 44.02
+    },
+    {
+      "name": "Diğer",
+      "budget_prev": 1345530000.0,
+      "actual_prev_full": 1183577464.0,
+      "budget_curr": 1745272000.0,
+      "budget_curr_revised": 1720463520.0,
+      "monthly": [
+        126214752.0,
+        125824396.0,
+        119608126.0,
+        121208580.0,
+        120011823.0,
+        124198359.0,
+        132185660.0,
+        98284855.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 629659103.0,
+      "actual_curr_ytd": 869251696.0,
+      "rate_prev": 46.8,
+      "rate_curr": 49.81
+    },
+    {
+      "name": "(C) Kar Amacı Gütmeyen Kuruluşlara Transferler",
+      "budget_prev": 1484158000.0,
+      "actual_prev_full": 1496359993.0,
+      "budget_curr": 1745703000.0,
+      "budget_curr_revised": 1657237438.0,
+      "monthly": [
+        58912150.0,
+        197909725.0,
+        93802423.0,
+        102031310.0,
+        145868234.0,
+        162868750.0,
+        185130098.0,
+        46038693.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 932591775.0,
+      "actual_curr_ytd": 946522690.0,
+      "rate_prev": 62.84,
+      "rate_curr": 54.22
+    },
+    {
+      "name": "DAÜye Katkı",
+      "budget_prev": 910000000.0,
+      "actual_prev_full": 909999999.0,
+      "budget_curr": 910000000.0,
+      "budget_curr_revised": 819000000.0,
+      "monthly": [
+        5810250.0,
+        126352497.0,
+        30000000.0,
+        32439750.0,
+        82000000.0,
+        100000000.0,
+        60000000.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 594965473.0,
+      "actual_curr_ytd": 436602497.0,
+      "rate_prev": 65.38,
+      "rate_curr": 47.98
+    },
+    {
+      "name": "(D) Hane Halkına Transferler",
+      "budget_prev": 33016693000.0,
+      "actual_prev_full": 29673322439.0,
+      "budget_curr": 42924713000.0,
+      "budget_curr_revised": 44120226431.0,
+      "monthly": [
+        1796323310.0,
+        2924045753.0,
+        3411061607.0,
+        3183162642.0,
+        2895168358.0,
+        2909285283.0,
+        4155293009.0,
+        2272732203.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 14541694104.0,
+      "actual_curr_ytd": 21274339961.0,
+      "rate_prev": 44.04,
+      "rate_curr": 49.56
+    },
+    {
+      "name": "Burslar",
+      "budget_prev": 371590000.0,
+      "actual_prev_full": 296740445.0,
+      "budget_curr": 539300000.0,
+      "budget_curr_revised": 485370000.0,
+      "monthly": [
+        0.0,
+        48977463.0,
+        32944794.0,
+        46080565.0,
+        48336323.0,
+        46989751.0,
+        46338695.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 187850379.0,
+      "actual_curr_ytd": 269667591.0,
+      "rate_prev": 50.55,
+      "rate_curr": 50.0
+    },
+    {
+      "name": "Tam ve Yarı Süreli İhtisas Bursları",
+      "budget_prev": 341600000.0,
+      "actual_prev_full": 350438212.0,
+      "budget_curr": 512000000.0,
+      "budget_curr_revised": 460800000.0,
+      "monthly": [
+        0.0,
+        67549262.0,
+        18244331.0,
+        43972144.0,
+        44492345.0,
+        45854466.0,
+        42869460.0,
+        12119437.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 185652736.0,
+      "actual_curr_ytd": 262982009.0,
+      "rate_prev": 54.35,
+      "rate_curr": 51.36
+    },
+    {
+      "name": "Yurtiçi ve Yurtdışı Tedaviler",
+      "budget_prev": 1750000000.0,
+      "actual_prev_full": 1718107502.0,
+      "budget_curr": 2800000000.0,
+      "budget_curr_revised": 2520000000.0,
+      "monthly": [
+        0.0,
+        268866652.0,
+        108933246.0,
+        124857456.0,
+        110754497.0,
+        88863321.0,
+        206249328.0,
+        153680641.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 789509744.0,
+      "actual_curr_ytd": 908524499.0,
+      "rate_prev": 45.12,
+      "rate_curr": 32.45
+    },
+    {
+      "name": "Maaş Benzeri Ödemeler",
+      "budget_prev": 30553503000.0,
+      "actual_prev_full": 27308036280.0,
+      "budget_curr": 39073413000.0,
+      "budget_curr_revised": 40654056431.0,
+      "monthly": [
+        1796323310.0,
+        2538652377.0,
+        3250939235.0,
+        2968252476.0,
+        2691585192.0,
+        2727577745.0,
+        3859835527.0,
+        2106932124.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 13378681245.0,
+      "actual_curr_ytd": 19833165862.0,
+      "rate_prev": 43.79,
+      "rate_curr": 50.76
+    },
+    {
+      "name": "Emekli Maaşları",
+      "budget_prev": 14765000000.0,
+      "actual_prev_full": 13776879325.0,
+      "budget_curr": 15500000000.0,
+      "budget_curr_revised": 15500000000.0,
+      "monthly": [
+        1375398324.0,
+        1373648421.0,
+        1371545296.0,
+        1369920397.0,
+        1364435738.0,
+        1363206180.0,
+        1588490932.0,
+        1.1398359811139836e+19,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 7000832318.0,
+      "actual_curr_ytd": 9806645288.0,
+      "rate_prev": 47.42,
+      "rate_curr": 63.27
+    },
+    {
+      "name": "Emekli İkramiyeleri",
+      "budget_prev": 74000000.0,
+      "actual_prev_full": 67540667.0,
+      "budget_curr": 27600000.0,
+      "budget_curr_revised": 67600000.0,
+      "monthly": [
+        0.0,
+        8711510.0,
+        5122383.0,
+        0.0,
+        21155882.0,
+        4821258.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 39048756.0,
+      "actual_curr_ytd": 39811032.0,
+      "rate_prev": 52.77,
+      "rate_curr": 144.24
+    },
+    {
+      "name": "Mücahit Tazmin Yasası Uyarınca Ödenen Emekli Maaşları",
+      "budget_prev": 500000000.0,
+      "actual_prev_full": 451472023.0,
+      "budget_curr": 550000000.0,
+      "budget_curr_revised": 550000000.0,
+      "monthly": [
+        45134033.0,
+        44195521.0,
+        43907554.0,
+        43774388.0,
+        43522634.0,
+        43515014.0,
+        49938060.0,
+        3737595977339922.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 232021783.0,
+      "actual_curr_ytd": 313987205.0,
+      "rate_prev": 46.4,
+      "rate_curr": 57.09
+    },
+    {
+      "name": "Kıdem Tazminatları",
+      "budget_prev": 502000000.0,
+      "actual_prev_full": 287089840.0,
+      "budget_curr": 700000000.0,
+      "budget_curr_revised": 700000000.0,
+      "monthly": [
+        0.0,
+        28683486.0,
+        22042748.0,
+        35843926.0,
+        57390770.0,
+        19456902.0,
+        18160599.0,
+        3838585800009955.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 126963867.0,
+      "actual_curr_ytd": 181578431.0,
+      "rate_prev": 25.29,
+      "rate_curr": 25.94
+    },
+    {
+      "name": "Muhtaç ve Yoksullara Yardım",
+      "budget_prev": 1216000000.0,
+      "actual_prev_full": 1139766605.0,
+      "budget_curr": 1606000000.0,
+      "budget_curr_revised": 1606000000.0,
+      "monthly": [
+        112450540.0,
+        114017106.0,
+        115143981.0,
+        114243383.0,
+        113768086.0,
+        115062224.0,
+        134331983.0,
+        9595717144999932.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 579267923.0,
+      "actual_curr_ytd": 819017303.0,
+      "rate_prev": 47.64,
+      "rate_curr": 51.0
+    },
+    {
+      "name": "Özürlülere Yardım",
+      "budget_prev": 2600000000.0,
+      "actual_prev_full": 2182924070.0,
+      "budget_curr": 2995000000.0,
+      "budget_curr_revised": 2995000000.0,
+      "monthly": [
+        212774735.0,
+        228475152.0,
+        222390503.0,
+        224244207.0,
+        228553995.0,
+        228256852.0,
+        258443990.0,
+        1.8128234345577997e+17,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1100375628.0,
+      "actual_curr_ytd": 1603139434.0,
+      "rate_prev": 42.32,
+      "rate_curr": 53.53
+    },
+    {
+      "name": "Diğer Maaş ve Benzeri Ödemeler",
+      "budget_prev": 10896503000.0,
+      "actual_prev_full": 9402363750.0,
+      "budget_curr": 17694813000.0,
+      "budget_curr_revised": 19235456431.0,
+      "monthly": [
+        50565678.0,
+        740921182.0,
+        1470786770.0,
+        1180226174.0,
+        862758087.0,
+        953259317.0,
+        1810469962.0,
+        6.162128585778867e+17,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4300170971.0,
+      "actual_curr_ytd": 7068987170.0,
+      "rate_prev": 39.46,
+      "rate_curr": 39.95
+    },
+    {
+      "name": "(E) Yurt Dışı Transferler",
+      "budget_prev": 1178000.0,
+      "actual_prev_full": 225251582.0,
+      "budget_curr": 1333000.0,
+      "budget_curr_revised": 1233000.0,
+      "monthly": [
+        0.0,
+        88521.0,
+        0.0,
+        0.0,
+        19777.0,
+        0.0,
+        43947.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 161441911.0,
+      "actual_curr_ytd": 152245.0,
+      "rate_prev": 13705.0,
+      "rate_curr": 11.42
+    },
+    {
+      "name": "(F) Diğer Cari Transferler",
+      "budget_prev": 1056400000.0,
+      "actual_prev_full": 308666620.0,
+      "budget_curr": 171500000.0,
+      "budget_curr_revised": 156200000.0,
+      "monthly": [
+        1394214.0,
+        2594214.0,
+        4049689.0,
+        2346053.0,
+        1409967.0,
+        35772589.0,
+        1701476.0,
+        4985641.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 93132632.0,
+      "actual_curr_ytd": 49268202.0,
+      "rate_prev": 8.82,
+      "rate_curr": 28.73
+    },
+    {
+      "name": "MAHALLİ YATIRIM",
+      "budget_prev": 4007210000.0,
+      "actual_prev_full": 3736810628.0,
+      "budget_curr": 8604250000.0,
+      "budget_curr_revised": 9014093204.0,
+      "monthly": [
+        32856245.0,
+        128762718.0,
+        234141129.0,
+        133559622.0,
+        176149446.0,
+        277894396.0,
+        658527946.0,
+        263180019.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 910583184.0,
+      "actual_curr_ytd": 1641891502.0,
+      "rate_prev": 22.72,
+      "rate_curr": 19.08
+    },
+    {
+      "name": "BORÇ VERME",
+      "budget_prev": 0.0,
+      "actual_prev_full": 11752480.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 0.0,
+      "monthly": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 0.0,
+      "actual_curr_ytd": 0.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "YEDEK ÖDENEK",
+      "budget_prev": 5999900000.0,
+      "actual_prev_full": 0.0,
+      "budget_curr": 6999900000.0,
+      "budget_curr_revised": 9018429046.0,
+      "monthly": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 0.0,
+      "actual_curr_ytd": 0.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "FON-DÖNER SERMAYE GİDERLERİ TOPLAMI",
+      "budget_prev": 3569550000.0,
+      "actual_prev_full": 3490757555.0,
+      "budget_curr": 4937529000.0,
+      "budget_curr_revised": 4479620000.0,
+      "monthly": [
+        131752322.0,
+        174595267.0,
+        496819525.0,
+        234750577.0,
+        502907325.0,
+        644015476.0,
+        255265938.0,
+        188701515.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1499166826.0,
+      "actual_curr_ytd": 2440106430.0,
+      "rate_prev": 42.0,
+      "rate_curr": 49.42
+    },
+    {
+      "name": "FİYAT İSTİKRAR FONU GİDERLERİ",
+      "budget_prev": 2900000000.0,
+      "actual_prev_full": 2827316590.0,
+      "budget_curr": 3900000000.0,
+      "budget_curr_revised": 3510000000.0,
+      "monthly": [
+        124029970.0,
+        106652503.0,
+        464511390.0,
+        157021070.0,
+        461726527.0,
+        555868245.0,
+        137154507.0,
+        132887708.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1208947369.0,
+      "actual_curr_ytd": 2006964212.0,
+      "rate_prev": 41.69,
+      "rate_curr": 51.46
+    },
+    {
+      "name": "Doğrudan Gelir Desteği Ödemeleri",
+      "budget_prev": 1700000000.0,
+      "actual_prev_full": 1852413276.0,
+      "budget_curr": 2300000000.0,
+      "budget_curr_revised": 2070000000.0,
+      "monthly": [
+        18030567.0,
+        48336300.0,
+        402360842.0,
+        62265545.0,
+        160874113.0,
+        481494037.0,
+        38870311.0,
+        87161950.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 829213877.0,
+      "actual_curr_ytd": 1212231714.0,
+      "rate_prev": 48.78,
+      "rate_curr": 52.71
+    },
+    {
+      "name": "Tarımsal KİTler Görev Zararları",
+      "budget_prev": 1200000000.0,
+      "actual_prev_full": 974903315.0,
+      "budget_curr": 1600000000.0,
+      "budget_curr_revised": 1440000000.0,
+      "monthly": [
+        105999404.0,
+        58316203.0,
+        62150549.0,
+        94755525.0,
+        300852414.0,
+        74374208.0,
+        98284196.0,
+        45725758.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 379733492.0,
+      "actual_curr_ytd": 794732497.0,
+      "rate_prev": 31.64,
+      "rate_curr": 49.67
+    },
+    {
+      "name": "DİĞER FONLARIN GİDERLERİ",
+      "budget_prev": 620000000.0,
+      "actual_prev_full": 577807508.0,
+      "budget_curr": 959179000.0,
+      "budget_curr_revised": 862501000.0,
+      "monthly": [
+        1786623.0,
+        63706427.0,
+        21465212.0,
+        69520592.0,
+        35050009.0,
+        78822290.0,
+        109801371.0,
+        51427086.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 249809925.0,
+      "actual_curr_ytd": 380152525.0,
+      "rate_prev": 40.29,
+      "rate_curr": 39.63
+    },
+    {
+      "name": "Turizm Teşvik Fonu",
+      "budget_prev": 400000000.0,
+      "actual_prev_full": 352940288.0,
+      "budget_curr": 600000000.0,
+      "budget_curr_revised": 538137000.0,
+      "monthly": [
+        1786623.0,
+        17763092.0,
+        17842099.0,
+        7497170.0,
+        26909957.0,
+        29938463.0,
+        99429173.0,
+        46252353.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 108720128.0,
+      "actual_curr_ytd": 201166577.0,
+      "rate_prev": 27.18,
+      "rate_curr": 33.53
+    },
+    {
+      "name": "Spor Fonu",
+      "budget_prev": 220000000.0,
+      "actual_prev_full": 224867220.0,
+      "budget_curr": 359179000.0,
+      "budget_curr_revised": 324364000.0,
+      "monthly": [
+        0.0,
+        45943335.0,
+        3623114.0,
+        62023422.0,
+        8140052.0,
+        48883827.0,
+        10372198.0,
+        5174733.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 141089797.0,
+      "actual_curr_ytd": 178985949.0,
+      "rate_prev": 64.13,
+      "rate_curr": 49.83
+    },
+    {
+      "name": "DÖNER SERMAYELERİN GİDERLERİ",
+      "budget_prev": 49550000.0,
+      "actual_prev_full": 85633456.0,
+      "budget_curr": 78350000.0,
+      "budget_curr_revised": 107119000.0,
+      "monthly": [
+        5935728.0,
+        4236336.0,
+        10842923.0,
+        8208915.0,
+        6130790.0,
+        9324941.0,
+        8310061.0,
+        4386721.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 40409532.0,
+      "actual_curr_ytd": 52989693.0,
+      "rate_prev": 81.55,
+      "rate_curr": 67.63
+    },
+    {
+      "name": "DÜÇ Döner Ser.",
+      "budget_prev": 14400000.0,
+      "actual_prev_full": 32933306.0,
+      "budget_curr": 27000000.0,
+      "budget_curr_revised": 37915000.0,
+      "monthly": [
+        3905074.0,
+        325385.0,
+        6982040.0,
+        3728047.0,
+        2492580.0,
+        5361506.0,
+        3927949.0,
+        798537.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 17738556.0,
+      "actual_curr_ytd": 26722582.0,
+      "rate_prev": 123.18,
+      "rate_curr": 98.97
+    },
+    {
+      "name": "Orman Dairesi Döner Ser.",
+      "budget_prev": 31500000.0,
+      "actual_prev_full": 44875946.0,
+      "budget_curr": 45000000.0,
+      "budget_curr_revised": 53239000.0,
+      "monthly": [
+        1620805.0,
+        3336945.0,
+        3206464.0,
+        4440230.0,
+        3497430.0,
+        3808395.0,
+        4195125.0,
+        3160445.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 18212477.0,
+      "actual_curr_ytd": 24105394.0,
+      "rate_prev": 57.82,
+      "rate_curr": 53.57
+    },
+    {
+      "name": "Tarımsal Araş. Döner Ser.",
+      "budget_prev": 3600000.0,
+      "actual_prev_full": 7824205.0,
+      "budget_curr": 6300000.0,
+      "budget_curr_revised": 5915000.0,
+      "monthly": [
+        409849.0,
+        574006.0,
+        654418.0,
+        40638.0,
+        140780.0,
+        155040.0,
+        186986.0,
+        427739.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4458500.0,
+      "actual_curr_ytd": 2161717.0,
+      "rate_prev": 123.85,
+      "rate_curr": 34.31
+    },
+    {
+      "name": "TC YARDIM VE KREDİLERİ TOPLAMI",
+      "budget_prev": 15900000000.0,
+      "actual_prev_full": 18786096097.0,
+      "budget_curr": 22000000000.0,
+      "budget_curr_revised": 29447650390.0,
+      "monthly": [
+        539253445.0,
+        943954682.0,
+        841363794.0,
+        2855676500.0,
+        604250073.0,
+        1796645140.0,
+        1326489036.0,
+        1135244576.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 8967955731.0,
+      "actual_curr_ytd": 8907632669.0,
+      "rate_prev": 56.4,
+      "rate_curr": 40.49
+    },
+    {
+      "name": "TC HİBE TOPLAMI",
+      "budget_prev": 14500000000.0,
+      "actual_prev_full": 17386747916.0,
+      "budget_curr": 19000000000.0,
+      "budget_curr_revised": 26447650390.0,
+      "monthly": [
+        539253445.0,
+        943954682.0,
+        831862028.0,
+        2855676500.0,
+        604250073.0,
+        1796645140.0,
+        1093413346.0,
+        1040622053.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 8324575929.0,
+      "actual_curr_ytd": 8665055214.0,
+      "rate_prev": 57.41,
+      "rate_curr": 45.61
+    },
+    {
+      "name": "TC YATIRIM (CARİ YIL)",
+      "budget_prev": 8500000000.0,
+      "actual_prev_full": 8680285151.0,
+      "budget_curr": 9000000000.0,
+      "budget_curr_revised": 12701227660.0,
+      "monthly": [
+        0.0,
+        0.0,
+        79437512.0,
+        2225898969.0,
+        0.0,
+        535941179.0,
+        120280595.0,
+        137176140.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4353736560.0,
+      "actual_curr_ytd": 2961558255.0,
+      "rate_prev": 51.22,
+      "rate_curr": 32.91
+    },
+    {
+      "name": "SAVUNMA (CARİ YIL)",
+      "budget_prev": 6000000000.0,
+      "actual_prev_full": 8018798585.0,
+      "budget_curr": 10000000000.0,
+      "budget_curr_revised": 12653645319.0,
+      "monthly": [
+        539253445.0,
+        871954682.0,
+        746126763.0,
+        603164031.0,
+        604250073.0,
+        1212887803.0,
+        973132750.0,
+        903445913.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 3820624474.0,
+      "actual_curr_ytd": 5550769548.0,
+      "rate_prev": 63.68,
+      "rate_curr": 55.51
+    },
+    {
+      "name": "REEL SEKTÖR",
+      "budget_prev": 0.0,
+      "actual_prev_full": 687664180.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 1092777410.0,
+      "monthly": [
+        0.0,
+        72000000.0,
+        6297753.0,
+        26613500.0,
+        0.0,
+        47816157.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 150214895.0,
+      "actual_curr_ytd": 152727410.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "TC KREDİLERİ TOPLAMI",
+      "budget_prev": 1400000000.0,
+      "actual_prev_full": 1399348181.0,
+      "budget_curr": 3000000000.0,
+      "budget_curr_revised": 3000000000.0,
+      "monthly": [
+        0.0,
+        0.0,
+        9501766.0,
+        0.0,
+        0.0,
+        0.0,
+        233075690.0,
+        94622523.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 643379802.0,
+      "actual_curr_ytd": 242577456.0,
+      "rate_prev": 45.96,
+      "rate_curr": 8.09
+    },
+    {
+      "name": "67/2005 Yasa Gereği Ödemeler",
+      "budget_prev": 1400000000.0,
+      "actual_prev_full": 1399348181.0,
+      "budget_curr": 3000000000.0,
+      "budget_curr_revised": 3000000000.0,
+      "monthly": [
+        0.0,
+        0.0,
+        9501766.0,
+        0.0,
+        0.0,
+        0.0,
+        233075690.0,
+        94622523.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 643379802.0,
+      "actual_curr_ytd": 242577456.0,
+      "rate_prev": 45.96,
+      "rate_curr": 8.09
+    },
+    {
+      "name": "DIŞ YARDIMLAR",
+      "budget_prev": 0.0,
+      "actual_prev_full": 10523629.0,
+      "budget_curr": 0.0,
+      "budget_curr_revised": 0.0,
+      "monthly": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 0.0,
+      "actual_curr_ytd": 0.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    {
+      "name": "Gelir Vergisi",
+      "budget_prev": 26976083000.0,
+      "actual_prev_full": 26624868461.0,
+      "budget_curr": 42914007000.0,
+      "budget_curr_revised": 42914007000.0,
+      "monthly": [
+        2477406287.0,
+        2252239930.0,
+        2209602336.0,
+        2275313360.0,
+        2475272254.0,
+        2533544812.0,
+        8686784160.0,
+        2271055528.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 14878312164.0,
+      "actual_curr_ytd": 22910163139.0,
+      "rate_prev": 55.15,
+      "rate_curr": 53.39
+    },
+    {
+      "name": "Kurumlar Vergisi",
+      "budget_prev": 10188886000.0,
+      "actual_prev_full": 9018873520.0,
+      "budget_curr": 15845065000.0,
+      "budget_curr_revised": 15845065000.0,
+      "monthly": [
+        1026279899.0,
+        462881922.0,
+        843220017.0,
+        415354065.0,
+        914600830.0,
+        2053993708.0,
+        506309417.0,
+        466151731.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4455352776.0,
+      "actual_curr_ytd": 6222639857.0,
+      "rate_prev": 43.73,
+      "rate_curr": 39.27
+    },
+    {
+      "name": "Dahilde Alınan Katma Değer Vergisi",
+      "budget_prev": 8674800000.0,
+      "actual_prev_full": 9160261446.0,
+      "budget_curr": 13783465000.0,
+      "budget_curr_revised": 13783465000.0,
+      "monthly": [
+        1052563458.0,
+        890943238.0,
+        700613032.0,
+        1023374284.0,
+        864882641.0,
+        780894961.0,
+        935467764.0,
+        853754633.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 4482275375.0,
+      "actual_curr_ytd": 6248739379.0,
+      "rate_prev": 51.67,
+      "rate_curr": 45.34
+    },
+    {
+      "name": "Mülkiyet Üzerinden Alınan Vergiler",
+      "budget_prev": 3781598000.0,
+      "actual_prev_full": 2877523723.0,
+      "budget_curr": 4921088000.0,
+      "budget_curr_revised": 4921088000.0,
+      "monthly": [
+        469599078.0,
+        244698834.0,
+        240814156.0,
+        326979480.0,
+        280389012.0,
+        246275925.0,
+        352245994.0,
+        218660058.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1615602562.0,
+      "actual_curr_ytd": 2161002480.0,
+      "rate_prev": 42.72,
+      "rate_curr": 43.91
+    },
+    {
+      "name": "Uluslararası Ticaret ve Muamelelerden Alınan",
+      "budget_prev": 22292555000.0,
+      "actual_prev_full": 18761249051.0,
+      "budget_curr": 29107673000.0,
+      "budget_curr_revised": 29107673000.0,
+      "monthly": [
+        1166215621.0,
+        1674089590.0,
+        1553555154.0,
+        1783892045.0,
+        2077707157.0,
+        1602686554.0,
+        2145896075.0,
+        1623527590.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 9404753604.0,
+      "actual_curr_ytd": 12004042196.0,
+      "rate_prev": 42.19,
+      "rate_curr": 41.24
+    },
+    {
+      "name": "Gümrük Vergileri",
+      "budget_prev": 2566650000.0,
+      "actual_prev_full": 2287194847.0,
+      "budget_curr": 3549649000.0,
+      "budget_curr_revised": 3549649000.0,
+      "monthly": [
+        120548460.0,
+        203933984.0,
+        195879044.0,
+        239259817.0,
+        255302867.0,
+        211299165.0,
+        256792639.0,
+        201252474.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 1104530538.0,
+      "actual_curr_ytd": 1483015975.0,
+      "rate_prev": 43.03,
+      "rate_curr": 41.78
+    },
+    {
+      "name": "İthalattan Alınan Katma Değer Vergisi",
+      "budget_prev": 18904120000.0,
+      "actual_prev_full": 15745552035.0,
+      "budget_curr": 24539134000.0,
+      "budget_curr_revised": 24539134000.0,
+      "monthly": [
+        1002372968.0,
+        1415317115.0,
+        1301963442.0,
+        1490534344.0,
+        1764226887.0,
+        1343631834.0,
+        1809808866.0,
+        1363851019.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 7949325267.0,
+      "actual_curr_ytd": 10127855455.0,
+      "rate_prev": 42.05,
+      "rate_curr": 41.27
+    },
+    {
+      "name": "Motorlu Taşıtlar Vergisi",
+      "budget_prev": 761789000.0,
+      "actual_prev_full": 838307248.0,
+      "budget_curr": 1113347000.0,
+      "budget_curr_revised": 1113347000.0,
+      "monthly": [
+        56259091.0,
+        67188850.0,
+        67683454.0,
+        66272974.0,
+        88329048.0,
+        86990708.0,
+        100514076.0,
+        73308288.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 438062440.0,
+      "actual_curr_ytd": 533238202.0,
+      "rate_prev": 57.5,
+      "rate_curr": 47.9
+    },
+    {
+      "name": "Harçlar",
+      "budget_prev": 4691478000.0,
+      "actual_prev_full": 4084027299.0,
+      "budget_curr": 6797406000.0,
+      "budget_curr_revised": 6797998468.0,
+      "monthly": [
+        240834328.0,
+        334989250.0,
+        347339773.0,
+        487489276.0,
+        775860415.0,
+        620872933.0,
+        854982187.0,
+        276723862.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 2101893317.0,
+      "actual_curr_ytd": 3662368161.0,
+      "rate_prev": 44.8,
+      "rate_curr": 53.88
+    },
+    {
+      "name": "RED VE İADELER",
+      "budget_prev": -558491000.0,
+      "actual_prev_full": -952116297.0,
+      "budget_curr": -1076208000.0,
+      "budget_curr_revised": -1076208000.0,
+      "monthly": [
+        -7386662.0,
+        -11012933.0,
+        -22161379.0,
+        -48169678.0,
+        -20049461.0,
+        -241787966.0,
+        -116386272.0,
+        -111979662.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": -457375134.0,
+      "actual_curr_ytd": -466954350.0,
+      "rate_prev": 81.9,
+      "rate_curr": 43.39
+    },
+    {
+      "name": "Spor Fonu Gelirleri",
+      "budget_prev": 250000000.0,
+      "actual_prev_full": 258918713.0,
+      "budget_curr": 400000000.0,
+      "budget_curr_revised": 400000000.0,
+      "monthly": [
+        4691797.0,
+        1288865.0,
+        722124.0,
+        180575371.0,
+        703099.0,
+        254669.0,
+        829832.0,
+        165419344.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 6690325.0,
+      "actual_curr_ytd": 189065757.0,
+      "rate_prev": 2.68,
+      "rate_curr": 47.27
+    },
+    {
+      "name": "Turizm Teşvik Fonu Gelirleri",
+      "budget_prev": 700000000.0,
+      "actual_prev_full": 773801622.0,
+      "budget_curr": 950000000.0,
+      "budget_curr_revised": 950000000.0,
+      "monthly": [
+        9148445.0,
+        12184265.0,
+        26271170.0,
+        198115437.0,
+        187626093.0,
+        16061728.0,
+        184490692.0,
+        38333647.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 378497347.0,
+      "actual_curr_ytd": 633897830.0,
+      "rate_prev": 54.07,
+      "rate_curr": 66.73
+    }
+  ],
+  "summary_rows": {
+    "genel_gider": {
+      "name": "GENEL GİDERLER",
+      "budget_prev": 136941000000.0,
+      "actual_prev_full": 129839075419.0,
+      "budget_curr": 190634850000.0,
+      "budget_curr_revised": 199268761079.0,
+      "monthly": [
+        7322136983.0,
+        12595174770.0,
+        12188347214.0,
+        13755467876.0,
+        12048844340.0,
+        13461407305.0,
+        15989937613.0,
+        9546824107.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 63541868422.0,
+      "actual_curr_ytd": 87361316101.0,
+      "rate_prev": 46.4,
+      "rate_curr": 45.83
+    },
+    "genel_gelir": {
+      "name": "GENEL GELİRLER",
+      "budget_prev": 118662000000.0,
+      "actual_prev_full": 114805516290.0,
+      "budget_curr": 165434000000.0,
+      "budget_curr_revised": 174237475257.0,
+      "monthly": [
+        14863949143.0,
+        9014245830.0,
+        9645533060.0,
+        11730629964.0,
+        10186596391.0,
+        10758954078.0,
+        17296098276.0,
+        8052473702.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 62131299696.0,
+      "actual_curr_ytd": 83496006741.0,
+      "rate_prev": 52.36,
+      "rate_curr": 50.47
+    },
+    "acik": {
+      "name": "AÇIK",
+      "budget_prev": -20879000000.0,
+      "actual_prev_full": -14815946519.0,
+      "budget_curr": -24500850000.0,
+      "budget_curr_revised": -25151315902.0,
+      "monthly": [
+        7464151592.0,
+        -3173909121.0,
+        -2973354448.0,
+        -2140544426.0,
+        -1903849862.0,
+        -2254975927.0,
+        1328672249.0,
+        -1030827896.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": -1218875674.0,
+      "actual_curr_ytd": -3653809943.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    },
+    "yerel_gider": {
+      "name": "YEREL GİDERLER",
+      "budget_prev": 121041000000.0,
+      "actual_prev_full": 111042455692.0,
+      "budget_curr": 168634850000.0,
+      "budget_curr_revised": 169821110689.0,
+      "monthly": [
+        6782883538.0,
+        11651220088.0,
+        11346983420.0,
+        10899791376.0,
+        11444594267.0,
+        11664762165.0,
+        14663448577.0,
+        8411579532.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 54573912691.0,
+      "actual_curr_ytd": 78453683431.0,
+      "rate_prev": 45.09,
+      "rate_curr": 46.52
+    },
+    "yerel_gelir": {
+      "name": "YEREL GELİRLER",
+      "budget_prev": 100162000000.0,
+      "actual_prev_full": 96226509172.0,
+      "budget_curr": 144134000000.0,
+      "budget_curr_revised": 144669794787.0,
+      "monthly": [
+        14247035129.0,
+        8477310967.0,
+        8373628972.0,
+        8759246950.0,
+        9540744406.0,
+        9409786238.0,
+        15992120826.0,
+        7380751636.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": 53355037017.0,
+      "actual_curr_ytd": 74799873488.0,
+      "rate_prev": 53.27,
+      "rate_curr": 51.9
+    },
+    "yerel_acik": {
+      "name": "AÇIK",
+      "budget_prev": -20879000000.0,
+      "actual_prev_full": -14815946519.0,
+      "budget_curr": -24500850000.0,
+      "budget_curr_revised": -25151315902.0,
+      "monthly": [
+        7464151592.0,
+        -3173909121.0,
+        -2973354448.0,
+        -2140544426.0,
+        -1903849862.0,
+        -2254975927.0,
+        1328672249.0,
+        -1030827896.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "actual_prev_ytd": -1218875674.0,
+      "actual_curr_ytd": -3653809943.0,
+      "rate_prev": 0.0,
+      "rate_curr": 0.0
+    }
+  }
+};
+
+/* Modül Değiştirme */
+function switchMod(mod){
+  S.activeModule = mod;
+  const isBudget = mod === 'budget';
+  
+  document.getElementById('tabBtnBudget').classList.toggle('active', isBudget);
+  document.getElementById('tabBtnDebt').classList.toggle('active', !isBudget);
+  
+  document.getElementById('module-budget').style.display = isBudget ? 'block' : 'none';
+  document.getElementById('module-debt').style.display = isBudget ? 'none' : 'block';
+  
+  const titleEl = document.getElementById('pageMainTitle');
+  const subEl = document.getElementById('pageMainSub');
+  if(isBudget){
+    titleEl.textContent = 'KKTC Maliye Gelir-Gider & Bütçe Dengesi';
+    subEl.textContent = 'KKTC Maliye Bakanlığı Genel Bütçe Gerçekleşmesi, Gelir-Gider Dengesi ve Harcama Analizi';
+    if(!S._budgetRendered){
+      renderBudget();
+      S._budgetRendered = true;
+    }
+  } else {
+    titleEl.textContent = 'KKTC Merkezi Hükümet Borç İlerlemesi';
+    subEl.textContent = 'TL ve Yabancı Para DİBS İhale + Borç Stoku — Canlı Kur ile TL Karşılığı';
+  }
+  
+  // URL Hash senkronizasyonu
+  try{ history.replaceState(null, '', '#' + mod); }catch(e){}
+  
+  // Grafikleri yeniden boyutlandır
+  requestAnimationFrame(() => {
+    Object.values(S.charts).forEach(c => {
+      if(c && c.canvas && c.canvas.offsetParent) c.resize();
+    });
+  });
+}
+
+/* Bütçe Alt Sekmeleri */
+document.querySelectorAll('.tab-btn[data-bt]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn[data-bt]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('#module-budget .tab-pane').forEach(x => x.classList.remove('active'));
+    const pane = document.getElementById('bp-' + b.dataset.bt);
+    if(pane) pane.classList.add('active');
+    requestAnimationFrame(() => {
+      Object.values(S.charts).forEach(c => {
+        if(c && c.canvas && c.canvas.offsetParent) c.resize();
+      });
+    });
+  });
+});
+
+/* Bütçe Verisini Yükleme */
+async function loadBudgetData(){
+  // 1. Önce data.json içinde 'budget' var mı kontrol et
+  if(S.rawData && S.rawData.budget){
+    S.budget = S.rawData.budget;
+    return;
+  }
+  // 2. budget_data.json dosyasından çek
+  try{
+    const r = await fetch('./budget_data.json');
+    if(r.ok){
+      S.budget = await r.json();
+      return;
+    }
+  }catch(e){}
+  // 3. Fallback olarak gömülü veriyi kullan
+  S.budget = BUDGET_FALLBACK;
+}
+
+/* Bütçe Arayüzünü Render Et */
+function renderBudget(){
+  const b = S.budget || BUDGET_FALLBACK;
+  if(!b) return;
+
+  const k = b.kpis;
+  const meta = b.metadata;
+
+  // Metadata güncelle
+  const repPeriodEl = document.getElementById('bReportPeriod');
+  if(repPeriodEl) repPeriodEl.textContent = meta.title || (meta.report_period + ' Genel Gelir Gider Raporu');
+  const repStatEl = document.getElementById('bReportStatus');
+  if(repStatEl) repStatEl.textContent = meta.active_months_count + ' Aylık Kümülatif Veri';
+  const pdfLinkEl = document.getElementById('bPdfLink');
+  if(pdfLinkEl && meta.source_url) pdfLinkEl.href = meta.source_url;
+
+  // 1. Bütçe KPI Kartları
+  const isDeficit = k.budget_balance < 0;
+  const isLocalDeficit = k.local_balance < 0;
+  const salaryShare = k.total_expense > 0 ? (25895595066 / k.total_expense * 100) : 0;
+  const taxShare = k.local_revenue > 0 ? (57288276060 / k.local_revenue * 100) : 0;
+  const tcGrantShare = k.total_revenue > 0 ? (8347416192 / k.total_revenue * 100) : 0;
+
+  const kpisHtml = `
+    <div class="kpi-card">
+      <div class="kpi-label">Toplam Genel Gelir</div>
+      <div class="kpi-value">${fb(k.total_revenue)} Mrd TL</div>
+      <div class="kpi-sub">2026 Bütçe: ${fb(k.total_revenue_budget)} Mrd TL</div>
+      <div class="kpi-bar-wrap"><div class="kpi-bar-fill" style="width:${Math.min(100, k.total_revenue_rate)}%;background:var(--accent3)"></div></div>
+      <div class="kpi-extra"><span>Gerçekleşme Oranı</span><b style="color:var(--accent3)">%${k.total_revenue_rate.toFixed(1)}</b></div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Toplam Genel Gider</div>
+      <div class="kpi-value">${fb(k.total_expense)} Mrd TL</div>
+      <div class="kpi-sub">2026 Bütçe: ${fb(k.total_expense_budget)} Mrd TL</div>
+      <div class="kpi-bar-wrap"><div class="kpi-bar-fill" style="width:${Math.min(100, k.total_expense_rate)}%;background:var(--accent)"></div></div>
+      <div class="kpi-extra"><span>Gerçekleşme Oranı</span><b style="color:var(--accent)">%${k.total_expense_rate.toFixed(1)}</b></div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Net Bütçe Dengesi</div>
+      <div class="kpi-value ${isDeficit ? 'kpi-val-neg' : 'kpi-val-pos'}">${fb(Math.abs(k.budget_balance))} Mrd TL ${isDeficit ? 'Açık' : 'Fazla'}</div>
+      <div class="kpi-sub">Bütçelenen Açık: -25.03 Mrd TL</div>
+      <div class="kpi-rate" style="color:${isDeficit ? 'var(--yellow)' : 'var(--green)'}">Geçen yıl aynı dönem: ${fb(Math.abs(k.prev_year_balance_ytd))} Mrd TL Açık</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Avans Dahil Açık</div>
+      <div class="kpi-value kpi-val-neg">${fb(Math.abs(k.balance_with_advance))} Mrd TL Açık</div>
+      <div class="kpi-sub">Avans Tutarı: ${fm(k.advance_amount)} M TL</div>
+      <div class="kpi-rate" style="color:var(--muted)">Fiili nakit ihtiyacı</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Yerel Bütçe Dengesi</div>
+      <div class="kpi-value ${isLocalDeficit ? 'kpi-val-neg' : 'kpi-val-pos'}">${fb(Math.abs(k.local_balance))} Mrd TL ${isLocalDeficit ? 'Açık' : 'Fazla'}</div>
+      <div class="kpi-sub">TC Hibeleri hariç öz kaynak dengesi</div>
+      <div class="kpi-rate" style="color:var(--accent2)">Yerel Gelir: ${fb(k.local_revenue)} Mrd TL</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Personel &amp; Maaş Gideri</div>
+      <div class="kpi-value">25.90 Mrd TL</div>
+      <div class="kpi-sub">Harcamalardaki Payı: %${salaryShare.toFixed(1)}</div>
+      <div class="kpi-bar-wrap"><div class="kpi-bar-fill" style="width:${salaryShare}%;background:var(--accent4)"></div></div>
+      <div class="kpi-extra"><span>Emekli maaşları dahil</span><b>35.70 Mrd (%40.9)</b></div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Vergi Gelirleri</div>
+      <div class="kpi-value">57.29 Mrd TL</div>
+      <div class="kpi-sub">Yerel Gelir Payı: %${taxShare.toFixed(1)}</div>
+      <div class="kpi-rate" style="color:var(--accent3)">Gelir Vergisi: 22.91 Mrd TL</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">TC Destek &amp; Hibeleri</div>
+      <div class="kpi-value">8.35 Mrd TL</div>
+      <div class="kpi-sub">Bütçe Gelir Payı: %${tcGrantShare.toFixed(1)}</div>
+      <div class="kpi-rate" style="color:var(--accent5)">8.03 Mrd Hibe + 0.32 Mrd Kredi</div>
+    </div>
+  `;
+  document.getElementById('b-kpis').innerHTML = kpisHtml;
+
+  // 2. Bütçe İçgörüleri
+  const insHtml = `
+    <h3>🏛️ KKTC Maliye Bakanlığı 2026 Yılı Bütçe Dengesi &amp; Mali Analiz Raporu</h3>
+    <ul>
+      <li><strong>Bütçe Dengesi ve Nakit Akışı:</strong> Yılın ilk 7 ayında toplam bütçe geliri <strong>${fb(k.total_revenue)} Mrd TL</strong>, toplam bütçe harcaması ise <strong>${fb(k.total_expense)} Mrd TL</strong> gerçekleşerek net bütçe açığı <strong>${fb(Math.abs(k.budget_balance))} Mrd TL</strong> (Avans dahil <strong>${fb(Math.abs(k.balance_with_advance))} Mrd TL</strong>) olmuştur.</li>
+      <li><strong>Aylık Denge Dalgalanmaları:</strong> Ocak ayında (+7.54 Mrd TL) ve Temmuz ayında (+1.31 Mrd TL) vergi tahsilat yoğunluğu nedeniyle bütçe fazla vermiş; Şubat-Haziran arasındaki 5 ayda ise ortalama aylık <strong>2.34 Mrd TL</strong> açık oluşmuştur.</li>
+      <li><strong>Katı Harcama Bloğu:</strong> Doğrudan kamu personeli giderleri (25.90 Mrd TL) ve emekli maaşları/ikramiye transferleri (21.27 Mrd TL) toplam harcamaların <strong>%54.0</strong>'ını oluşturmakta, maliye bütçesinin harcama esnekliğini sınırlandırmaktadır.</li>
+      <li><strong>Bütçe Hedef Gerçekleşme Performansı:</strong> Yıllık öngörülen -25.03 Mrd TL açığa kıyasla 7. ay sonunda açık sadece -3.87 Mrd TL seviyesindedir. Gelir gerçekleşme oranı <strong>%50.5</strong>, gider gerçekleşme oranı ise <strong>%45.8</strong> düzeyindedir.</li>
+    </ul>
+  `;
+  document.getElementById('b-insights').innerHTML = insHtml;
+
+  // 3. Grafikleri Çiz
+  renderBudgetCharts(b);
+
+  // 4. Detay Tablosunu Doldur
+  filterBudgetTable();
+}
+
+/* Bütçe Grafikleri */
+function renderBudgetCharts(b){
+  const ms = b.monthly_series || [];
+  const labels = ms.map(m => m.month_name);
+  const revs = ms.map(m => m.revenue / 1e9);
+  const exps = ms.map(m => m.expense / 1e9);
+  const bals = ms.map(m => m.balance / 1e9);
+  const locBals = ms.map(m => m.local_balance / 1e9);
+
+  // Kümülatif seriler
+  let cR = 0, cE = 0, cB = 0;
+  const cumRevs = revs.map(v => (cR += v));
+  const cumExps = exps.map(v => (cE += v));
+  const cumBals = bals.map(v => (cB += v));
+
+  // 1. Aylık Nakit Akışı ve Net Denge (Combo)
+  mk('cBudgetMonthlyFlow', {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Genel Gelir (Mrd TL)', data: revs, backgroundColor: 'rgba(46,196,182,0.85)', borderRadius: 4, order: 2 },
+        { label: 'Genel Gider (Mrd TL)', data: exps, backgroundColor: 'rgba(230,57,70,0.85)', borderRadius: 4, order: 2 },
+        { label: 'Net Bütçe Dengesi (Mrd TL)', data: bals, type: 'line', borderColor: '#f4a261', backgroundColor: '#f4a261', borderWidth: 3, pointRadius: 5, pointHoverRadius: 7, tension: 0.25, order: 1 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fn(ctx.raw, 2) + ' Mrd TL' } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Milyar TL' }, grid: gG },
+        x: { grid: nG }
+      }
+    }
+  });
+
+  // 2. Kümülatif Gelişim
+  mk('cBudgetMonthlyCum', {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Kümülatif Gelir', data: cumRevs, borderColor: '#2ec4b6', backgroundColor: 'rgba(46,196,182,0.1)', fill: true, tension: 0.3, pointRadius: 3 },
+        { label: 'Kümülatif Gider', data: cumExps, borderColor: '#e63946', backgroundColor: 'rgba(230,57,70,0.1)', fill: true, tension: 0.3, pointRadius: 3 },
+        { label: 'Kümülatif Açık/Denge', data: cumBals, borderColor: '#f4a261', borderDash: [4, 4], borderWidth: 2, pointRadius: 3, fill: false }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fn(ctx.raw, 2) + ' Mrd TL' } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Mrd TL' }, grid: gG },
+        x: { grid: nG }
+      }
+    }
+  });
+
+  // 3. Genel Bütçe vs Yerel Bütçe Dengesi
+  mk('cBudgetLocalVsGen', {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Genel Bütçe Dengesi', data: bals, backgroundColor: bals.map(v => v >= 0 ? 'rgba(34,197,94,0.7)' : 'rgba(239,68,68,0.7)'), borderRadius: 4 },
+        { label: 'Yerel Bütçe Dengesi (TC Hibesiz)', data: locBals, backgroundColor: locBals.map(v => v >= 0 ? 'rgba(46,196,182,0.7)' : 'rgba(244,162,97,0.7)'), borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fn(ctx.raw, 2) + ' Mrd TL' } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Mrd TL' }, grid: gG },
+        x: { grid: nG }
+      }
+    }
+  });
+
+  // 4. Gelir Kaynakları Dağılımı (Doughnut)
+  mk('cBudgetRevPie', {
+    type: 'doughnut',
+    data: {
+      labels: ['Vergi Gelirleri', 'Vergi Dışı Mahalli', 'TC Yardımları', 'Fon Gelirleri', 'TC Kredileri', 'Diğer Gelirler'],
+      datasets: [{
+        data: [57.29, 9.98, 8.03, 5.56, 0.32, 2.32],
+        backgroundColor: ['#2ec4b6', '#38bdf8', '#f4a261', '#a78bfa', '#e63946', '#8899b8'],
+        borderColor: '#1a2235',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.raw.toFixed(2) + ' Mrd TL' } }
+      }
+    }
+  });
+
+  // 5. Vergi Gelirleri Kalemleri (Horizontal Bar)
+  mk('cBudgetTaxBreakdown', {
+    type: 'bar',
+    data: {
+      labels: ['Gelir Vergisi', 'İthalattan KDV', 'Dahilde KDV', 'Kurumlar Vergisi', 'Harçlar', 'Gümrük Vergileri', 'Motorlu Taşıtlar'],
+      datasets: [{
+        label: 'Tahsilat (Mrd TL)',
+        data: [22.91, 10.13, 6.25, 6.22, 3.66, 1.48, 0.53],
+        backgroundColor: '#2ec4b6',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(2) + ' Mrd TL' } }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Mrd TL' }, grid: gG },
+        y: { grid: nG }
+      }
+    }
+  });
+
+  // 6. Harcama Grupları Dağılımı (Doughnut)
+  mk('cBudgetExpPie', {
+    type: 'doughnut',
+    data: {
+      labels: ['Personel Maaş & Ücret', 'Hanehalkı & Emekli Maaş', 'TC Savunma Projeleri', 'TC Yatırım Projeleri', 'FİF Fon Harcamaları', 'Mahalli Yatırımlar', 'Diğer'],
+      datasets: [{
+        data: [25.90, 21.27, 5.55, 2.96, 2.01, 1.64, 28.03],
+        backgroundColor: ['#e63946', '#f4a261', '#a78bfa', '#38bdf8', '#2ec4b6', '#22c55e', '#64748b'],
+        borderColor: '#1a2235',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.raw.toFixed(2) + ' Mrd TL' } }
+      }
+    }
+  });
+
+  // 7. Sabit vs Esnek Harcamalar
+  mk('cBudgetRigidExp', {
+    type: 'bar',
+    data: {
+      labels: ['Personel + Emekliler (Sabit)', 'Savunma ve TC Projeleri', 'Mahalli Yatırımlar (Kalkınma)', 'FİF ve Fonlar'],
+      datasets: [{
+        label: 'Tutar (Mrd TL)',
+        data: [47.17, 8.51, 1.64, 2.01],
+        backgroundColor: ['#e63946', '#a78bfa', '#22c55e', '#2ec4b6'],
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(2) + ' Mrd TL' } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Mrd TL' }, grid: gG },
+        x: { grid: nG }
+      }
+    }
+  });
+
+  // 8. Bütçe Gerçekleşme Oranı (%)
+  mk('cBudgetRealization', {
+    type: 'bar',
+    data: {
+      labels: [
+        'Vergi Dışı Mahalli Gelirler', 'Sermaye Gelirleri', 'Emekli Maaşları', 'Sosyal Güvenlik Primleri',
+        'Harçlar', 'Gelir Vergisi', 'FİF Giderleri', 'Maaş/Ücret Giderleri', 'Normatif Eşik (7 Ay)',
+        'Dahilde KDV', 'İthalattan KDV', 'Gümrük Vergileri', 'TC Yardımları', 'Kurumlar Vergisi',
+        'TC Yatırım Projeleri', 'Mahalli Yatırımlar'
+      ],
+      datasets: [{
+        label: 'Gerçekleşme Oranı (%)',
+        data: [204.2, 93.7, 63.3, 55.3, 53.9, 53.4, 51.5, 51.0, 58.3, 45.3, 41.3, 41.8, 40.5, 39.3, 32.9, 19.1],
+        backgroundColor: [
+          '#22c55e', '#22c55e', '#f4a261', '#f4a261', '#2ec4b6', '#2ec4b6', '#f4a261', '#f4a261',
+          'rgba(255,255,255,0.4)',
+          '#38bdf8', '#38bdf8', '#38bdf8', '#a78bfa', '#e63946', '#e63946', '#ef4444'
+        ],
+        borderRadius: 3
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.raw.toFixed(1) + '%' } }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Yüzde (%)' }, grid: gG },
+        y: { grid: nG }
+      }
+    }
+  });
+
+  // 9. Bütçe Açığı vs DİBS İhale Borçlanması (Korelasyon)
+  const monthlyAucs = [0.0, 7.13, 4.28, 7.34, 4.04, 4.82, 8.98]; // 2026 ihaleleri (Mrd TL)
+  mk('cBudgetDebtCorr', {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'DİBS İhale Kabul Hacmi (Borçlanma)', data: monthlyAucs, backgroundColor: 'rgba(244,162,97,0.85)', borderRadius: 4, order: 2 },
+        { label: 'Aylık Net Bütçe Dengesi', data: bals, type: 'line', borderColor: '#2ec4b6', backgroundColor: '#2ec4b6', borderWidth: 3, pointRadius: 5, order: 1 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fn(ctx.raw, 2) + ' Mrd TL' } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Mrd TL' }, grid: gG },
+        x: { grid: nG }
+      }
+    }
+  });
+}
+
+/* Bütçe Detay Tablosu Filtreleme ve Arama */
+function setBudgetTableFilter(f, btn){
+  S.budgetFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  filterBudgetTable();
+}
+
+function filterBudgetTable(){
+  const b = S.budget || BUDGET_FALLBACK;
+  if(!b) return;
+
+  const searchInput = document.getElementById('bTableSearch');
+  const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
+  const f = S.budgetFilter || 'all';
+
+  const rows = [];
+  // Gelirler
+  (b.all_revenues || []).forEach(r => rows.push({ ...r, type: 'Gelir', isMain: r.name.toUpperCase() === r.name }));
+  // Giderler
+  (b.all_expenses || []).forEach(r => rows.push({ ...r, type: 'Gider', isMain: r.name.toUpperCase() === r.name }));
+
+  const filtered = rows.filter(r => {
+    if(f === 'gelir' && r.type !== 'Gelir') return false;
+    if(f === 'gider' && r.type !== 'Gider') return false;
+    if(f === 'main' && !r.isMain) return false;
+    if(q && !r.name.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('bTableBody');
+  if(!tbody) return;
+
+  if(!filtered.length){
+    tbody.innerHTML = '<tr><td colspan="8" class="no-data">Eşleşen bütçe kalemi bulunamadı.</td></tr>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(r => {
+    const diff = r.actual_prev_ytd > 0 ? (((r.actual_curr_ytd - r.actual_prev_ytd) / r.actual_prev_ytd) * 100) : null;
+    const diffStr = diff != null ? (diff >= 0 ? '+' + diff.toFixed(1) + '%' : diff.toFixed(1) + '%') : '—';
+    const diffClass = diff != null ? (diff >= 0 ? 'kpi-val-pos' : 'kpi-val-neg') : '';
+    const typeBadge = r.type === 'Gelir' ? '<span class="tag tag-gelir">Gelir</span>' : '<span class="tag tag-gider">Gider</span>';
+    const rowClass = r.isMain ? 'tr-main-item' : '';
+
+    html += `
+      <tr class="${rowClass}">
+        <td>${r.name}</td>
+        <td>${typeBadge}</td>
+        <td>${fn(r.budget_curr)}</td>
+        <td>${fn(r.budget_curr_revised)}</td>
+        <td style="font-weight:600">${fn(r.actual_curr_ytd)}</td>
+        <td>${fn(r.actual_prev_ytd)}</td>
+        <td class="${diffClass}">${diffStr}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:.4rem">
+            <span>%${r.rate_curr.toFixed(1)}</span>
+            <div style="width:40px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden">
+              <div style="width:${Math.min(100, r.rate_curr)}%;height:100%;background:${r.type === 'Gelir' ? 'var(--accent3)' : 'var(--accent)'}"></div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
 /* BAŞLATMA */
 async function init(){
   try{document.getElementById('loadSub').textContent='Canlı kurlar çekiliyor...';await fetchRates();
-    document.getElementById('loadSub').textContent='DİBS verileri yükleniyor...';const{src,data}=await loadData();S.rawData=data;
+    document.getElementById('loadSub').textContent='DİBS ve Maliye verileri yükleniyor...';
+    const{src,data}=await loadData();S.rawData=data;
+    await loadBudgetData();
     const tlH=data.tlRaw_headers||[];const fxH=data.fxRaw_headers||[];const tlSH=data.tlStockRaw_headers||[];const usdSH=data.usdStockRaw_headers||[];const eurSH=data.eurStockRaw_headers||[];const gbpSH=data.gbpStockRaw_headers||[];
     S.tl=procTL(data.tlRaw||[]);S.fx=procFX(data.fxRaw||[]);
     S.stk=[...procStock(data.tlStockRaw||[],'TL'),...procStock(data.usdStockRaw||[],'USD'),...procStock(data.eurStockRaw||[],'EUR'),...procStock(data.gbpStockRaw||[],'GBP')];
@@ -913,6 +5339,11 @@ async function init(){
     const totalParsed=S.tl.length+S.fx.length+S.stk.length;
     if(src==='live'&&totalParsed<10){console.warn('Canlı veri yetersiz ('+totalParsed+'), demo ile tamamlanıyor...');if(!S.tl.length)S.tl=procTL(DEMO.tlRaw);if(!S.fx.length)S.fx=procFX(DEMO.fxRaw);if(!S.stk.length)S.stk=[...procStock(DEMO.tlStockRaw,'TL'),...procStock(DEMO.usdStockRaw,'USD'),...procStock(DEMO.eurStockRaw,'EUR'),...procStock(DEMO.gbpStockRaw,'GBP')];S.src='partial'}
     updateStatus();render();
+    renderBudget();
+    // URL Hash kontrolü: #debt veya #budget
+    const h = location.hash.replace('#','');
+    if(h === 'debt') switchMod('debt');
+    else switchMod('budget');
   }catch(e){console.error('init:',e);document.getElementById('loadMsg').textContent='Hata: '+e.message;try{useDemo()}catch(e2){console.error('useDemo:',e2)}}
   hideLoader();
   // Hata durumunda debug panelini otomatik aç
