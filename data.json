@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-10-30 22:09:11",
+  "last_updated": "2026-10-31 11:38:56",
   "sources": {
     "tlRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
@@ -90,7 +90,7 @@
       ],
       "title": "2026 Temmuz Genel Gelir Gider Raporu",
       "source_url": "https://maliye.gov.ct.tr/downloads/raporlar/genel-gelir-gider/2026-07-genel-gelir-gider-raporu.pdf",
-      "parsed_at": "2026-10-30 22:18:50"
+      "parsed_at": "2026-10-31 11:48:33"
     },
     "kpis": {
       "total_revenue": 83496006741.0,
@@ -3774,5 +3774,5 @@
       }
     }
   },
-  "budget_last_updated": "2026-10-30 22:18:50"
+  "budget_last_updated": "2026-10-31 11:48:33"
 }
