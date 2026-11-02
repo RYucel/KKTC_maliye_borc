@@ -23,7 +23,8 @@ jobs:
     defaults:
       run:
         # Düz "bash" WSL'e çözülüyor; Git Bash'i açıkça kullan
-        shell: '"C:\Program Files\Git\bin\bash.exe" --noprofile --norc -eo pipefail {0}'
+        # (runner boşluklu/tırnaklı yolu çözemiyor, 8.3 kısa yol şart)
+        shell: C:\PROGRA~1\Git\bin\bash.exe --noprofile --norc -eo pipefail {0}
     env:
       PYTHONIOENCODING: utf-8
       PYTHONUTF8: '1'
