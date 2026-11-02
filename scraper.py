@@ -144,6 +144,15 @@ def main():
     print(f"Zaman: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print()
 
+    # Önceki çıktı: bir kaynak çekilemezse son başarılı verisini korumak için
+    previous = {}
+    if os.path.exists(output_file):
+        try:
+            with open(output_file, "r", encoding="utf-8") as f:
+                previous = json.load(f)
+        except (OSError, ValueError) as e:
+            print(f"Önceki {output_file} okunamadı: {e}")
+
     data = {
         "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "sources": {}
@@ -181,8 +190,20 @@ def main():
             source_info["rows"] = len(parsed["data"])
             source_info["httpStatus"] = status_code
             source_info["headersFound"] = len(parsed["headers"])
+            source_info["lastSuccess"] = data["last_updated"]
             print(f"  ✓ {len(parsed['data'])} satır, {len(parsed['headers'])} header")
             success += 1
+        elif previous.get(key):
+            # Çekilemedi ama elimizde önceki başarılı veri var — boşla ezme, koru
+            data[key] = previous[key]
+            data[key + "_headers"] = previous.get(key + "_headers", [])
+            data[key + "_debug"] = previous.get(key + "_debug", {})
+            prev_info = previous.get("sources", {}).get(key, {})
+            source_info["status"] = "stale"
+            source_info["rows"] = len(previous[key])
+            source_info["error"] = error_msg
+            source_info["lastSuccess"] = prev_info.get("lastSuccess") or previous.get("last_updated")
+            print(f"  ⚠ Başarısız, önceki veri korundu ({len(previous[key])} satır): {error_msg}")
         else:
             data[key] = []
             data[key + "_headers"] = []
