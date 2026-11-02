@@ -1,52 +1,46 @@
 {
-  "last_updated": "2026-11-02 12:52:54",
+  "last_updated": "2026-11-02 10:54:31",
   "sources": {
     "tlRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
-      "status": "ok",
+      "status": "stale",
       "rows": 69,
-      "httpStatus": 200,
-      "headersFound": 0,
+      "error": "Tüm denemeler başarısız",
       "lastSuccess": "2026-11-02 12:52:54"
     },
     "fxRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4717",
-      "status": "ok",
+      "status": "stale",
       "rows": 200,
-      "httpStatus": 200,
-      "headersFound": 0,
+      "error": "Tüm denemeler başarısız",
       "lastSuccess": "2026-11-02 12:52:54"
     },
     "tlStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-stoku",
-      "status": "ok",
+      "status": "stale",
       "rows": 66,
-      "httpStatus": 200,
-      "headersFound": 0,
+      "error": "Tüm denemeler başarısız",
       "lastSuccess": "2026-11-02 12:52:54"
     },
     "usdStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4718",
-      "status": "ok",
+      "status": "stale",
       "rows": 59,
-      "httpStatus": 200,
-      "headersFound": 0,
+      "error": "Tüm denemeler başarısız",
       "lastSuccess": "2026-11-02 12:52:54"
     },
     "eurStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4779",
-      "status": "ok",
+      "status": "stale",
       "rows": 46,
-      "httpStatus": 200,
-      "headersFound": 0,
+      "error": "Tüm denemeler başarısız",
       "lastSuccess": "2026-11-02 12:52:54"
     },
     "gbpStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/5694",
-      "status": "ok",
+      "status": "stale",
       "rows": 23,
-      "httpStatus": 200,
-      "headersFound": 0,
+      "error": "Tüm denemeler başarısız",
       "lastSuccess": "2026-11-02 12:52:54"
     }
   },
@@ -5189,7 +5183,7 @@
       ],
       "title": "2026 Temmuz Genel Gelir Gider Raporu",
       "source_url": "https://maliye.gov.ct.tr/downloads/raporlar/genel-gelir-gider/2026-07-genel-gelir-gider-raporu.pdf",
-      "parsed_at": "2026-11-01 22:04:22"
+      "parsed_at": "2026-11-02 11:04:09"
     },
     "kpis": {
       "total_revenue": 83496006741.0,
@@ -8873,5 +8867,5 @@
       }
     }
   },
-  "budget_last_updated": "2026-11-01 22:04:22"
+  "budget_last_updated": "2026-11-02 11:04:09"
 }
