@@ -1,10 +1,9 @@
 name: Veri Güncelle
 
 on:
-  # Günde iki kez çalıştır (06:00 ve 18:00 UTC = 09:00 ve 21:00 TR)
+  # Hafta içi günde bir kez çalıştır (15:00 UTC = 18:00 TR)
   schedule:
-    - cron: '0 6 * * *'
-    - cron: '0 18 * * *'
+    - cron: '0 15 * * 1-5'
   # Manuel tetikleme
   workflow_dispatch:
 

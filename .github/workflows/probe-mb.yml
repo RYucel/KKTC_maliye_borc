@@ -1,0 +1,36 @@
+name: Erişim Testi (mb.gov.ct.tr)
+
+# mb.gov.ct.tr 2026-10-28'den beri GitHub-hosted runner'lara yanıt vermiyor.
+# Bu iş veri yazmaz; yalnızca engelin kalkıp kalkmadığını loglar. Erişim
+# düzenli olarak "ERİŞİLEBİLİR" çıkarsa veri güncellemesi tekrar
+# ubuntu-latest'e taşınabilir.
+
+on:
+  # Hafta içi günde bir kez (15:10 UTC = 18:10 TR), yerel çalıştırmadan hemen sonra
+  schedule:
+    - cron: '10 15 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Siteye bağlanmayı dene
+        run: |
+          ip=$(curl -s -m 10 https://api.ipify.org || echo "?")
+          echo "### mb.gov.ct.tr erişim testi" >> "$GITHUB_STEP_SUMMARY"
+          echo "Runner IP: \`$ip\`" >> "$GITHUB_STEP_SUMMARY"
+          for url in https://mb.gov.ct.tr/tr/dibs-ihaleleri https://mb.gov.ct.tr/tr/dibs-stoku; do
+            res=$(curl -s -o /dev/null -w "%{http_code} %{time_total}s" --connect-timeout 20 -m 40 "$url" || true)
+            code=${res%% *}
+            if [ "$code" = "200" ]; then
+              echo "::notice title=ERİŞİLEBİLİR::$url → $res (IP $ip)"
+              echo "- ✅ ERİŞİLEBİLİR: $url → $res" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "::warning title=ERİŞİLEMİYOR::$url → ${res:-zaman aşımı} (IP $ip)"
+              echo "- ❌ ERİŞİLEMİYOR: $url → ${res:-zaman aşımı}" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
