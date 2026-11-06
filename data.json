@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-04 07:32:19",
+  "last_updated": "2026-11-06 07:55:09",
   "sources": {
     "tlRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
@@ -7,7 +7,7 @@
       "rows": 69,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-04 07:32:19"
+      "lastSuccess": "2026-11-06 07:55:09"
     },
     "fxRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4717",
@@ -15,7 +15,7 @@
       "rows": 200,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-04 07:32:19"
+      "lastSuccess": "2026-11-06 07:55:09"
     },
     "tlStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-stoku",
@@ -23,7 +23,7 @@
       "rows": 66,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-04 07:32:19"
+      "lastSuccess": "2026-11-06 07:55:09"
     },
     "usdStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4718",
@@ -31,7 +31,7 @@
       "rows": 59,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-04 07:32:19"
+      "lastSuccess": "2026-11-06 07:55:09"
     },
     "eurStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4779",
@@ -39,7 +39,7 @@
       "rows": 46,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-04 07:32:19"
+      "lastSuccess": "2026-11-06 07:55:09"
     },
     "gbpStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/5694",
@@ -47,7 +47,7 @@
       "rows": 23,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-04 07:32:19"
+      "lastSuccess": "2026-11-06 07:55:09"
     }
   },
   "tlRaw": [
@@ -5189,7 +5189,7 @@
       ],
       "title": "2026 Temmuz Genel Gelir Gider Raporu",
       "source_url": "https://maliye.gov.ct.tr/downloads/raporlar/genel-gelir-gider/2026-07-genel-gelir-gider-raporu.pdf",
-      "parsed_at": "2026-11-04 07:32:45"
+      "parsed_at": "2026-11-06 07:55:36"
     },
     "kpis": {
       "total_revenue": 83496006741.0,
@@ -8873,5 +8873,5 @@
       }
     }
   },
-  "budget_last_updated": "2026-11-04 07:32:45"
+  "budget_last_updated": "2026-11-06 07:55:36"
 }
