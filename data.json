@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-11-10 07:49:00",
+  "last_updated": "2026-11-11 07:27:51",
   "sources": {
     "tlRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-ihaleleri",
@@ -7,7 +7,7 @@
       "rows": 69,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-10 07:49:00"
+      "lastSuccess": "2026-11-11 07:27:51"
     },
     "fxRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4717",
@@ -15,7 +15,7 @@
       "rows": 204,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-10 07:49:00"
+      "lastSuccess": "2026-11-11 07:27:51"
     },
     "tlStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/dibs-stoku",
@@ -23,7 +23,7 @@
       "rows": 66,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-10 07:49:00"
+      "lastSuccess": "2026-11-11 07:27:51"
     },
     "usdStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4718",
@@ -31,7 +31,7 @@
       "rows": 60,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-10 07:49:00"
+      "lastSuccess": "2026-11-11 07:27:51"
     },
     "eurStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/4779",
@@ -39,7 +39,7 @@
       "rows": 47,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-10 07:49:00"
+      "lastSuccess": "2026-11-11 07:27:51"
     },
     "gbpStockRaw": {
       "url": "https://mb.gov.ct.tr/tr/node/5694",
@@ -47,7 +47,7 @@
       "rows": 24,
       "httpStatus": 200,
       "headersFound": 0,
-      "lastSuccess": "2026-11-10 07:49:00"
+      "lastSuccess": "2026-11-11 07:27:51"
     }
   },
   "tlRaw": [
@@ -5240,7 +5240,7 @@
       "Kasım",
       "11,700,000.00",
       "18,700,000.00",
-      "63,350,000.00"
+      "65,350,000.00"
     ]
   ],
   "gbpStockRaw_headers": [],
@@ -5267,7 +5267,7 @@
       ],
       "title": "2026 Temmuz Genel Gelir Gider Raporu",
       "source_url": "https://maliye.gov.ct.tr/downloads/raporlar/genel-gelir-gider/2026-07-genel-gelir-gider-raporu.pdf",
-      "parsed_at": "2026-11-10 07:49:26"
+      "parsed_at": "2026-11-11 07:28:15"
     },
     "kpis": {
       "total_revenue": 83496006741.0,
@@ -8951,5 +8951,5 @@
       }
     }
   },
-  "budget_last_updated": "2026-11-10 07:49:26"
+  "budget_last_updated": "2026-11-11 07:28:15"
 }
